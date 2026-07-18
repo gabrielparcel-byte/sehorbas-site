@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEHORBAS — Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de Maringá</title>
+    <meta name="description" content="SEHORBAS — Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de Maringá e Região. Convenções, convênios, parcerias e atendimento ao trabalhador.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER / NAVBAR -->
+    <header class="header" id="header">
+        <div class="container header-inner">
+            <a href="#" class="logo-link">
+                <img src="assets/logo.png" alt="SEHORBAS" class="logo-img">
+                <div class="logo-text">
+                    <span class="logo-name">SEHORBAS</span>
+                    <span class="logo-sub">Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares</span>
+                </div>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="#sobre" class="nav-link">Sobre</a>
+                <a href="#equipe" class="nav-link">Equipe</a>
+                <a href="#convenios" class="nav-link">Convênios</a>
+                <a href="#convencao" class="nav-link">Convenção</a>
+                <a href="#agendamento" class="nav-link">Agendamento</a>
+                <a href="#contato" class="nav-link">Contato</a>
+                <a href="admin.html" class="nav-link nav-admin">Área Admin</a>
+            </nav>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-content">
+                <h1>Defendendo os direitos dos <span class="highlight">trabalhadores</span> da hospitalidade</h1>
+                <p class="hero-sub">Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de Maringá e Região — atuando desde 1990 na defesa dos seus direitos.</p>
+                <div class="hero-actions">
+                    <a href="#agendamento" class="btn btn-primary">Agendar Atendimento</a>
+                    <a href="#convencao" class="btn btn-outline">Ver Convenção</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="assets/logo.png" alt="SEHORBAS Logo" class="hero-logo">
+            </div>
+        </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section class="section" id="sobre">
+        <div class="container">
+            <h2 class="section-title">Sobre o SEHORBAS</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">🏛️</div>
+                    <h3>Quem Somos</h3>
+                    <p>O SEHORBAS é o Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de Maringá e Região, registrado no Ministério do Trabalho desde 10/03/1990 (Livro Nº 002, FLS: 001).</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">⚖️</div>
+                    <h3>Nossa Missão</h3>
+                    <p>Defender os direitos trabalhistas e promover melhorias nas condições de trabalho dos empregados do setor de hospitalidade em Maringá e região.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🤝</div>
+                    <h3>O que Fazemos</h3>
+                    <p>Negociação de convenções coletivas, assistência jurídica, convênios com parceiros e atendimento personalizado ao trabalhador.</p>
+                </div>
+            </div>
+            <div class="about-info">
+                <p><strong>CNPJ:</strong> 80.291.206/0001-57</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- EQUIPE -->
+    <section class="section section-alt" id="equipe">
+        <div class="container">
+            <h2 class="section-title">Nossa Equipe</h2>
+            <div class="team-grid" id="teamGrid">
+                <div class="team-card">
+                    <div class="team-avatar">JC</div>
+                    <h3>João Candido Nogueira</h3>
+                    <span class="team-role">Presidente</span>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar">AR</div>
+                    <h3>Antonio Roberto Ghion</h3>
+                    <span class="team-role">Tesoureiro</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONVÊNIOS E PARCERIAS -->
+    <section class="section" id="convenios">
+        <div class="container">
+            <h2 class="section-title">Convênios e Parcerias</h2>
+            <p class="section-desc">Confira os convênios disponíveis para os trabalhadores associados ao SEHORBAS.</p>
+            <div class="convenios-grid" id="conveniosGrid">
+                <!-- Populated by JS from localStorage or default data -->
+                <div class="convenio-empty">
+                    <p>Nenhum convênio cadastrado ainda. Acesse a <a href="admin.html">área administrativa</a> para adicionar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONVENÇÃO COLETIVA -->
+    <section class="section section-alt" id="convencao">
+        <div class="container">
+            <h2 class="section-title">Convenção Coletiva</h2>
+            <p class="section-desc">Acesse a convenção coletiva vigente e documentos anteriores.</p>
+            <div class="convencao-list" id="convencaoList">
+                <div class="convenio-empty">
+                    <p>Nenhuma convenção cadastrada ainda. Acesse a <a href="admin.html">área administrativa</a> para adicionar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AGENDAMENTO -->
+    <section class="section" id="agendamento">
+        <div class="container">
+            <h2 class="section-title">Agendar Atendimento</h2>
+            <p class="section-desc">Preencha o formulário abaixo e enviaremos sua solicitação diretamente pelo WhatsApp.</p>
+            <form class="agendamento-form" id="agendamentoForm">
+                <div class="form-group">
+                    <label for="nome">Nome completo</label>
+                    <input type="text" id="nome" required placeholder="Seu nome completo">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <input type="tel" id="telefone" required placeholder="(44) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data desejada</label>
+                        <input type="date" id="data" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="assunto">Assunto</label>
+                    <select id="assunto" required>
+                        <option value="">Selecione o assunto</option>
+                        <option value="Convenção Coletiva">Convenção Coletiva</option>
+                        <option value="Direitos Trabalhistas">Direitos Trabalhistas</option>
+                        <option value="Convênios">Convênios</option>
+                        <option value="Homologação">Homologação</option>
+                        <option value="Assistência Jurídica">Assistência Jurídica</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mensagem">Mensagem (opcional)</label>
+                    <textarea id="mensagem" rows="3" placeholder="Descreva brevemente o que precisa..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.616l4.529-1.468A11.956 11.956 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.336 0-4.512-.767-6.262-2.063l-.438-.332-2.846.922.949-2.804-.363-.462A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                    Enviar pelo WhatsApp
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- CONTATO / LOCALIZAÇÃO -->
+    <section class="section section-alt" id="contato">
+        <div class="container">
+            <h2 class="section-title">Contato e Localização</h2>
+            <div class="contato-grid">
+                <div class="contato-info">
+                    <div class="contato-item">
+                        <span class="contato-icon">📍</span>
+                        <div>
+                            <strong>Endereço</strong>
+                            <p>Rua Joubert de Carvalho, 623 — 5º Andar — Sala 505<br>Edif. Atalaia — Zona 01<br>CEP 87013-911 — Maringá/PR</p>
+                        </div>
+                    </div>
+                    <div class="contato-item">
+                        <span class="contato-icon">📞</span>
+                        <div>
+                            <strong>Telefones</strong>
+                            <p><a href="tel:+554432225952">(44) 3222-5952</a><br><a href="tel:+554430285952">(44) 3028-5952</a></p>
+                        </div>
+                    </div>
+                    <div class="contato-item">
+                        <span class="contato-icon">✉️</span>
+                        <div>
+                            <strong>Email</strong>
+                            <p><a href="mailto:sehorbasmaringa@outlook.com">sehorbasmaringa@outlook.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contato-item">
+                        <span class="contato-icon">🕐</span>
+                        <div>
+                            <strong>Horário de Atendimento</strong>
+                            <p>Segunda a Sexta: 8h às 17h</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contato-mapa">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3661.5!2d-51.9386!3d-23.4205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ecd6f0c4e2e6e3%3A0x0!2sRua+Joubert+de+Carvalho%2C+623+-+Zona+01%2C+Maring%C3%A1+-+PR%2C+87013-911!5e0!3m2!1spt-BR!2sbr!4v1"
+                        width="100%" height="350" style="border:0; border-radius: 12px;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Localização SEHORBAS">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <img src="assets/logo.png" alt="SEHORBAS" class="footer-logo">
+                <p>SEHORBAS — Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de Maringá e Região</p>
+            </div>
+            <div class="footer-links">
+                <a href="#sobre">Sobre</a>
+                <a href="#equipe">Equipe</a>
+                <a href="#convenios">Convênios</a>
+                <a href="#convencao">Convenção</a>
+                <a href="#agendamento">Agendamento</a>
+                <a href="#contato">Contato</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 SEHORBAS. Todos os direitos reservados.</p>
+                <p>CNPJ: 80.291.206/0001-57</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

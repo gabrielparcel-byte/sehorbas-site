@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEHORBAS — Área Administrativa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <div class="admin-login" id="loginScreen">
+        <div class="login-card">
+            <img src="assets/logo.png" alt="SEHORBAS" class="login-logo">
+            <h1>Área Administrativa</h1>
+            <p>Acesse com suas credenciais para gerenciar o site.</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUser">Usuário</label>
+                    <input type="text" id="loginUser" required placeholder="admin">
+                </div>
+                <div class="form-group">
+                    <label for="loginPass">Senha</label>
+                    <input type="password" id="loginPass" required placeholder="••••••">
+                </div>
+                <div class="login-error" id="loginError"></div>
+                <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+            </form>
+            <a href="index.html" class="back-link">← Voltar ao site</a>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div class="admin-panel" id="adminPanel" style="display:none;">
+        <header class="admin-header">
+            <div class="container admin-header-inner">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/logo.png" alt="SEHORBAS" class="logo-img">
+                    <span class="logo-name">SEHORBAS</span>
+                    <span class="admin-badge">Admin</span>
+                </a>
+                <button class="btn btn-outline btn-sm" id="logoutBtn">Sair</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div class="container">
+                <!-- TABS -->
+                <div class="admin-tabs">
+                    <button class="tab active" data-tab="convenios">Convênios e Parcerias</button>
+                    <button class="tab" data-tab="convencoes">Convenções</button>
+                    <button class="tab" data-tab="equipe">Equipe</button>
+                </div>
+
+                <!-- TAB: CONVÊNIOS -->
+                <div class="tab-content active" id="tab-convenios">
+                    <div class="admin-section-header">
+                        <h2>Convênios e Parcerias</h2>
+                        <button class="btn btn-primary btn-sm" id="addConvenioBtn">+ Adicionar</button>
+                    </div>
+
+                    <!-- FORM -->
+                    <div class="admin-form-card" id="convenioFormCard" style="display:none;">
+                        <h3 id="convenioFormTitle">Novo Convênio</h3>
+                        <form id="convenioForm">
+                            <input type="hidden" id="convenioId">
+                            <div class="form-group">
+                                <label for="convenioNome">Nome do convênio/parceiro</label>
+                                <input type="text" id="convenioNome" required placeholder="Ex: Clínica Saúde Total">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="convenioEndereco">Endereço</label>
+                                    <input type="text" id="convenioEndereco" placeholder="Rua, número, bairro">
+                                </div>
+                                <div class="form-group">
+                                    <label for="convenioTelefone">Telefone</label>
+                                    <input type="text" id="convenioTelefone" placeholder="(44) 9999-9999">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="convenioDescricao">Descrição da parceria</label>
+                                <textarea id="convenioDescricao" rows="3" required placeholder="Descreva os benefícios para o associado..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="convenioLogo">Logo (URL da imagem, opcional)</label>
+                                <input type="text" id="convenioLogo" placeholder="https://... ou deixe vazio">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline btn-sm" id="cancelConvenio">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="admin-list" id="conveniosList"></div>
+                </div>
+
+                <!-- TAB: CONVENÇÕES -->
+                <div class="tab-content" id="tab-convencoes">
+                    <div class="admin-section-header">
+                        <h2>Convenções Coletivas</h2>
+                        <button class="btn btn-primary btn-sm" id="addConvencaoBtn">+ Adicionar</button>
+                    </div>
+
+                    <div class="admin-form-card" id="convencaoFormCard" style="display:none;">
+                        <h3 id="convencaoFormTitle">Nova Convenção</h3>
+                        <form id="convencaoForm">
+                            <input type="hidden" id="convencaoId">
+                            <div class="form-group">
+                                <label for="convencaoTitulo">Título</label>
+                                <input type="text" id="convencaoTitulo" required placeholder="Ex: Convenção Coletiva 2025/2026">
+                            </div>
+                            <div class="form-group">
+                                <label for="convencaoDescricao">Descrição</label>
+                                <input type="text" id="convencaoDescricao" placeholder="Breve descrição">
+                            </div>
+                            <div class="form-group">
+                                <label for="convencaoArquivo">Link do arquivo (PDF)</label>
+                                <input type="text" id="convencaoArquivo" placeholder="https://... URL do PDF">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline btn-sm" id="cancelConvencao">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="admin-list" id="convencoesList"></div>
+                </div>
+
+                <!-- TAB: EQUIPE -->
+                <div class="tab-content" id="tab-equipe">
+                    <div class="admin-section-header">
+                        <h2>Equipe / Funcionários</h2>
+                        <button class="btn btn-primary btn-sm" id="addFuncBtn">+ Adicionar</button>
+                    </div>
+
+                    <div class="admin-form-card" id="funcFormCard" style="display:none;">
+                        <h3 id="funcFormTitle">Novo Funcionário</h3>
+                        <form id="funcForm">
+                            <input type="hidden" id="funcIdx">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="funcNome">Nome</label>
+                                    <input type="text" id="funcNome" required placeholder="Nome completo">
+                                </div>
+                                <div class="form-group">
+                                    <label for="funcCargo">Cargo</label>
+                                    <input type="text" id="funcCargo" required placeholder="Ex: Secretário(a)">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline btn-sm" id="cancelFunc">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="admin-list" id="funcList"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
