@@ -144,6 +144,8 @@ const convencaoForm = document.getElementById('convencaoForm');
 
 document.getElementById('addConvencaoBtn').addEventListener('click', () => {
     document.getElementById('convencaoId').value = '';
+    document.getElementById('convencaoArquivoAtual').value = '';
+    document.getElementById('convencaoArquivoHint').textContent = '';
     convencaoForm.reset();
     document.getElementById('convencaoFormTitle').textContent = 'Nova Convenção';
     convencaoFormCard.style.display = 'block';
@@ -155,16 +157,41 @@ document.getElementById('cancelConvencao').addEventListener('click', () => {
 
 convencaoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const submitBtn = convencaoForm.querySelector('button[type="submit"]');
     const id = document.getElementById('convencaoId').value;
+    const arquivoAtual = document.getElementById('convencaoArquivoAtual').value;
+    const fileInput = document.getElementById('convencaoArquivo');
+    const file = fileInput.files[0];
+
+    let arquivo_url = arquivoAtual || null;
+
+    if (file) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando arquivo...';
+        const filePath = `${Date.now()}_${file.name}`;
+        const { error: uploadError } = await sb.storage.from('convencoes-arquivos').upload(filePath, file);
+        if (uploadError) {
+            alert('Erro ao enviar arquivo: ' + uploadError.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar';
+            return;
+        }
+        const { data: { publicUrl } } = sb.storage.from('convencoes-arquivos').getPublicUrl(filePath);
+        arquivo_url = publicUrl;
+    }
+
     const item = {
         titulo: document.getElementById('convencaoTitulo').value.trim(),
         descricao: document.getElementById('convencaoDescricao').value.trim(),
-        arquivo_url: document.getElementById('convencaoArquivo').value.trim() || null
+        arquivo_url
     };
 
     const { error } = id
         ? await sb.from('convencoes').update(item).eq('id', id)
         : await sb.from('convencoes').insert(item);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar';
 
     if (error) {
         alert('Erro ao salvar convenção: ' + error.message);
@@ -180,7 +207,11 @@ async function editConvencao(id) {
     document.getElementById('convencaoId').value = c.id;
     document.getElementById('convencaoTitulo').value = c.titulo;
     document.getElementById('convencaoDescricao').value = c.descricao || '';
-    document.getElementById('convencaoArquivo').value = c.arquivo_url || '';
+    document.getElementById('convencaoArquivo').value = '';
+    document.getElementById('convencaoArquivoAtual').value = c.arquivo_url || '';
+    document.getElementById('convencaoArquivoHint').textContent = c.arquivo_url
+        ? 'Já existe um arquivo enviado. Escolha um novo apenas se quiser substituí-lo.'
+        : '';
     document.getElementById('convencaoFormTitle').textContent = 'Editar Convenção';
     convencaoFormCard.style.display = 'block';
 }

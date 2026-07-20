@@ -112,6 +112,7 @@
                         <h3 id="convencaoFormTitle">Nova Convenção</h3>
                         <form id="convencaoForm">
                             <input type="hidden" id="convencaoId">
+                            <input type="hidden" id="convencaoArquivoAtual">
                             <div class="form-group">
                                 <label for="convencaoTitulo">Título</label>
                                 <input type="text" id="convencaoTitulo" required placeholder="Ex: Convenção Coletiva 2025/2026">
@@ -121,8 +122,9 @@
                                 <input type="text" id="convencaoDescricao" placeholder="Breve descrição">
                             </div>
                             <div class="form-group">
-                                <label for="convencaoArquivo">Link do arquivo (PDF)</label>
-                                <input type="text" id="convencaoArquivo" placeholder="https://... URL do PDF">
+                                <label for="convencaoArquivo">Arquivo (PDF)</label>
+                                <input type="file" id="convencaoArquivo" accept="application/pdf">
+                                <p class="field-hint" id="convencaoArquivoHint"></p>
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-outline btn-sm" id="cancelConvencao">Cancelar</button>

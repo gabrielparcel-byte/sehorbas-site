@@ -490,6 +490,11 @@ ul, ol { list-style: none; }
     box-shadow: 0 0 0 3px rgba(0, 119, 182, .1);
 }
 .form-group textarea { resize: vertical; }
+.form-group input[type="file"] {
+    padding: 10px 12px;
+    background: var(--cinza-50);
+    cursor: pointer;
+}
 
 /* ========== CONTATO ========== */
 .contato-grid {
