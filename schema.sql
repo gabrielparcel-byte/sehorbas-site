@@ -29,6 +29,7 @@ create table if not exists equipe (
     id uuid primary key default gen_random_uuid(),
     nome text not null,
     cargo text not null,
+    descricao text,
     ordem int not null default 0,
     created_at timestamptz not null default now()
 );

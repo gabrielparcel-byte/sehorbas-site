@@ -155,6 +155,7 @@ async function renderEquipeSite() {
                 <div class="team-avatar">${iniciais}</div>
                 <h3>${f.nome}</h3>
                 <span class="team-role">${f.cargo}</span>
+                ${f.descricao ? `<p class="team-desc">${f.descricao}</p>` : ''}
             </div>
         `;
     }).join('');

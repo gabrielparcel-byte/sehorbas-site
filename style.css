@@ -322,6 +322,12 @@ ul, ol { list-style: none; }
     background: var(--azul-claro);
     border-radius: 20px;
 }
+.team-desc {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--cinza-500);
+    line-height: 1.6;
+}
 
 /* ========== CONVÊNIOS ========== */
 .convenios-grid {

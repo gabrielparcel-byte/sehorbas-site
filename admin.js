@@ -272,7 +272,8 @@ funcForm.addEventListener('submit', async (e) => {
     const id = document.getElementById('funcIdx').value;
     const item = {
         nome: document.getElementById('funcNome').value.trim(),
-        cargo: document.getElementById('funcCargo').value.trim()
+        cargo: document.getElementById('funcCargo').value.trim(),
+        descricao: document.getElementById('funcDescricao').value.trim() || null
     };
 
     const { error } = id
@@ -293,6 +294,7 @@ async function editFunc(id) {
     document.getElementById('funcIdx').value = f.id;
     document.getElementById('funcNome').value = f.nome;
     document.getElementById('funcCargo').value = f.cargo;
+    document.getElementById('funcDescricao').value = f.descricao || '';
     document.getElementById('funcFormTitle').textContent = 'Editar Funcionário';
     funcFormCard.style.display = 'block';
 }
