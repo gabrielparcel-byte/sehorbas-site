@@ -239,8 +239,8 @@ async function renderConvenios() {
     list.innerHTML = convenios.map(c => `
         <div class="admin-list-item">
             <div class="admin-list-info">
-                <h4>${c.nome}</h4>
-                <p>${c.descricao}</p>
+                <h4>${escapeHtml(c.nome)}</h4>
+                <p>${escapeHtml(c.descricao)}</p>
             </div>
             <div class="admin-list-actions">
                 <button class="btn btn-outline btn-sm" onclick="editConvenio('${c.id}')">Editar</button>
@@ -353,8 +353,8 @@ async function renderConvencoes() {
     list.innerHTML = convencoes.map(c => `
         <div class="admin-list-item">
             <div class="admin-list-info">
-                <h4>${c.titulo}</h4>
-                <p>${c.descricao || 'Sem descrição'}</p>
+                <h4>${escapeHtml(c.titulo)}</h4>
+                <p>${escapeHtml(c.descricao || 'Sem descrição')}</p>
             </div>
             <div class="admin-list-actions">
                 <button class="btn btn-outline btn-sm" onclick="editConvencao('${c.id}')">Editar</button>
@@ -436,8 +436,8 @@ async function renderEquipe() {
     list.innerHTML = equipe.map(f => `
         <div class="admin-list-item">
             <div class="admin-list-info">
-                <h4>${f.nome}</h4>
-                <p>${f.cargo}</p>
+                <h4>${escapeHtml(f.nome)}</h4>
+                <p>${escapeHtml(f.cargo)}</p>
             </div>
             <div class="admin-list-actions">
                 <button class="btn btn-outline btn-sm" onclick="editFunc('${f.id}')">Editar</button>

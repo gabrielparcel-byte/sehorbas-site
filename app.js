@@ -69,24 +69,26 @@ if (telefoneInput) {
 
 // ========== CONVÊNIOS ==========
 function buildConvenioCardHTML(c) {
-    const logoEhPdf = c.logo_url && c.logo_url.toLowerCase().endsWith('.pdf');
-    const logoHtml = c.logo_url
+    const logoUrlSegura = safeUrl(c.logo_url);
+    const siteUrlSeguro = safeUrl(c.site_url);
+    const logoEhPdf = logoUrlSegura && logoUrlSegura.toLowerCase().endsWith('.pdf');
+    const logoHtml = logoUrlSegura
         ? (logoEhPdf
-            ? `<a href="${c.logo_url}" target="_blank" title="Ver logo (PDF)">📄</a>`
-            : `<img src="${c.logo_url}" alt="${c.nome}">`)
-        : c.nome.charAt(0).toUpperCase();
+            ? `<a href="${logoUrlSegura}" target="_blank" rel="noopener" title="Ver logo (PDF)">📄</a>`
+            : `<img src="${logoUrlSegura}" alt="${escapeHtml(c.nome)}">`)
+        : escapeHtml(c.nome).charAt(0).toUpperCase();
 
     return `
     <div class="convenio-card">
         <div class="convenio-card-header">
             <div class="convenio-logo">${logoHtml}</div>
-            <h3>${c.nome}</h3>
+            <h3>${escapeHtml(c.nome)}</h3>
         </div>
         <div class="convenio-card-body">
-            <p>${c.descricao}</p>
-            ${c.endereco ? `<div class="convenio-detail"><span>📍</span><span>${c.endereco}</span></div>` : ''}
-            ${c.telefone ? `<div class="convenio-detail"><span>📞</span><span>${c.telefone}</span></div>` : ''}
-            ${c.site_url ? `<a href="${c.site_url}" target="_blank" rel="noopener" class="convenio-site-link">🔗 Visitar site</a>` : ''}
+            <p>${escapeHtml(c.descricao)}</p>
+            ${c.endereco ? `<div class="convenio-detail"><span>📍</span><span>${escapeHtml(c.endereco)}</span></div>` : ''}
+            ${c.telefone ? `<div class="convenio-detail"><span>📞</span><span>${escapeHtml(c.telefone)}</span></div>` : ''}
+            ${siteUrlSeguro ? `<a href="${siteUrlSeguro}" target="_blank" rel="noopener" class="convenio-site-link">🔗 Visitar site</a>` : ''}
         </div>
     </div>
     `;
@@ -142,15 +144,18 @@ async function renderConvencoes() {
         return;
     }
 
-    list.innerHTML = convencoes.map(c => `
+    list.innerHTML = convencoes.map(c => {
+        const arquivoUrlSeguro = safeUrl(c.arquivo_url);
+        return `
         <div class="convencao-item">
             <div class="convencao-info">
-                <h3>${c.titulo}</h3>
-                <p>${c.descricao || ''}</p>
+                <h3>${escapeHtml(c.titulo)}</h3>
+                <p>${escapeHtml(c.descricao || '')}</p>
             </div>
-            ${c.arquivo_url ? `<a href="${c.arquivo_url}" target="_blank" class="convencao-download">📄 Download</a>` : ''}
+            ${arquivoUrlSeguro ? `<a href="${arquivoUrlSeguro}" target="_blank" rel="noopener" class="convencao-download">📄 Download</a>` : ''}
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // ========== RENDER EQUIPE ==========
@@ -175,13 +180,13 @@ async function renderEquipeSite() {
     }
 
     grid.innerHTML = equipe.map(f => {
-        const iniciais = f.nome.split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('').toUpperCase();
+        const iniciais = escapeHtml(f.nome.split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('').toUpperCase());
         return `
             <div class="team-card">
                 <div class="team-avatar">${iniciais}</div>
-                <h3>${f.nome}</h3>
-                <span class="team-role">${f.cargo}</span>
-                ${f.descricao ? `<p class="team-desc">${f.descricao}</p>` : ''}
+                <h3>${escapeHtml(f.nome)}</h3>
+                <span class="team-role">${escapeHtml(f.cargo)}</span>
+                ${f.descricao ? `<p class="team-desc">${escapeHtml(f.descricao)}</p>` : ''}
             </div>
         `;
     }).join('');
