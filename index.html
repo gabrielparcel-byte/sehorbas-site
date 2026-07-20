@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -86,16 +87,7 @@
         <div class="container">
             <h2 class="section-title">Nossa Equipe</h2>
             <div class="team-grid" id="teamGrid">
-                <div class="team-card">
-                    <div class="team-avatar">JC</div>
-                    <h3>João Candido Nogueira</h3>
-                    <span class="team-role">Presidente</span>
-                </div>
-                <div class="team-card">
-                    <div class="team-avatar">AR</div>
-                    <h3>Antonio Roberto Ghion</h3>
-                    <span class="team-role">Tesoureiro</span>
-                </div>
+                <p class="convenio-empty">Carregando equipe...</p>
             </div>
         </div>
     </section>
@@ -240,6 +232,7 @@
         </div>
     </footer>
 
+    <script src="supabase-config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

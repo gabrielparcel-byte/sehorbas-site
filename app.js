@@ -57,25 +57,23 @@ document.getElementById('telefone').addEventListener('input', function () {
     }
 });
 
-// ========== DATA LAYER (localStorage) ==========
-function getData(key, fallback) {
-    try {
-        const d = localStorage.getItem(`sehorbas_${key}`);
-        return d ? JSON.parse(d) : fallback;
-    } catch { return fallback; }
-}
-
-function setData(key, value) {
-    localStorage.setItem(`sehorbas_${key}`, JSON.stringify(value));
-}
-
 // ========== RENDER CONVÊNIOS ==========
-function renderConvenios() {
+async function renderConvenios() {
     const grid = document.getElementById('conveniosGrid');
     if (!grid) return;
-    const convenios = getData('convenios', []);
 
-    if (convenios.length === 0) {
+    const { data: convenios, error } = await supabase
+        .from('convenios')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Erro ao carregar convênios:', error);
+        grid.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar os convênios no momento.</p></div>`;
+        return;
+    }
+
+    if (!convenios || convenios.length === 0) {
         grid.innerHTML = `<div class="convenio-empty"><p>Em breve, novos convênios e parcerias para você.</p></div>`;
         return;
     }
@@ -84,7 +82,7 @@ function renderConvenios() {
         <div class="convenio-card">
             <div class="convenio-card-header">
                 <div class="convenio-logo">
-                    ${c.logo ? `<img src="${c.logo}" alt="${c.nome}">` : c.nome.charAt(0).toUpperCase()}
+                    ${c.logo_url ? `<img src="${c.logo_url}" alt="${c.nome}">` : c.nome.charAt(0).toUpperCase()}
                 </div>
                 <h3>${c.nome}</h3>
             </div>
@@ -98,12 +96,22 @@ function renderConvenios() {
 }
 
 // ========== RENDER CONVENÇÕES ==========
-function renderConvencoes() {
+async function renderConvencoes() {
     const list = document.getElementById('convencaoList');
     if (!list) return;
-    const convencoes = getData('convencoes', []);
 
-    if (convencoes.length === 0) {
+    const { data: convencoes, error } = await supabase
+        .from('convencoes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Erro ao carregar convenções:', error);
+        list.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar as convenções no momento.</p></div>`;
+        return;
+    }
+
+    if (!convencoes || convencoes.length === 0) {
         list.innerHTML = `<div class="convenio-empty"><p>Em breve, a convenção coletiva estará disponível para consulta.</p></div>`;
         return;
     }
@@ -114,11 +122,45 @@ function renderConvencoes() {
                 <h3>${c.titulo}</h3>
                 <p>${c.descricao || ''}</p>
             </div>
-            ${c.arquivo ? `<a href="${c.arquivo}" target="_blank" class="convencao-download">📄 Download</a>` : ''}
+            ${c.arquivo_url ? `<a href="${c.arquivo_url}" target="_blank" class="convencao-download">📄 Download</a>` : ''}
         </div>
     `).join('');
+}
+
+// ========== RENDER EQUIPE ==========
+async function renderEquipeSite() {
+    const grid = document.getElementById('teamGrid');
+    if (!grid) return;
+
+    const { data: equipe, error } = await supabase
+        .from('equipe')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+    if (error) {
+        console.error('Erro ao carregar equipe:', error);
+        grid.innerHTML = `<p class="convenio-empty">Não foi possível carregar a equipe no momento.</p>`;
+        return;
+    }
+
+    if (!equipe || equipe.length === 0) {
+        grid.innerHTML = `<p class="convenio-empty">Em breve, informações da equipe.</p>`;
+        return;
+    }
+
+    grid.innerHTML = equipe.map(f => {
+        const iniciais = f.nome.split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('').toUpperCase();
+        return `
+            <div class="team-card">
+                <div class="team-avatar">${iniciais}</div>
+                <h3>${f.nome}</h3>
+                <span class="team-role">${f.cargo}</span>
+            </div>
+        `;
+    }).join('');
 }
 
 // ========== INIT ==========
 renderConvenios();
 renderConvencoes();
+renderEquipeSite();

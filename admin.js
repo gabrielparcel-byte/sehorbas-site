@@ -1,24 +1,16 @@
-// ========== DATA HELPERS ==========
-function getData(key, fallback) {
-    try {
-        const d = localStorage.getItem(`sehorbas_${key}`);
-        return d ? JSON.parse(d) : fallback;
-    } catch { return fallback; }
-}
-function setData(key, value) {
-    localStorage.setItem(`sehorbas_${key}`, JSON.stringify(value));
-}
-
 // ========== AUTH ==========
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'sehorbas2026';
-
-function isLoggedIn() {
-    return sessionStorage.getItem('sehorbas_auth') === 'true';
-}
-
 const loginScreen = document.getElementById('loginScreen');
 const adminPanel = document.getElementById('adminPanel');
+
+async function checkSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        showPanel();
+    } else {
+        loginScreen.style.display = 'flex';
+        adminPanel.style.display = 'none';
+    }
+}
 
 function showPanel() {
     loginScreen.style.display = 'none';
@@ -26,22 +18,26 @@ function showPanel() {
     renderAll();
 }
 
-if (isLoggedIn()) showPanel();
+checkSession();
 
-document.getElementById('loginForm').addEventListener('submit', (e) => {
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const user = document.getElementById('loginUser').value.trim();
-    const pass = document.getElementById('loginPass').value;
-    if (user === ADMIN_USER && pass === ADMIN_PASS) {
-        sessionStorage.setItem('sehorbas_auth', 'true');
-        showPanel();
-    } else {
-        document.getElementById('loginError').textContent = 'Usuário ou senha incorretos.';
+    const email = document.getElementById('loginUser').value.trim();
+    const password = document.getElementById('loginPass').value;
+    const errorBox = document.getElementById('loginError');
+    errorBox.textContent = '';
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+        errorBox.textContent = 'Email ou senha incorretos.';
+        return;
     }
+    showPanel();
 });
 
-document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.removeItem('sehorbas_auth');
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
     location.reload();
 });
 
@@ -70,65 +66,73 @@ document.getElementById('cancelConvenio').addEventListener('click', () => {
     convenioFormCard.style.display = 'none';
 });
 
-convenioForm.addEventListener('submit', (e) => {
+convenioForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const convenios = getData('convenios', []);
     const id = document.getElementById('convenioId').value;
     const item = {
         nome: document.getElementById('convenioNome').value.trim(),
         endereco: document.getElementById('convenioEndereco').value.trim(),
         telefone: document.getElementById('convenioTelefone').value.trim(),
         descricao: document.getElementById('convenioDescricao').value.trim(),
-        logo: document.getElementById('convenioLogo').value.trim()
+        logo_url: document.getElementById('convenioLogo').value.trim() || null
     };
 
-    if (id !== '') {
-        convenios[parseInt(id)] = item;
-    } else {
-        convenios.push(item);
+    const { error } = id
+        ? await supabase.from('convenios').update(item).eq('id', id)
+        : await supabase.from('convenios').insert(item);
+
+    if (error) {
+        alert('Erro ao salvar convênio: ' + error.message);
+        return;
     }
-    setData('convenios', convenios);
     convenioFormCard.style.display = 'none';
     renderConvenios();
 });
 
-function editConvenio(idx) {
-    const convenios = getData('convenios', []);
-    const c = convenios[idx];
-    document.getElementById('convenioId').value = idx;
+async function editConvenio(id) {
+    const { data: c, error } = await supabase.from('convenios').select('*').eq('id', id).single();
+    if (error || !c) return;
+    document.getElementById('convenioId').value = c.id;
     document.getElementById('convenioNome').value = c.nome;
     document.getElementById('convenioEndereco').value = c.endereco || '';
     document.getElementById('convenioTelefone').value = c.telefone || '';
     document.getElementById('convenioDescricao').value = c.descricao;
-    document.getElementById('convenioLogo').value = c.logo || '';
+    document.getElementById('convenioLogo').value = c.logo_url || '';
     document.getElementById('convenioFormTitle').textContent = 'Editar Convênio';
     convenioFormCard.style.display = 'block';
 }
 
-function deleteConvenio(idx) {
+async function deleteConvenio(id) {
     if (!confirm('Remover este convênio?')) return;
-    const convenios = getData('convenios', []);
-    convenios.splice(idx, 1);
-    setData('convenios', convenios);
+    const { error } = await supabase.from('convenios').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
     renderConvenios();
 }
 
-function renderConvenios() {
+async function renderConvenios() {
     const list = document.getElementById('conveniosList');
-    const convenios = getData('convenios', []);
-    if (convenios.length === 0) {
+    const { data: convenios, error } = await supabase
+        .from('convenios')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        return;
+    }
+    if (!convenios || convenios.length === 0) {
         list.innerHTML = '<div class="admin-list-empty">Nenhum convênio cadastrado.</div>';
         return;
     }
-    list.innerHTML = convenios.map((c, i) => `
+    list.innerHTML = convenios.map(c => `
         <div class="admin-list-item">
             <div class="admin-list-info">
                 <h4>${c.nome}</h4>
                 <p>${c.descricao}</p>
             </div>
             <div class="admin-list-actions">
-                <button class="btn btn-outline btn-sm" onclick="editConvenio(${i})">Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteConvenio(${i})">Remover</button>
+                <button class="btn btn-outline btn-sm" onclick="editConvenio('${c.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteConvenio('${c.id}')">Remover</button>
             </div>
         </div>
     `).join('');
@@ -149,61 +153,69 @@ document.getElementById('cancelConvencao').addEventListener('click', () => {
     convencaoFormCard.style.display = 'none';
 });
 
-convencaoForm.addEventListener('submit', (e) => {
+convencaoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const convencoes = getData('convencoes', []);
     const id = document.getElementById('convencaoId').value;
     const item = {
         titulo: document.getElementById('convencaoTitulo').value.trim(),
         descricao: document.getElementById('convencaoDescricao').value.trim(),
-        arquivo: document.getElementById('convencaoArquivo').value.trim()
+        arquivo_url: document.getElementById('convencaoArquivo').value.trim() || null
     };
 
-    if (id !== '') {
-        convencoes[parseInt(id)] = item;
-    } else {
-        convencoes.push(item);
+    const { error } = id
+        ? await supabase.from('convencoes').update(item).eq('id', id)
+        : await supabase.from('convencoes').insert(item);
+
+    if (error) {
+        alert('Erro ao salvar convenção: ' + error.message);
+        return;
     }
-    setData('convencoes', convencoes);
     convencaoFormCard.style.display = 'none';
     renderConvencoes();
 });
 
-function editConvencao(idx) {
-    const convencoes = getData('convencoes', []);
-    const c = convencoes[idx];
-    document.getElementById('convencaoId').value = idx;
+async function editConvencao(id) {
+    const { data: c, error } = await supabase.from('convencoes').select('*').eq('id', id).single();
+    if (error || !c) return;
+    document.getElementById('convencaoId').value = c.id;
     document.getElementById('convencaoTitulo').value = c.titulo;
     document.getElementById('convencaoDescricao').value = c.descricao || '';
-    document.getElementById('convencaoArquivo').value = c.arquivo || '';
+    document.getElementById('convencaoArquivo').value = c.arquivo_url || '';
     document.getElementById('convencaoFormTitle').textContent = 'Editar Convenção';
     convencaoFormCard.style.display = 'block';
 }
 
-function deleteConvencao(idx) {
+async function deleteConvencao(id) {
     if (!confirm('Remover esta convenção?')) return;
-    const convencoes = getData('convencoes', []);
-    convencoes.splice(idx, 1);
-    setData('convencoes', convencoes);
+    const { error } = await supabase.from('convencoes').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
     renderConvencoes();
 }
 
-function renderConvencoes() {
+async function renderConvencoes() {
     const list = document.getElementById('convencoesList');
-    const convencoes = getData('convencoes', []);
-    if (convencoes.length === 0) {
+    const { data: convencoes, error } = await supabase
+        .from('convencoes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        return;
+    }
+    if (!convencoes || convencoes.length === 0) {
         list.innerHTML = '<div class="admin-list-empty">Nenhuma convenção cadastrada.</div>';
         return;
     }
-    list.innerHTML = convencoes.map((c, i) => `
+    list.innerHTML = convencoes.map(c => `
         <div class="admin-list-item">
             <div class="admin-list-info">
                 <h4>${c.titulo}</h4>
                 <p>${c.descricao || 'Sem descrição'}</p>
             </div>
             <div class="admin-list-actions">
-                <button class="btn btn-outline btn-sm" onclick="editConvencao(${i})">Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteConvencao(${i})">Remover</button>
+                <button class="btn btn-outline btn-sm" onclick="editConvencao('${c.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteConvencao('${c.id}')">Remover</button>
             </div>
         </div>
     `).join('');
@@ -212,15 +224,6 @@ function renderConvencoes() {
 // ========== EQUIPE CRUD ==========
 const funcFormCard = document.getElementById('funcFormCard');
 const funcForm = document.getElementById('funcForm');
-
-const DEFAULT_EQUIPE = [
-    { nome: 'João Candido Nogueira', cargo: 'Presidente' },
-    { nome: 'Antonio Roberto Ghion', cargo: 'Tesoureiro' }
-];
-
-function getEquipe() {
-    return getData('equipe', DEFAULT_EQUIPE);
-}
 
 document.getElementById('addFuncBtn').addEventListener('click', () => {
     document.getElementById('funcIdx').value = '';
@@ -233,59 +236,67 @@ document.getElementById('cancelFunc').addEventListener('click', () => {
     funcFormCard.style.display = 'none';
 });
 
-funcForm.addEventListener('submit', (e) => {
+funcForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const equipe = getEquipe();
-    const idx = document.getElementById('funcIdx').value;
+    const id = document.getElementById('funcIdx').value;
     const item = {
         nome: document.getElementById('funcNome').value.trim(),
         cargo: document.getElementById('funcCargo').value.trim()
     };
 
-    if (idx !== '') {
-        equipe[parseInt(idx)] = item;
-    } else {
-        equipe.push(item);
+    const { error } = id
+        ? await supabase.from('equipe').update(item).eq('id', id)
+        : await supabase.from('equipe').insert(item);
+
+    if (error) {
+        alert('Erro ao salvar funcionário: ' + error.message);
+        return;
     }
-    setData('equipe', equipe);
     funcFormCard.style.display = 'none';
     renderEquipe();
 });
 
-function editFunc(idx) {
-    const equipe = getEquipe();
-    const f = equipe[idx];
-    document.getElementById('funcIdx').value = idx;
+async function editFunc(id) {
+    const { data: f, error } = await supabase.from('equipe').select('*').eq('id', id).single();
+    if (error || !f) return;
+    document.getElementById('funcIdx').value = f.id;
     document.getElementById('funcNome').value = f.nome;
     document.getElementById('funcCargo').value = f.cargo;
     document.getElementById('funcFormTitle').textContent = 'Editar Funcionário';
     funcFormCard.style.display = 'block';
 }
 
-function deleteFunc(idx) {
+async function deleteFunc(id) {
     if (!confirm('Remover este funcionário?')) return;
-    const equipe = getEquipe();
-    equipe.splice(idx, 1);
-    setData('equipe', equipe);
+    const { error } = await supabase.from('equipe').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
     renderEquipe();
 }
 
-function renderEquipe() {
+async function renderEquipe() {
     const list = document.getElementById('funcList');
-    const equipe = getEquipe();
-    if (equipe.length === 0) {
+    const { data: equipe, error } = await supabase
+        .from('equipe')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        return;
+    }
+    if (!equipe || equipe.length === 0) {
         list.innerHTML = '<div class="admin-list-empty">Nenhum funcionário cadastrado.</div>';
         return;
     }
-    list.innerHTML = equipe.map((f, i) => `
+    list.innerHTML = equipe.map(f => `
         <div class="admin-list-item">
             <div class="admin-list-info">
                 <h4>${f.nome}</h4>
                 <p>${f.cargo}</p>
             </div>
             <div class="admin-list-actions">
-                <button class="btn btn-outline btn-sm" onclick="editFunc(${i})">Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteFunc(${i})">Remover</button>
+                <button class="btn btn-outline btn-sm" onclick="editFunc('${f.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteFunc('${f.id}')">Remover</button>
             </div>
         </div>
     `).join('');
