@@ -1,14 +1,26 @@
 // ========== AUTH ==========
 const loginScreen = document.getElementById('loginScreen');
 const adminPanel = document.getElementById('adminPanel');
+const mainLoginCard = document.getElementById('mainLoginCard');
+const forgotPasswordScreen = document.getElementById('forgotPasswordScreen');
+const resetPasswordScreen = document.getElementById('resetPasswordScreen');
+
+let isPasswordRecovery = false;
+
+function showLoginCard() {
+    mainLoginCard.style.display = 'block';
+    forgotPasswordScreen.style.display = 'none';
+    resetPasswordScreen.style.display = 'none';
+}
 
 async function checkSession() {
     const { data: { session } } = await sb.auth.getSession();
-    if (session) {
+    if (session && !isPasswordRecovery) {
         showPanel();
-    } else {
+    } else if (!isPasswordRecovery) {
         loginScreen.style.display = 'flex';
         adminPanel.style.display = 'none';
+        showLoginCard();
     }
 }
 
@@ -17,6 +29,20 @@ function showPanel() {
     adminPanel.style.display = 'block';
     renderAll();
 }
+
+// Quando o usuário clica no link de recuperação recebido por email, o
+// Supabase autentica automaticamente e dispara este evento — mostramos a
+// tela de nova senha em vez de já abrir o painel administrativo.
+sb.auth.onAuthStateChange((event) => {
+    if (event === 'PASSWORD_RECOVERY') {
+        isPasswordRecovery = true;
+        loginScreen.style.display = 'flex';
+        adminPanel.style.display = 'none';
+        mainLoginCard.style.display = 'none';
+        forgotPasswordScreen.style.display = 'none';
+        resetPasswordScreen.style.display = 'block';
+    }
+});
 
 checkSession();
 
@@ -39,6 +65,59 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 document.getElementById('logoutBtn').addEventListener('click', async () => {
     await sb.auth.signOut();
     location.reload();
+});
+
+// ========== ESQUECI MINHA SENHA ==========
+document.getElementById('forgotPasswordBtn').addEventListener('click', () => {
+    mainLoginCard.style.display = 'none';
+    forgotPasswordScreen.style.display = 'block';
+    document.getElementById('forgotError').textContent = '';
+    document.getElementById('forgotSuccess').textContent = '';
+});
+
+document.getElementById('backToLoginBtn').addEventListener('click', showLoginCard);
+
+document.getElementById('forgotPasswordForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('forgotEmail').value.trim();
+    const errorBox = document.getElementById('forgotError');
+    const successBox = document.getElementById('forgotSuccess');
+    errorBox.textContent = '';
+    successBox.textContent = '';
+
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname
+    });
+
+    if (error) {
+        errorBox.textContent = 'Não foi possível enviar o email: ' + error.message;
+        return;
+    }
+    successBox.textContent = 'Link enviado! Confira seu email (e a caixa de spam) para redefinir sua senha.';
+});
+
+// ========== DEFINIR NOVA SENHA ==========
+document.getElementById('resetPasswordForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const novaSenha = document.getElementById('newPassword').value;
+    const confirmacao = document.getElementById('newPasswordConfirm').value;
+    const errorBox = document.getElementById('resetError');
+    errorBox.textContent = '';
+
+    if (novaSenha !== confirmacao) {
+        errorBox.textContent = 'As senhas não coincidem.';
+        return;
+    }
+
+    const { error } = await sb.auth.updateUser({ password: novaSenha });
+
+    if (error) {
+        errorBox.textContent = 'Erro ao salvar nova senha: ' + error.message;
+        return;
+    }
+
+    isPasswordRecovery = false;
+    showPanel();
 });
 
 // ========== TABS ==========

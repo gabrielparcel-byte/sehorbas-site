@@ -15,7 +15,7 @@
 
     <!-- LOGIN -->
     <div class="admin-login" id="loginScreen">
-        <div class="login-card">
+        <div class="login-card" id="mainLoginCard">
             <img src="assets/logo.png" alt="SEHORBAS" class="login-logo">
             <h1>Área Administrativa</h1>
             <p>Acesse com suas credenciais para gerenciar o site.</p>
@@ -31,7 +31,44 @@
                 <div class="login-error" id="loginError"></div>
                 <button type="submit" class="btn btn-primary btn-full">Entrar</button>
             </form>
+            <button type="button" class="link-btn" id="forgotPasswordBtn">Esqueci minha senha</button>
             <a href="index.html" class="back-link">← Voltar ao site</a>
+        </div>
+
+        <!-- ESQUECI MINHA SENHA -->
+        <div class="login-card" id="forgotPasswordScreen" style="display:none;">
+            <img src="assets/logo.png" alt="SEHORBAS" class="login-logo">
+            <h1>Recuperar Senha</h1>
+            <p>Informe seu email e enviaremos um link para redefinir sua senha.</p>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <input type="email" id="forgotEmail" required placeholder="seuemail@sehorbas.com">
+                </div>
+                <div class="login-error" id="forgotError"></div>
+                <div class="login-success" id="forgotSuccess"></div>
+                <button type="submit" class="btn btn-primary btn-full">Enviar link de recuperação</button>
+            </form>
+            <button type="button" class="link-btn" id="backToLoginBtn">← Voltar para o login</button>
+        </div>
+
+        <!-- DEFINIR NOVA SENHA (após clicar no link do email) -->
+        <div class="login-card" id="resetPasswordScreen" style="display:none;">
+            <img src="assets/logo.png" alt="SEHORBAS" class="login-logo">
+            <h1>Nova Senha</h1>
+            <p>Digite sua nova senha de acesso.</p>
+            <form id="resetPasswordForm">
+                <div class="form-group">
+                    <label for="newPassword">Nova senha</label>
+                    <input type="password" id="newPassword" required minlength="6" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="form-group">
+                    <label for="newPasswordConfirm">Confirmar nova senha</label>
+                    <input type="password" id="newPasswordConfirm" required minlength="6" placeholder="Repita a senha">
+                </div>
+                <div class="login-error" id="resetError"></div>
+                <button type="submit" class="btn btn-primary btn-full">Salvar nova senha</button>
+            </form>
         </div>
     </div>
 

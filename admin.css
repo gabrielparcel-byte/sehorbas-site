@@ -35,6 +35,11 @@
     margin-bottom: 12px;
     min-height: 18px;
 }
+.login-success {
+    color: #059669;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
 .back-link {
     display: inline-block;
     margin-top: 20px;
@@ -42,6 +47,17 @@
     color: var(--azul);
 }
 .back-link:hover { text-decoration: underline; }
+.link-btn {
+    display: block;
+    margin: 16px auto 0;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--azul);
+    cursor: pointer;
+}
+.link-btn:hover { text-decoration: underline; }
 
 /* ========== ADMIN HEADER ========== */
 .admin-header {
