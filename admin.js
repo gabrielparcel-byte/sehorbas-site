@@ -57,6 +57,8 @@ const convenioForm = document.getElementById('convenioForm');
 
 document.getElementById('addConvenioBtn').addEventListener('click', () => {
     document.getElementById('convenioId').value = '';
+    document.getElementById('convenioLogoAtual').value = '';
+    document.getElementById('convenioLogoHint').textContent = '';
     convenioForm.reset();
     document.getElementById('convenioFormTitle').textContent = 'Novo Convênio';
     convenioFormCard.style.display = 'block';
@@ -68,18 +70,43 @@ document.getElementById('cancelConvenio').addEventListener('click', () => {
 
 convenioForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const submitBtn = convenioForm.querySelector('button[type="submit"]');
     const id = document.getElementById('convenioId').value;
+    const logoAtual = document.getElementById('convenioLogoAtual').value;
+    const fileInput = document.getElementById('convenioLogo');
+    const file = fileInput.files[0];
+
+    let logo_url = logoAtual || null;
+
+    if (file) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando logo...';
+        const filePath = `${Date.now()}_${file.name}`;
+        const { error: uploadError } = await sb.storage.from('convenios-logos').upload(filePath, file);
+        if (uploadError) {
+            alert('Erro ao enviar logo: ' + uploadError.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar';
+            return;
+        }
+        const { data: { publicUrl } } = sb.storage.from('convenios-logos').getPublicUrl(filePath);
+        logo_url = publicUrl;
+    }
+
     const item = {
         nome: document.getElementById('convenioNome').value.trim(),
         endereco: document.getElementById('convenioEndereco').value.trim(),
         telefone: document.getElementById('convenioTelefone').value.trim(),
         descricao: document.getElementById('convenioDescricao').value.trim(),
-        logo_url: document.getElementById('convenioLogo').value.trim() || null
+        logo_url
     };
 
     const { error } = id
         ? await sb.from('convenios').update(item).eq('id', id)
         : await sb.from('convenios').insert(item);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar';
 
     if (error) {
         alert('Erro ao salvar convênio: ' + error.message);
@@ -97,7 +124,11 @@ async function editConvenio(id) {
     document.getElementById('convenioEndereco').value = c.endereco || '';
     document.getElementById('convenioTelefone').value = c.telefone || '';
     document.getElementById('convenioDescricao').value = c.descricao;
-    document.getElementById('convenioLogo').value = c.logo_url || '';
+    document.getElementById('convenioLogo').value = '';
+    document.getElementById('convenioLogoAtual').value = c.logo_url || '';
+    document.getElementById('convenioLogoHint').textContent = c.logo_url
+        ? 'Já existe uma logo enviada. Escolha uma nova apenas se quiser substituí-la.'
+        : '';
     document.getElementById('convenioFormTitle').textContent = 'Editar Convênio';
     convenioFormCard.style.display = 'block';
 }

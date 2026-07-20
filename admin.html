@@ -69,6 +69,7 @@
                         <h3 id="convenioFormTitle">Novo Convênio</h3>
                         <form id="convenioForm">
                             <input type="hidden" id="convenioId">
+                            <input type="hidden" id="convenioLogoAtual">
                             <div class="form-group">
                                 <label for="convenioNome">Nome do convênio/parceiro</label>
                                 <input type="text" id="convenioNome" required placeholder="Ex: Clínica Saúde Total">
@@ -88,8 +89,9 @@
                                 <textarea id="convenioDescricao" rows="3" required placeholder="Descreva os benefícios para o associado..."></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="convenioLogo">Logo (URL da imagem, opcional)</label>
-                                <input type="text" id="convenioLogo" placeholder="https://... ou deixe vazio">
+                                <label for="convenioLogo">Logo (imagem, opcional)</label>
+                                <input type="file" id="convenioLogo" accept="image/*">
+                                <p class="field-hint" id="convenioLogoHint"></p>
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-outline btn-sm" id="cancelConvenio">Cancelar</button>
