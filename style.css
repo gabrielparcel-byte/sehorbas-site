@@ -372,6 +372,14 @@ ul, ol { list-style: none; }
     height: 100%;
     object-fit: cover;
 }
+.convenio-logo a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 24px;
+}
 .convenio-card-header h3 {
     font-size: 17px;
     font-weight: 700;
@@ -395,6 +403,17 @@ ul, ol { list-style: none; }
     margin-bottom: 6px;
 }
 .convenio-detail span:first-child { flex-shrink: 0; }
+.convenio-site-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--azul);
+    transition: color var(--transition);
+}
+.convenio-site-link:hover { color: var(--azul-escuro); text-decoration: underline; }
 .convenio-empty {
     grid-column: 1 / -1;
     text-align: center;

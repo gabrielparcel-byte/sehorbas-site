@@ -12,6 +12,7 @@ create table if not exists convenios (
     telefone text,
     descricao text not null,
     logo_url text,
+    site_url text,
     created_at timestamptz not null default now()
 );
 

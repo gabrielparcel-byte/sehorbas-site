@@ -98,6 +98,7 @@ convenioForm.addEventListener('submit', async (e) => {
         endereco: document.getElementById('convenioEndereco').value.trim(),
         telefone: document.getElementById('convenioTelefone').value.trim(),
         descricao: document.getElementById('convenioDescricao').value.trim(),
+        site_url: document.getElementById('convenioSite').value.trim() || null,
         logo_url
     };
 
@@ -124,6 +125,7 @@ async function editConvenio(id) {
     document.getElementById('convenioEndereco').value = c.endereco || '';
     document.getElementById('convenioTelefone').value = c.telefone || '';
     document.getElementById('convenioDescricao').value = c.descricao;
+    document.getElementById('convenioSite').value = c.site_url || '';
     document.getElementById('convenioLogo').value = '';
     document.getElementById('convenioLogoAtual').value = c.logo_url || '';
     document.getElementById('convenioLogoHint').textContent = c.logo_url

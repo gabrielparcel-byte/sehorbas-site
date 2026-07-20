@@ -89,9 +89,13 @@
                                 <textarea id="convenioDescricao" rows="3" required placeholder="Descreva os benefícios para o associado..."></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="convenioLogo">Logo (imagem, opcional)</label>
-                                <input type="file" id="convenioLogo" accept="image/*">
+                                <label for="convenioLogo">Logo (PNG, JPEG ou PDF, opcional)</label>
+                                <input type="file" id="convenioLogo" accept="image/png,image/jpeg,application/pdf">
                                 <p class="field-hint" id="convenioLogoHint"></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="convenioSite">Site do parceiro (opcional)</label>
+                                <input type="text" id="convenioSite" placeholder="https://www.exemplo.com.br">
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-outline btn-sm" id="cancelConvenio">Cancelar</button>

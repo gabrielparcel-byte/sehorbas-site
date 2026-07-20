@@ -78,21 +78,29 @@ async function renderConvenios() {
         return;
     }
 
-    grid.innerHTML = convenios.map(c => `
+    grid.innerHTML = convenios.map(c => {
+        const logoEhPdf = c.logo_url && c.logo_url.toLowerCase().endsWith('.pdf');
+        const logoHtml = c.logo_url
+            ? (logoEhPdf
+                ? `<a href="${c.logo_url}" target="_blank" title="Ver logo (PDF)">📄</a>`
+                : `<img src="${c.logo_url}" alt="${c.nome}">`)
+            : c.nome.charAt(0).toUpperCase();
+
+        return `
         <div class="convenio-card">
             <div class="convenio-card-header">
-                <div class="convenio-logo">
-                    ${c.logo_url ? `<img src="${c.logo_url}" alt="${c.nome}">` : c.nome.charAt(0).toUpperCase()}
-                </div>
+                <div class="convenio-logo">${logoHtml}</div>
                 <h3>${c.nome}</h3>
             </div>
             <div class="convenio-card-body">
                 <p>${c.descricao}</p>
                 ${c.endereco ? `<div class="convenio-detail"><span>📍</span><span>${c.endereco}</span></div>` : ''}
                 ${c.telefone ? `<div class="convenio-detail"><span>📞</span><span>${c.telefone}</span></div>` : ''}
+                ${c.site_url ? `<a href="${c.site_url}" target="_blank" rel="noopener" class="convenio-site-link">🔗 Visitar site</a>` : ''}
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // ========== RENDER CONVENÇÕES ==========
