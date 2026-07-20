@@ -62,7 +62,7 @@ async function renderConvenios() {
     const grid = document.getElementById('conveniosGrid');
     if (!grid) return;
 
-    const { data: convenios, error } = await supabase
+    const { data: convenios, error } = await sb
         .from('convenios')
         .select('*')
         .order('created_at', { ascending: false });
@@ -100,7 +100,7 @@ async function renderConvencoes() {
     const list = document.getElementById('convencaoList');
     if (!list) return;
 
-    const { data: convencoes, error } = await supabase
+    const { data: convencoes, error } = await sb
         .from('convencoes')
         .select('*')
         .order('created_at', { ascending: false });
@@ -132,7 +132,7 @@ async function renderEquipeSite() {
     const grid = document.getElementById('teamGrid');
     if (!grid) return;
 
-    const { data: equipe, error } = await supabase
+    const { data: equipe, error } = await sb
         .from('equipe')
         .select('*')
         .order('ordem', { ascending: true });

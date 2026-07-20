@@ -3,7 +3,7 @@ const loginScreen = document.getElementById('loginScreen');
 const adminPanel = document.getElementById('adminPanel');
 
 async function checkSession() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await sb.auth.getSession();
     if (session) {
         showPanel();
     } else {
@@ -27,7 +27,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const errorBox = document.getElementById('loginError');
     errorBox.textContent = '';
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await sb.auth.signInWithPassword({ email, password });
 
     if (error) {
         errorBox.textContent = 'Email ou senha incorretos.';
@@ -37,7 +37,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 });
 
 document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
+    await sb.auth.signOut();
     location.reload();
 });
 
@@ -78,8 +78,8 @@ convenioForm.addEventListener('submit', async (e) => {
     };
 
     const { error } = id
-        ? await supabase.from('convenios').update(item).eq('id', id)
-        : await supabase.from('convenios').insert(item);
+        ? await sb.from('convenios').update(item).eq('id', id)
+        : await sb.from('convenios').insert(item);
 
     if (error) {
         alert('Erro ao salvar convênio: ' + error.message);
@@ -90,7 +90,7 @@ convenioForm.addEventListener('submit', async (e) => {
 });
 
 async function editConvenio(id) {
-    const { data: c, error } = await supabase.from('convenios').select('*').eq('id', id).single();
+    const { data: c, error } = await sb.from('convenios').select('*').eq('id', id).single();
     if (error || !c) return;
     document.getElementById('convenioId').value = c.id;
     document.getElementById('convenioNome').value = c.nome;
@@ -104,14 +104,14 @@ async function editConvenio(id) {
 
 async function deleteConvenio(id) {
     if (!confirm('Remover este convênio?')) return;
-    const { error } = await supabase.from('convenios').delete().eq('id', id);
+    const { error } = await sb.from('convenios').delete().eq('id', id);
     if (error) { alert('Erro ao remover: ' + error.message); return; }
     renderConvenios();
 }
 
 async function renderConvenios() {
     const list = document.getElementById('conveniosList');
-    const { data: convenios, error } = await supabase
+    const { data: convenios, error } = await sb
         .from('convenios')
         .select('*')
         .order('created_at', { ascending: false });
@@ -163,8 +163,8 @@ convencaoForm.addEventListener('submit', async (e) => {
     };
 
     const { error } = id
-        ? await supabase.from('convencoes').update(item).eq('id', id)
-        : await supabase.from('convencoes').insert(item);
+        ? await sb.from('convencoes').update(item).eq('id', id)
+        : await sb.from('convencoes').insert(item);
 
     if (error) {
         alert('Erro ao salvar convenção: ' + error.message);
@@ -175,7 +175,7 @@ convencaoForm.addEventListener('submit', async (e) => {
 });
 
 async function editConvencao(id) {
-    const { data: c, error } = await supabase.from('convencoes').select('*').eq('id', id).single();
+    const { data: c, error } = await sb.from('convencoes').select('*').eq('id', id).single();
     if (error || !c) return;
     document.getElementById('convencaoId').value = c.id;
     document.getElementById('convencaoTitulo').value = c.titulo;
@@ -187,14 +187,14 @@ async function editConvencao(id) {
 
 async function deleteConvencao(id) {
     if (!confirm('Remover esta convenção?')) return;
-    const { error } = await supabase.from('convencoes').delete().eq('id', id);
+    const { error } = await sb.from('convencoes').delete().eq('id', id);
     if (error) { alert('Erro ao remover: ' + error.message); return; }
     renderConvencoes();
 }
 
 async function renderConvencoes() {
     const list = document.getElementById('convencoesList');
-    const { data: convencoes, error } = await supabase
+    const { data: convencoes, error } = await sb
         .from('convencoes')
         .select('*')
         .order('created_at', { ascending: false });
@@ -245,8 +245,8 @@ funcForm.addEventListener('submit', async (e) => {
     };
 
     const { error } = id
-        ? await supabase.from('equipe').update(item).eq('id', id)
-        : await supabase.from('equipe').insert(item);
+        ? await sb.from('equipe').update(item).eq('id', id)
+        : await sb.from('equipe').insert(item);
 
     if (error) {
         alert('Erro ao salvar funcionário: ' + error.message);
@@ -257,7 +257,7 @@ funcForm.addEventListener('submit', async (e) => {
 });
 
 async function editFunc(id) {
-    const { data: f, error } = await supabase.from('equipe').select('*').eq('id', id).single();
+    const { data: f, error } = await sb.from('equipe').select('*').eq('id', id).single();
     if (error || !f) return;
     document.getElementById('funcIdx').value = f.id;
     document.getElementById('funcNome').value = f.nome;
@@ -268,14 +268,14 @@ async function editFunc(id) {
 
 async function deleteFunc(id) {
     if (!confirm('Remover este funcionário?')) return;
-    const { error } = await supabase.from('equipe').delete().eq('id', id);
+    const { error } = await sb.from('equipe').delete().eq('id', id);
     if (error) { alert('Erro ao remover: ' + error.message); return; }
     renderEquipe();
 }
 
 async function renderEquipe() {
     const list = document.getElementById('funcList');
-    const { data: equipe, error } = await supabase
+    const { data: equipe, error } = await sb
         .from('equipe')
         .select('*')
         .order('ordem', { ascending: true });
