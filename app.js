@@ -2,63 +2,97 @@
 const menuToggle = document.getElementById('menuToggle');
 const nav = document.getElementById('nav');
 
-menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('active');
-    nav.classList.toggle('open');
-});
-
-nav.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        menuToggle.classList.remove('active');
-        nav.classList.remove('open');
+if (menuToggle && nav) {
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        nav.classList.toggle('open');
     });
-});
+
+    nav.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            nav.classList.remove('open');
+        });
+    });
+}
 
 // ========== HEADER SCROLL ==========
 const header = document.getElementById('header');
-window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 20);
-});
+if (header) {
+    window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 20);
+    });
+}
 
 // ========== WHATSAPP AGENDAMENTO ==========
 const WHATSAPP_NUMBER = '554432225952';
+const agendamentoForm = document.getElementById('agendamentoForm');
 
-document.getElementById('agendamentoForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const nome = document.getElementById('nome').value.trim();
-    const telefone = document.getElementById('telefone').value.trim();
-    const data = document.getElementById('data').value;
-    const assunto = document.getElementById('assunto').value;
-    const mensagem = document.getElementById('mensagem').value.trim();
+if (agendamentoForm) {
+    agendamentoForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nome = document.getElementById('nome').value.trim();
+        const telefone = document.getElementById('telefone').value.trim();
+        const data = document.getElementById('data').value;
+        const assunto = document.getElementById('assunto').value;
+        const mensagem = document.getElementById('mensagem').value.trim();
 
-    const dataFormatada = data ? new Date(data + 'T12:00:00').toLocaleDateString('pt-BR') : '';
+        const dataFormatada = data ? new Date(data + 'T12:00:00').toLocaleDateString('pt-BR') : '';
 
-    let texto = `Olá! Gostaria de agendar um atendimento no SEHORBAS.\n\n`;
-    texto += `*Nome:* ${nome}\n`;
-    texto += `*Telefone:* ${telefone}\n`;
-    texto += `*Data desejada:* ${dataFormatada}\n`;
-    texto += `*Assunto:* ${assunto}\n`;
-    if (mensagem) texto += `*Mensagem:* ${mensagem}\n`;
+        let texto = `Olá! Gostaria de agendar um atendimento no SEHORBAS.\n\n`;
+        texto += `*Nome:* ${nome}\n`;
+        texto += `*Telefone:* ${telefone}\n`;
+        texto += `*Data desejada:* ${dataFormatada}\n`;
+        texto += `*Assunto:* ${assunto}\n`;
+        if (mensagem) texto += `*Mensagem:* ${mensagem}\n`;
 
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
-    window.open(url, '_blank');
-});
+        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
+        window.open(url, '_blank');
+    });
+}
 
 // ========== PHONE MASK ==========
-document.getElementById('telefone').addEventListener('input', function () {
-    let v = this.value.replace(/\D/g, '');
-    if (v.length > 11) v = v.slice(0, 11);
-    if (v.length > 6) {
-        this.value = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
-    } else if (v.length > 2) {
-        this.value = `(${v.slice(0, 2)}) ${v.slice(2)}`;
-    } else if (v.length > 0) {
-        this.value = `(${v}`;
-    }
-});
+const telefoneInput = document.getElementById('telefone');
+if (telefoneInput) {
+    telefoneInput.addEventListener('input', function () {
+        let v = this.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+        if (v.length > 6) {
+            this.value = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+        } else if (v.length > 2) {
+            this.value = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+        } else if (v.length > 0) {
+            this.value = `(${v}`;
+        }
+    });
+}
 
-// ========== RENDER CONVÊNIOS ==========
-async function renderConvenios() {
+// ========== CONVÊNIOS ==========
+function buildConvenioCardHTML(c) {
+    const logoEhPdf = c.logo_url && c.logo_url.toLowerCase().endsWith('.pdf');
+    const logoHtml = c.logo_url
+        ? (logoEhPdf
+            ? `<a href="${c.logo_url}" target="_blank" title="Ver logo (PDF)">📄</a>`
+            : `<img src="${c.logo_url}" alt="${c.nome}">`)
+        : c.nome.charAt(0).toUpperCase();
+
+    return `
+    <div class="convenio-card">
+        <div class="convenio-card-header">
+            <div class="convenio-logo">${logoHtml}</div>
+            <h3>${c.nome}</h3>
+        </div>
+        <div class="convenio-card-body">
+            <p>${c.descricao}</p>
+            ${c.endereco ? `<div class="convenio-detail"><span>📍</span><span>${c.endereco}</span></div>` : ''}
+            ${c.telefone ? `<div class="convenio-detail"><span>📞</span><span>${c.telefone}</span></div>` : ''}
+            ${c.site_url ? `<a href="${c.site_url}" target="_blank" rel="noopener" class="convenio-site-link">🔗 Visitar site</a>` : ''}
+        </div>
+    </div>
+    `;
+}
+
+async function renderConvenios(limit) {
     const grid = document.getElementById('conveniosGrid');
     if (!grid) return;
 
@@ -78,29 +112,13 @@ async function renderConvenios() {
         return;
     }
 
-    grid.innerHTML = convenios.map(c => {
-        const logoEhPdf = c.logo_url && c.logo_url.toLowerCase().endsWith('.pdf');
-        const logoHtml = c.logo_url
-            ? (logoEhPdf
-                ? `<a href="${c.logo_url}" target="_blank" title="Ver logo (PDF)">📄</a>`
-                : `<img src="${c.logo_url}" alt="${c.nome}">`)
-            : c.nome.charAt(0).toUpperCase();
+    const exibidos = limit ? convenios.slice(0, limit) : convenios;
+    grid.innerHTML = exibidos.map(buildConvenioCardHTML).join('');
 
-        return `
-        <div class="convenio-card">
-            <div class="convenio-card-header">
-                <div class="convenio-logo">${logoHtml}</div>
-                <h3>${c.nome}</h3>
-            </div>
-            <div class="convenio-card-body">
-                <p>${c.descricao}</p>
-                ${c.endereco ? `<div class="convenio-detail"><span>📍</span><span>${c.endereco}</span></div>` : ''}
-                ${c.telefone ? `<div class="convenio-detail"><span>📞</span><span>${c.telefone}</span></div>` : ''}
-                ${c.site_url ? `<a href="${c.site_url}" target="_blank" rel="noopener" class="convenio-site-link">🔗 Visitar site</a>` : ''}
-            </div>
-        </div>
-        `;
-    }).join('');
+    const verMaisWrap = document.getElementById('conveniosVerMais');
+    if (verMaisWrap) {
+        verMaisWrap.style.display = (limit && convenios.length > limit) ? 'flex' : 'none';
+    }
 }
 
 // ========== RENDER CONVENÇÕES ==========
@@ -170,6 +188,6 @@ async function renderEquipeSite() {
 }
 
 // ========== INIT ==========
-renderConvenios();
+renderConvenios(document.getElementById('conveniosVerMais') ? 3 : undefined);
 renderConvencoes();
 renderEquipeSite();
