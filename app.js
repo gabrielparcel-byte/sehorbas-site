@@ -262,6 +262,11 @@ function ajustarEmbedsInstagram() {
         encaixar();
         new ResizeObserver(encaixar).observe(iframe);
         window.addEventListener('resize', encaixar);
+
+        // Alguns posts demoram mais para o Instagram calcular a altura
+        // final (ex: publicações com várias fotos/carrossel interno).
+        // Reforça a checagem por alguns segundos como garantia extra.
+        [800, 1600, 2500, 4000, 6000].forEach((delay) => setTimeout(encaixar, delay));
     });
 }
 
