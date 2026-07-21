@@ -513,7 +513,7 @@ ul, ol { list-style: none; }
 /* ========== CARROSSEL (Notícias / Convenção / Acordo / Modelos) ========== */
 .carousel-wrap {
     position: relative;
-    padding: 0 8px;
+    padding: 0 48px;
 }
 .carousel-track {
     display: flex;
@@ -555,8 +555,8 @@ ul, ol { list-style: none; }
     transition: all var(--transition);
 }
 .carousel-btn:hover { background: var(--azul-claro); }
-.carousel-prev { left: -8px; }
-.carousel-next { right: -8px; }
+.carousel-prev { left: 0; }
+.carousel-next { right: 0; }
 @media (max-width: 640px) {
     .carousel-btn { display: none; }
 }
