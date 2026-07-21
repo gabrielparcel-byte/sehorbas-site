@@ -92,6 +92,7 @@
                     <button class="tab active" data-tab="convenios">Convênios e Parcerias</button>
                     <button class="tab" data-tab="convencoes">Convenções</button>
                     <button class="tab" data-tab="acordos">Acordos</button>
+                    <button class="tab" data-tab="noticias">Notícias</button>
                     <button class="tab" data-tab="equipe">Equipe</button>
                 </div>
 
@@ -213,6 +214,36 @@
                     </div>
 
                     <div class="admin-list" id="acordosList"></div>
+                </div>
+
+                <!-- TAB: NOTÍCIAS -->
+                <div class="tab-content" id="tab-noticias">
+                    <div class="admin-section-header">
+                        <h2>Notícias (posts do Instagram)</h2>
+                        <button class="btn btn-primary btn-sm" id="addNoticiaBtn">+ Adicionar</button>
+                    </div>
+
+                    <div class="admin-form-card" id="noticiaFormCard" style="display:none;">
+                        <h3 id="noticiaFormTitle">Nova Notícia</h3>
+                        <form id="noticiaForm">
+                            <input type="hidden" id="noticiaId">
+                            <div class="form-group">
+                                <label for="noticiaLink">Link do post do Instagram</label>
+                                <input type="text" id="noticiaLink" required placeholder="https://www.instagram.com/p/XXXXXXXXX/">
+                                <p class="field-hint">Copie o link do post direto do Instagram (Compartilhar → Copiar link).</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="noticiaTitulo">Título (opcional)</label>
+                                <input type="text" id="noticiaTitulo" placeholder="Ex: Campanha de conscientização">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline btn-sm" id="cancelNoticia">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="admin-list" id="noticiasList"></div>
                 </div>
 
                 <!-- TAB: EQUIPE -->

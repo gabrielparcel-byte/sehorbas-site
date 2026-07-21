@@ -478,6 +478,87 @@ async function renderAcordosAdmin() {
     `).join('');
 }
 
+// ========== NOTÍCIAS CRUD ==========
+const noticiaFormCard = document.getElementById('noticiaFormCard');
+const noticiaForm = document.getElementById('noticiaForm');
+
+document.getElementById('addNoticiaBtn').addEventListener('click', () => {
+    document.getElementById('noticiaId').value = '';
+    noticiaForm.reset();
+    document.getElementById('noticiaFormTitle').textContent = 'Nova Notícia';
+    noticiaFormCard.style.display = 'block';
+});
+
+document.getElementById('cancelNoticia').addEventListener('click', () => {
+    noticiaFormCard.style.display = 'none';
+});
+
+noticiaForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('noticiaId').value;
+    const item = {
+        link: document.getElementById('noticiaLink').value.trim(),
+        titulo: document.getElementById('noticiaTitulo').value.trim() || null
+    };
+
+    const { error } = id
+        ? await sb.from('noticias').update(item).eq('id', id)
+        : await sb.from('noticias').insert(item);
+
+    if (error) {
+        alert('Erro ao salvar notícia: ' + error.message);
+        return;
+    }
+    noticiaFormCard.style.display = 'none';
+    renderNoticiasAdmin();
+});
+
+async function editNoticia(id) {
+    const { data: n, error } = await sb.from('noticias').select('*').eq('id', id).single();
+    if (error || !n) return;
+    document.getElementById('noticiaId').value = n.id;
+    document.getElementById('noticiaLink').value = n.link;
+    document.getElementById('noticiaTitulo').value = n.titulo || '';
+    document.getElementById('noticiaFormTitle').textContent = 'Editar Notícia';
+    noticiaFormCard.style.display = 'block';
+}
+
+async function deleteNoticia(id) {
+    if (!confirm('Remover esta notícia?')) return;
+    const { error } = await sb.from('noticias').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
+    renderNoticiasAdmin();
+}
+
+async function renderNoticiasAdmin() {
+    const list = document.getElementById('noticiasList');
+    const { data: noticias, error } = await sb
+        .from('noticias')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        return;
+    }
+    if (!noticias || noticias.length === 0) {
+        list.innerHTML = '<div class="admin-list-empty">Nenhuma notícia cadastrada.</div>';
+        return;
+    }
+    list.innerHTML = noticias.map(n => `
+        <div class="admin-list-item">
+            <div class="admin-list-info">
+                <h4>${escapeHtml(n.titulo || 'Sem título')}</h4>
+                <p>${escapeHtml(n.link)}</p>
+            </div>
+            <div class="admin-list-actions">
+                <button class="btn btn-outline btn-sm" onclick="editNoticia('${n.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteNoticia('${n.id}')">Remover</button>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ========== EQUIPE CRUD ==========
 const funcFormCard = document.getElementById('funcFormCard');
 const funcForm = document.getElementById('funcForm');
@@ -599,5 +680,6 @@ function renderAll() {
     renderConvenios();
     renderConvencoes();
     renderAcordosAdmin();
+    renderNoticiasAdmin();
     renderEquipe();
 }

@@ -34,6 +34,14 @@ create table if not exists acordos (
     created_at timestamptz not null default now()
 );
 
+-- NOTÍCIAS (posts do Instagram exibidos como portal de notícias)
+create table if not exists noticias (
+    id uuid primary key default gen_random_uuid(),
+    link text not null,
+    titulo text,
+    created_at timestamptz not null default now()
+);
+
 -- EQUIPE / FUNCIONÁRIOS
 create table if not exists equipe (
     id uuid primary key default gen_random_uuid(),
@@ -54,12 +62,14 @@ create table if not exists equipe (
 alter table convenios enable row level security;
 alter table convencoes enable row level security;
 alter table acordos enable row level security;
+alter table noticias enable row level security;
 alter table equipe enable row level security;
 
 -- Leitura pública
 create policy "convenios_select_public" on convenios for select using (true);
 create policy "convencoes_select_public" on convencoes for select using (true);
 create policy "acordos_select_public" on acordos for select using (true);
+create policy "noticias_select_public" on noticias for select using (true);
 create policy "equipe_select_public" on equipe for select using (true);
 
 -- Escrita (insert/update/delete) só para autenticados
@@ -72,6 +82,10 @@ create policy "convencoes_write_auth" on convencoes for all
     with check (auth.role() = 'authenticated');
 
 create policy "acordos_write_auth" on acordos for all
+    using (auth.role() = 'authenticated')
+    with check (auth.role() = 'authenticated');
+
+create policy "noticias_write_auth" on noticias for all
     using (auth.role() = 'authenticated')
     with check (auth.role() = 'authenticated');
 

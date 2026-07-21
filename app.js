@@ -169,6 +169,59 @@ function renderAcordos() {
     return renderDocumentos('acordos', 'acordoList', 'Em breve, o acordo coletivo estará disponível para consulta.');
 }
 
+// ========== RENDER NOTÍCIAS (posts do Instagram) ==========
+function processInstagramEmbeds(retries) {
+    if (retries === undefined) retries = 20;
+    if (window.instgrm && window.instgrm.Embeds) {
+        window.instgrm.Embeds.process();
+    } else if (retries > 0) {
+        setTimeout(() => processInstagramEmbeds(retries - 1), 300);
+    }
+}
+
+function buildNoticiaCardHTML(n) {
+    const linkSeguro = safeUrl(n.link);
+    if (!linkSeguro) return '';
+    return `
+    <div class="noticia-card">
+        ${n.titulo ? `<h3 class="noticia-titulo">${escapeHtml(n.titulo)}</h3>` : ''}
+        <div class="noticia-embed-wrap">
+            <blockquote class="instagram-media" data-instgrm-permalink="${linkSeguro}" data-instgrm-version="14"></blockquote>
+        </div>
+    </div>
+    `;
+}
+
+async function renderNoticias(limit) {
+    const grid = document.getElementById('noticiasGrid');
+    if (!grid) return;
+
+    const { data: noticias, error } = await sb
+        .from('noticias')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Erro ao carregar notícias:', error);
+        grid.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar as notícias no momento.</p></div>`;
+        return;
+    }
+
+    if (!noticias || noticias.length === 0) {
+        grid.innerHTML = `<div class="convenio-empty"><p>Em breve, novidades por aqui.</p></div>`;
+        return;
+    }
+
+    const exibidas = limit ? noticias.slice(0, limit) : noticias;
+    grid.innerHTML = exibidas.map(buildNoticiaCardHTML).join('');
+    processInstagramEmbeds();
+
+    const verMaisWrap = document.getElementById('noticiasVerMais');
+    if (verMaisWrap) {
+        verMaisWrap.style.display = (limit && noticias.length > limit) ? 'flex' : 'none';
+    }
+}
+
 // ========== RENDER EQUIPE ==========
 let equipeCache = [];
 
@@ -252,4 +305,5 @@ if (teamModalOverlay) {
 renderConvenios(document.getElementById('conveniosVerMais') ? 3 : undefined);
 renderConvencoes();
 renderAcordos();
+renderNoticias(document.getElementById('noticiasVerMais') ? 3 : undefined);
 renderEquipeSite();
