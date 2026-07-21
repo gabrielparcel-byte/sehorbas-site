@@ -187,40 +187,43 @@ function wireCarousel(trackId, prevId, nextId) {
         return item ? item.getBoundingClientRect().width + 20 : 320;
     };
 
-    prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
-    nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
+    function avancar() {
+        const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 5;
+        track.scrollTo({ left: atEnd ? 0 : track.scrollLeft + scrollAmount(), behavior: 'smooth' });
+    }
+    function voltar() {
+        track.scrollTo({ left: Math.max(0, track.scrollLeft - scrollAmount()), behavior: 'smooth' });
+    }
 
-    // Deslizamento contínuo e automático (tipo "esteira"), pausa ao interagir.
-    let paused = false;
+    prevBtn.addEventListener('click', () => { voltar(); pausarTemporario(); });
+    nextBtn.addEventListener('click', () => { avancar(); pausarTemporario(); });
+
+    // Avanço automático — move um card por vez, alinhado ao snap, pausa ao interagir.
+    let autoTimer = null;
+    let pausado = false;
     let resumeTimer = null;
 
-    function pause() {
-        paused = true;
+    function iniciarAuto() {
+        pararAuto();
+        autoTimer = setInterval(() => {
+            if (!pausado && track.scrollWidth > track.clientWidth + 5) avancar();
+        }, 4000);
+    }
+    function pararAuto() {
+        if (autoTimer) clearInterval(autoTimer);
+    }
+    function pausarTemporario() {
+        pausado = true;
         clearTimeout(resumeTimer);
-    }
-    function pauseTemporario() {
-        pause();
-        resumeTimer = setTimeout(() => { paused = false; }, 4000);
+        resumeTimer = setTimeout(() => { pausado = false; }, 6000);
     }
 
-    track.addEventListener('mouseenter', pause);
-    track.addEventListener('mouseleave', () => { paused = false; });
-    track.addEventListener('touchstart', pause, { passive: true });
-    track.addEventListener('touchend', pauseTemporario);
-    prevBtn.addEventListener('click', pauseTemporario);
-    nextBtn.addEventListener('click', pauseTemporario);
+    track.addEventListener('mouseenter', () => { pausado = true; });
+    track.addEventListener('mouseleave', () => { pausado = false; });
+    track.addEventListener('touchstart', () => { pausado = true; }, { passive: true });
+    track.addEventListener('touchend', pausarTemporario);
 
-    function tick() {
-        if (!paused && track.scrollWidth > track.clientWidth + 1) {
-            if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 1) {
-                track.scrollLeft = 0;
-            } else {
-                track.scrollLeft += 0.6;
-            }
-        }
-        requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
+    iniciarAuto();
 }
 
 // ========== RENDER NOTÍCIAS (posts do Instagram) ==========
