@@ -40,6 +40,7 @@ create table if not exists equipe (
     nome text not null,
     cargo text not null,
     descricao text,
+    foto_url text,
     ordem int not null default 0,
     created_at timestamptz not null default now()
 );

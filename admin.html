@@ -226,6 +226,7 @@
                         <h3 id="funcFormTitle">Novo Funcionário</h3>
                         <form id="funcForm">
                             <input type="hidden" id="funcIdx">
+                            <input type="hidden" id="funcFotoAtual">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="funcNome">Nome</label>
@@ -239,6 +240,11 @@
                             <div class="form-group">
                                 <label for="funcDescricao">Descrição (opcional)</label>
                                 <textarea id="funcDescricao" rows="3" placeholder="Uma breve descrição sobre este membro da equipe..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="funcFoto">Foto (PNG ou JPEG, opcional)</label>
+                                <input type="file" id="funcFoto" accept="image/png,image/jpeg">
+                                <p class="field-hint" id="funcFotoHint"></p>
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-outline btn-sm" id="cancelFunc">Cancelar</button>

@@ -484,6 +484,8 @@ const funcForm = document.getElementById('funcForm');
 
 document.getElementById('addFuncBtn').addEventListener('click', () => {
     document.getElementById('funcIdx').value = '';
+    document.getElementById('funcFotoAtual').value = '';
+    document.getElementById('funcFotoHint').textContent = '';
     funcForm.reset();
     document.getElementById('funcFormTitle').textContent = 'Novo Funcionário';
     funcFormCard.style.display = 'block';
@@ -495,16 +497,42 @@ document.getElementById('cancelFunc').addEventListener('click', () => {
 
 funcForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const submitBtn = funcForm.querySelector('button[type="submit"]');
     const id = document.getElementById('funcIdx').value;
+    const fotoAtual = document.getElementById('funcFotoAtual').value;
+    const fileInput = document.getElementById('funcFoto');
+    const file = fileInput.files[0];
+
+    let foto_url = fotoAtual || null;
+
+    if (file) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando foto...';
+        const filePath = `${Date.now()}_${file.name}`;
+        const { error: uploadError } = await sb.storage.from('equipe-fotos').upload(filePath, file);
+        if (uploadError) {
+            alert('Erro ao enviar foto: ' + uploadError.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar';
+            return;
+        }
+        const { data: { publicUrl } } = sb.storage.from('equipe-fotos').getPublicUrl(filePath);
+        foto_url = publicUrl;
+    }
+
     const item = {
         nome: document.getElementById('funcNome').value.trim(),
         cargo: document.getElementById('funcCargo').value.trim(),
-        descricao: document.getElementById('funcDescricao').value.trim() || null
+        descricao: document.getElementById('funcDescricao').value.trim() || null,
+        foto_url
     };
 
     const { error } = id
         ? await sb.from('equipe').update(item).eq('id', id)
         : await sb.from('equipe').insert(item);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar';
 
     if (error) {
         alert('Erro ao salvar funcionário: ' + error.message);
@@ -521,6 +549,11 @@ async function editFunc(id) {
     document.getElementById('funcNome').value = f.nome;
     document.getElementById('funcCargo').value = f.cargo;
     document.getElementById('funcDescricao').value = f.descricao || '';
+    document.getElementById('funcFoto').value = '';
+    document.getElementById('funcFotoAtual').value = f.foto_url || '';
+    document.getElementById('funcFotoHint').textContent = f.foto_url
+        ? 'Já existe uma foto enviada. Escolha uma nova apenas se quiser substituí-la.'
+        : '';
     document.getElementById('funcFormTitle').textContent = 'Editar Funcionário';
     funcFormCard.style.display = 'block';
 }

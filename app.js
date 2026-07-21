@@ -192,9 +192,13 @@ async function renderEquipeSite() {
 
     grid.innerHTML = equipe.map(f => {
         const iniciais = escapeHtml(f.nome.split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('').toUpperCase());
+        const fotoUrlSegura = safeUrl(f.foto_url);
+        const avatarHtml = fotoUrlSegura
+            ? `<img src="${fotoUrlSegura}" alt="${escapeHtml(f.nome)}">`
+            : iniciais;
         return `
             <div class="team-card">
-                <div class="team-avatar">${iniciais}</div>
+                <div class="team-avatar">${avatarHtml}</div>
                 <h3>${escapeHtml(f.nome)}</h3>
                 <span class="team-role">${escapeHtml(f.cargo)}</span>
                 ${f.descricao ? `<p class="team-desc">${escapeHtml(f.descricao)}</p>` : ''}
