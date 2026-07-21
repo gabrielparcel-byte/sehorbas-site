@@ -175,7 +175,7 @@ function renderModelosAcordo() {
     return renderDocumentos('modelos_acordo', 'modelosTrack', 'Em breve, modelos de acordo disponíveis para download.');
 }
 
-// ========== CARROSSEL (setas prev/next) ==========
+// ========== CARROSSEL (setas prev/next + deslizamento automático) ==========
 function wireCarousel(trackId, prevId, nextId) {
     const track = document.getElementById(trackId);
     const prevBtn = document.getElementById(prevId);
@@ -189,6 +189,38 @@ function wireCarousel(trackId, prevId, nextId) {
 
     prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
     nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
+
+    // Deslizamento contínuo e automático (tipo "esteira"), pausa ao interagir.
+    let paused = false;
+    let resumeTimer = null;
+
+    function pause() {
+        paused = true;
+        clearTimeout(resumeTimer);
+    }
+    function pauseTemporario() {
+        pause();
+        resumeTimer = setTimeout(() => { paused = false; }, 4000);
+    }
+
+    track.addEventListener('mouseenter', pause);
+    track.addEventListener('mouseleave', () => { paused = false; });
+    track.addEventListener('touchstart', pause, { passive: true });
+    track.addEventListener('touchend', pauseTemporario);
+    prevBtn.addEventListener('click', pauseTemporario);
+    nextBtn.addEventListener('click', pauseTemporario);
+
+    function tick() {
+        if (!paused && track.scrollWidth > track.clientWidth + 1) {
+            if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 1) {
+                track.scrollLeft = 0;
+            } else {
+                track.scrollLeft += 0.6;
+            }
+        }
+        requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
 }
 
 // ========== RENDER NOTÍCIAS (posts do Instagram) ==========
