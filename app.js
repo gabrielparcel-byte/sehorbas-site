@@ -123,28 +123,28 @@ async function renderConvenios(limit) {
     }
 }
 
-// ========== RENDER CONVENÇÕES ==========
-async function renderConvencoes() {
-    const list = document.getElementById('convencaoList');
+// ========== RENDER DOCUMENTOS (Convenções / Acordos) ==========
+async function renderDocumentos(tabela, listId, mensagemVazia) {
+    const list = document.getElementById(listId);
     if (!list) return;
 
-    const { data: convencoes, error } = await sb
-        .from('convencoes')
+    const { data: docs, error } = await sb
+        .from(tabela)
         .select('*')
         .order('created_at', { ascending: false });
 
     if (error) {
-        console.error('Erro ao carregar convenções:', error);
-        list.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar as convenções no momento.</p></div>`;
+        console.error(`Erro ao carregar ${tabela}:`, error);
+        list.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar no momento.</p></div>`;
         return;
     }
 
-    if (!convencoes || convencoes.length === 0) {
-        list.innerHTML = `<div class="convenio-empty"><p>Em breve, a convenção coletiva estará disponível para consulta.</p></div>`;
+    if (!docs || docs.length === 0) {
+        list.innerHTML = `<div class="convenio-empty"><p>${mensagemVazia}</p></div>`;
         return;
     }
 
-    list.innerHTML = convencoes.map(c => {
+    list.innerHTML = docs.map(c => {
         const arquivoUrlSeguro = safeUrl(c.arquivo_url);
         return `
         <div class="convencao-item">
@@ -156,6 +156,14 @@ async function renderConvencoes() {
         </div>
         `;
     }).join('');
+}
+
+function renderConvencoes() {
+    return renderDocumentos('convencoes', 'convencaoList', 'Em breve, a convenção coletiva estará disponível para consulta.');
+}
+
+function renderAcordos() {
+    return renderDocumentos('acordos', 'acordoList', 'Em breve, o acordo coletivo estará disponível para consulta.');
 }
 
 // ========== RENDER EQUIPE ==========
@@ -195,4 +203,5 @@ async function renderEquipeSite() {
 // ========== INIT ==========
 renderConvenios(document.getElementById('conveniosVerMais') ? 3 : undefined);
 renderConvencoes();
+renderAcordos();
 renderEquipeSite();

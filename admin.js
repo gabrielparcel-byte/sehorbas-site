@@ -364,6 +364,120 @@ async function renderConvencoes() {
     `).join('');
 }
 
+// ========== ACORDOS CRUD ==========
+const acordoFormCard = document.getElementById('acordoFormCard');
+const acordoForm = document.getElementById('acordoForm');
+
+document.getElementById('addAcordoBtn').addEventListener('click', () => {
+    document.getElementById('acordoId').value = '';
+    document.getElementById('acordoArquivoAtual').value = '';
+    document.getElementById('acordoArquivoHint').textContent = '';
+    acordoForm.reset();
+    document.getElementById('acordoFormTitle').textContent = 'Novo Acordo';
+    acordoFormCard.style.display = 'block';
+});
+
+document.getElementById('cancelAcordo').addEventListener('click', () => {
+    acordoFormCard.style.display = 'none';
+});
+
+acordoForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = acordoForm.querySelector('button[type="submit"]');
+    const id = document.getElementById('acordoId').value;
+    const arquivoAtual = document.getElementById('acordoArquivoAtual').value;
+    const fileInput = document.getElementById('acordoArquivo');
+    const file = fileInput.files[0];
+
+    let arquivo_url = arquivoAtual || null;
+
+    if (file) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando arquivo...';
+        const filePath = `${Date.now()}_${file.name}`;
+        const { error: uploadError } = await sb.storage.from('acordos-arquivos').upload(filePath, file);
+        if (uploadError) {
+            alert('Erro ao enviar arquivo: ' + uploadError.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar';
+            return;
+        }
+        const { data: { publicUrl } } = sb.storage.from('acordos-arquivos').getPublicUrl(filePath);
+        arquivo_url = publicUrl;
+    }
+
+    const item = {
+        titulo: document.getElementById('acordoTitulo').value.trim(),
+        descricao: document.getElementById('acordoDescricao').value.trim(),
+        arquivo_url
+    };
+
+    const { error } = id
+        ? await sb.from('acordos').update(item).eq('id', id)
+        : await sb.from('acordos').insert(item);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar';
+
+    if (error) {
+        alert('Erro ao salvar acordo: ' + error.message);
+        return;
+    }
+    acordoFormCard.style.display = 'none';
+    renderAcordosAdmin();
+});
+
+async function editAcordo(id) {
+    const { data: c, error } = await sb.from('acordos').select('*').eq('id', id).single();
+    if (error || !c) return;
+    document.getElementById('acordoId').value = c.id;
+    document.getElementById('acordoTitulo').value = c.titulo;
+    document.getElementById('acordoDescricao').value = c.descricao || '';
+    document.getElementById('acordoArquivo').value = '';
+    document.getElementById('acordoArquivoAtual').value = c.arquivo_url || '';
+    document.getElementById('acordoArquivoHint').textContent = c.arquivo_url
+        ? 'Já existe um arquivo enviado. Escolha um novo apenas se quiser substituí-lo.'
+        : '';
+    document.getElementById('acordoFormTitle').textContent = 'Editar Acordo';
+    acordoFormCard.style.display = 'block';
+}
+
+async function deleteAcordo(id) {
+    if (!confirm('Remover este acordo?')) return;
+    const { error } = await sb.from('acordos').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
+    renderAcordosAdmin();
+}
+
+async function renderAcordosAdmin() {
+    const list = document.getElementById('acordosList');
+    const { data: acordos, error } = await sb
+        .from('acordos')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        return;
+    }
+    if (!acordos || acordos.length === 0) {
+        list.innerHTML = '<div class="admin-list-empty">Nenhum acordo cadastrado.</div>';
+        return;
+    }
+    list.innerHTML = acordos.map(c => `
+        <div class="admin-list-item">
+            <div class="admin-list-info">
+                <h4>${escapeHtml(c.titulo)}</h4>
+                <p>${escapeHtml(c.descricao || 'Sem descrição')}</p>
+            </div>
+            <div class="admin-list-actions">
+                <button class="btn btn-outline btn-sm" onclick="editAcordo('${c.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAcordo('${c.id}')">Remover</button>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ========== EQUIPE CRUD ==========
 const funcFormCard = document.getElementById('funcFormCard');
 const funcForm = document.getElementById('funcForm');
@@ -451,5 +565,6 @@ async function renderEquipe() {
 function renderAll() {
     renderConvenios();
     renderConvencoes();
+    renderAcordosAdmin();
     renderEquipe();
 }

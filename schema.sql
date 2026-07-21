@@ -25,6 +25,15 @@ create table if not exists convencoes (
     created_at timestamptz not null default now()
 );
 
+-- ACORDOS COLETIVOS
+create table if not exists acordos (
+    id uuid primary key default gen_random_uuid(),
+    titulo text not null,
+    descricao text,
+    arquivo_url text,
+    created_at timestamptz not null default now()
+);
+
 -- EQUIPE / FUNCIONÁRIOS
 create table if not exists equipe (
     id uuid primary key default gen_random_uuid(),
@@ -43,11 +52,13 @@ create table if not exists equipe (
 
 alter table convenios enable row level security;
 alter table convencoes enable row level security;
+alter table acordos enable row level security;
 alter table equipe enable row level security;
 
 -- Leitura pública
 create policy "convenios_select_public" on convenios for select using (true);
 create policy "convencoes_select_public" on convencoes for select using (true);
+create policy "acordos_select_public" on acordos for select using (true);
 create policy "equipe_select_public" on equipe for select using (true);
 
 -- Escrita (insert/update/delete) só para autenticados
@@ -56,6 +67,10 @@ create policy "convenios_write_auth" on convenios for all
     with check (auth.role() = 'authenticated');
 
 create policy "convencoes_write_auth" on convencoes for all
+    using (auth.role() = 'authenticated')
+    with check (auth.role() = 'authenticated');
+
+create policy "acordos_write_auth" on acordos for all
     using (auth.role() = 'authenticated')
     with check (auth.role() = 'authenticated');
 
