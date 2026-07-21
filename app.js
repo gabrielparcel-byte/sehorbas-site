@@ -25,7 +25,7 @@ if (header) {
 }
 
 // ========== WHATSAPP AGENDAMENTO ==========
-const WHATSAPP_NUMBER = '554432225952';
+const WHATSAPP_NUMBER = '5544988130165';
 const agendamentoForm = document.getElementById('agendamentoForm');
 
 if (agendamentoForm) {
