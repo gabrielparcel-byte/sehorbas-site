@@ -595,12 +595,12 @@ ul, ol { list-style: none; }
     flex: 1;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     overflow: hidden;
+    position: relative;
 }
 .noticia-embed-wrap iframe {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100%;
+    transform-origin: top center;
 }
 
 .ver-mais-wrap {

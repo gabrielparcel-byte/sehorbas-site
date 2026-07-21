@@ -231,9 +231,38 @@ function processInstagramEmbeds(retries) {
     if (retries === undefined) retries = 20;
     if (window.instgrm && window.instgrm.Embeds) {
         window.instgrm.Embeds.process();
+        ajustarEmbedsInstagram();
     } else if (retries > 0) {
         setTimeout(() => processInstagramEmbeds(retries - 1), 300);
     }
+}
+
+// Reduz cada post do Instagram proporcionalmente para caber inteiro
+// dentro do card, em vez de simplesmente cortar o excesso. Usa
+// ResizeObserver porque o Instagram só define a altura real do post
+// depois de carregar o conteúdo de forma assíncrona.
+function ajustarEmbedsInstagram() {
+    document.querySelectorAll('.noticia-embed-wrap iframe').forEach((iframe) => {
+        if (iframe.dataset.ajustado) return;
+        iframe.dataset.ajustado = '1';
+
+        let ultimaAlturaNatural = 0;
+        const encaixar = () => {
+            const wrap = iframe.closest('.noticia-embed-wrap');
+            const alturaNatural = iframe.offsetHeight;
+            const alturaDisponivel = wrap ? wrap.clientHeight : 0;
+            if (!alturaNatural || !alturaDisponivel || alturaNatural === ultimaAlturaNatural) return;
+            ultimaAlturaNatural = alturaNatural;
+
+            const escala = Math.min(1, alturaDisponivel / alturaNatural);
+            iframe.style.transform = `scale(${escala})`;
+            iframe.style.width = `${100 / escala}%`;
+        };
+
+        encaixar();
+        new ResizeObserver(encaixar).observe(iframe);
+        window.addEventListener('resize', encaixar);
+    });
 }
 
 function buildNoticiaCardHTML(n) {
