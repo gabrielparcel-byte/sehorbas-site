@@ -34,17 +34,20 @@ if (agendamentoForm) {
         const nome = document.getElementById('nome').value.trim();
         const telefone = document.getElementById('telefone').value.trim();
         const data = document.getElementById('data').value;
+        const horario = document.getElementById('horario').value;
         const assunto = document.getElementById('assunto').value;
         const mensagem = document.getElementById('mensagem').value.trim();
 
         const dataFormatada = data ? new Date(data + 'T12:00:00').toLocaleDateString('pt-BR') : '';
 
-        let texto = `Olá! Gostaria de agendar um atendimento no SEHORBAS.\n\n`;
+        let texto = `Olá! Gostaria de fazer um *pré-agendamento* no SEHORBAS.\n\n`;
         texto += `*Nome:* ${nome}\n`;
         texto += `*Telefone:* ${telefone}\n`;
-        texto += `*Data desejada:* ${dataFormatada}\n`;
+        texto += `*Data de preferência:* ${dataFormatada}\n`;
+        if (horario) texto += `*Horário de preferência:* ${horario}\n`;
         texto += `*Assunto:* ${assunto}\n`;
         if (mensagem) texto += `*Mensagem:* ${mensagem}\n`;
+        texto += `\n_Estou ciente de que este é um pré-agendamento e que o horário será confirmado pelo atendente._`;
 
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
         window.open(url, '_blank');
