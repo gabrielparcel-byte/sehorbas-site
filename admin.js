@@ -478,6 +478,120 @@ async function renderAcordosAdmin() {
     `).join('');
 }
 
+// ========== MODELOS DE ACORDO CRUD ==========
+const modeloFormCard = document.getElementById('modeloFormCard');
+const modeloForm = document.getElementById('modeloForm');
+
+document.getElementById('addModeloBtn').addEventListener('click', () => {
+    document.getElementById('modeloId').value = '';
+    document.getElementById('modeloArquivoAtual').value = '';
+    document.getElementById('modeloArquivoHint').textContent = '';
+    modeloForm.reset();
+    document.getElementById('modeloFormTitle').textContent = 'Novo Modelo';
+    modeloFormCard.style.display = 'block';
+});
+
+document.getElementById('cancelModelo').addEventListener('click', () => {
+    modeloFormCard.style.display = 'none';
+});
+
+modeloForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = modeloForm.querySelector('button[type="submit"]');
+    const id = document.getElementById('modeloId').value;
+    const arquivoAtual = document.getElementById('modeloArquivoAtual').value;
+    const fileInput = document.getElementById('modeloArquivo');
+    const file = fileInput.files[0];
+
+    let arquivo_url = arquivoAtual || null;
+
+    if (file) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando arquivo...';
+        const filePath = `${Date.now()}_${file.name}`;
+        const { error: uploadError } = await sb.storage.from('modelos-acordo-arquivos').upload(filePath, file);
+        if (uploadError) {
+            alert('Erro ao enviar arquivo: ' + uploadError.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar';
+            return;
+        }
+        const { data: { publicUrl } } = sb.storage.from('modelos-acordo-arquivos').getPublicUrl(filePath);
+        arquivo_url = publicUrl;
+    }
+
+    const item = {
+        titulo: document.getElementById('modeloTitulo').value.trim(),
+        descricao: document.getElementById('modeloDescricao').value.trim(),
+        arquivo_url
+    };
+
+    const { error } = id
+        ? await sb.from('modelos_acordo').update(item).eq('id', id)
+        : await sb.from('modelos_acordo').insert(item);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar';
+
+    if (error) {
+        alert('Erro ao salvar modelo: ' + error.message);
+        return;
+    }
+    modeloFormCard.style.display = 'none';
+    renderModelosAdmin();
+});
+
+async function editModelo(id) {
+    const { data: c, error } = await sb.from('modelos_acordo').select('*').eq('id', id).single();
+    if (error || !c) return;
+    document.getElementById('modeloId').value = c.id;
+    document.getElementById('modeloTitulo').value = c.titulo;
+    document.getElementById('modeloDescricao').value = c.descricao || '';
+    document.getElementById('modeloArquivo').value = '';
+    document.getElementById('modeloArquivoAtual').value = c.arquivo_url || '';
+    document.getElementById('modeloArquivoHint').textContent = c.arquivo_url
+        ? 'Já existe um arquivo enviado. Escolha um novo apenas se quiser substituí-lo.'
+        : '';
+    document.getElementById('modeloFormTitle').textContent = 'Editar Modelo';
+    modeloFormCard.style.display = 'block';
+}
+
+async function deleteModelo(id) {
+    if (!confirm('Remover este modelo?')) return;
+    const { error } = await sb.from('modelos_acordo').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
+    renderModelosAdmin();
+}
+
+async function renderModelosAdmin() {
+    const list = document.getElementById('modelosList');
+    const { data: modelos, error } = await sb
+        .from('modelos_acordo')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        return;
+    }
+    if (!modelos || modelos.length === 0) {
+        list.innerHTML = '<div class="admin-list-empty">Nenhum modelo cadastrado.</div>';
+        return;
+    }
+    list.innerHTML = modelos.map(c => `
+        <div class="admin-list-item">
+            <div class="admin-list-info">
+                <h4>${escapeHtml(c.titulo)}</h4>
+                <p>${escapeHtml(c.descricao || 'Sem descrição')}</p>
+            </div>
+            <div class="admin-list-actions">
+                <button class="btn btn-outline btn-sm" onclick="editModelo('${c.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteModelo('${c.id}')">Remover</button>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ========== NOTÍCIAS CRUD ==========
 const noticiaFormCard = document.getElementById('noticiaFormCard');
 const noticiaForm = document.getElementById('noticiaForm');
@@ -680,6 +794,7 @@ function renderAll() {
     renderConvenios();
     renderConvencoes();
     renderAcordosAdmin();
+    renderModelosAdmin();
     renderNoticiasAdmin();
     renderEquipe();
 }

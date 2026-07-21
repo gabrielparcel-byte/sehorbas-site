@@ -169,6 +169,10 @@ function renderAcordos() {
     return renderDocumentos('acordos', 'acordoList', 'Em breve, o acordo coletivo estará disponível para consulta.');
 }
 
+function renderModelosAcordo() {
+    return renderDocumentos('modelos_acordo', 'modelosList', 'Em breve, modelos de acordo disponíveis para download.');
+}
+
 // ========== RENDER NOTÍCIAS (posts do Instagram) ==========
 function processInstagramEmbeds(retries) {
     if (retries === undefined) retries = 20;
@@ -305,5 +309,6 @@ if (teamModalOverlay) {
 renderConvenios(document.getElementById('conveniosVerMais') ? 3 : undefined);
 renderConvencoes();
 renderAcordos();
+renderModelosAcordo();
 renderNoticias(document.getElementById('noticiasVerMais') ? 3 : undefined);
 renderEquipeSite();

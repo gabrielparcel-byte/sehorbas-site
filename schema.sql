@@ -34,6 +34,15 @@ create table if not exists acordos (
     created_at timestamptz not null default now()
 );
 
+-- MODELOS DE ACORDO (documentos editáveis para download)
+create table if not exists modelos_acordo (
+    id uuid primary key default gen_random_uuid(),
+    titulo text not null,
+    descricao text,
+    arquivo_url text,
+    created_at timestamptz not null default now()
+);
+
 -- NOTÍCIAS (posts do Instagram exibidos como portal de notícias)
 create table if not exists noticias (
     id uuid primary key default gen_random_uuid(),
@@ -62,6 +71,7 @@ create table if not exists equipe (
 alter table convenios enable row level security;
 alter table convencoes enable row level security;
 alter table acordos enable row level security;
+alter table modelos_acordo enable row level security;
 alter table noticias enable row level security;
 alter table equipe enable row level security;
 
@@ -69,6 +79,7 @@ alter table equipe enable row level security;
 create policy "convenios_select_public" on convenios for select using (true);
 create policy "convencoes_select_public" on convencoes for select using (true);
 create policy "acordos_select_public" on acordos for select using (true);
+create policy "modelos_acordo_select_public" on modelos_acordo for select using (true);
 create policy "noticias_select_public" on noticias for select using (true);
 create policy "equipe_select_public" on equipe for select using (true);
 
@@ -82,6 +93,10 @@ create policy "convencoes_write_auth" on convencoes for all
     with check (auth.role() = 'authenticated');
 
 create policy "acordos_write_auth" on acordos for all
+    using (auth.role() = 'authenticated')
+    with check (auth.role() = 'authenticated');
+
+create policy "modelos_acordo_write_auth" on modelos_acordo for all
     using (auth.role() = 'authenticated')
     with check (auth.role() = 'authenticated');
 
