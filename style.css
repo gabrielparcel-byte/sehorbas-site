@@ -770,9 +770,11 @@ ul, ol { list-style: none; }
         transform: translateY(-120%);
         transition: transform var(--transition);
         z-index: 999;
+        max-height: calc(100vh - 72px);
+        overflow-y: auto;
     }
     .nav.open { transform: translateY(0); }
-    .nav-link { width: 100%; text-align: center; padding: 12px; }
+    .nav-link { width: 100%; text-align: center; padding: 14px; font-size: 16px; }
     .nav-admin { margin-left: 0; margin-top: 8px; }
     .menu-toggle { display: flex; }
 }
