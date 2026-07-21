@@ -541,6 +541,16 @@ ul, ol { list-style: none; }
     justify-content: center;
 }
 .noticia-embed-wrap iframe { max-width: 100%; }
+.noticias-seguir {
+    text-align: center;
+    margin-top: 32px;
+}
+.noticias-seguir a {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--azul);
+}
+.noticias-seguir a:hover { text-decoration: underline; }
 
 .ver-mais-wrap {
     display: flex;
