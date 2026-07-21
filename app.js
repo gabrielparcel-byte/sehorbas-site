@@ -170,6 +170,8 @@ function renderAcordos() {
 }
 
 // ========== RENDER EQUIPE ==========
+let equipeCache = [];
+
 async function renderEquipeSite() {
     const grid = document.getElementById('teamGrid');
     if (!grid) return;
@@ -190,6 +192,8 @@ async function renderEquipeSite() {
         return;
     }
 
+    equipeCache = equipe;
+
     grid.innerHTML = equipe.map(f => {
         const iniciais = escapeHtml(f.nome.split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('').toUpperCase());
         const fotoUrlSegura = safeUrl(f.foto_url);
@@ -197,7 +201,7 @@ async function renderEquipeSite() {
             ? `<img src="${fotoUrlSegura}" alt="${escapeHtml(f.nome)}">`
             : iniciais;
         return `
-            <div class="team-card">
+            <div class="team-card" onclick="openTeamModal('${f.id}')">
                 <div class="team-avatar">${avatarHtml}</div>
                 <h3>${escapeHtml(f.nome)}</h3>
                 <span class="team-role">${escapeHtml(f.cargo)}</span>
@@ -205,6 +209,43 @@ async function renderEquipeSite() {
             </div>
         `;
     }).join('');
+}
+
+// ========== MODAL DETALHE EQUIPE ==========
+const teamModalOverlay = document.getElementById('teamModalOverlay');
+
+function openTeamModal(id) {
+    const f = equipeCache.find(p => p.id === id);
+    if (!f || !teamModalOverlay) return;
+
+    const iniciais = escapeHtml(f.nome.split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('').toUpperCase());
+    const fotoUrlSegura = safeUrl(f.foto_url);
+
+    document.getElementById('teamModalAvatar').innerHTML = fotoUrlSegura
+        ? `<img src="${fotoUrlSegura}" alt="${escapeHtml(f.nome)}">`
+        : iniciais;
+    document.getElementById('teamModalNome').textContent = f.nome;
+    document.getElementById('teamModalCargo').textContent = f.cargo;
+    document.getElementById('teamModalDesc').textContent = f.descricao || 'Nenhuma descrição cadastrada.';
+
+    teamModalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeTeamModal() {
+    if (!teamModalOverlay) return;
+    teamModalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+if (teamModalOverlay) {
+    document.getElementById('teamModalClose').addEventListener('click', closeTeamModal);
+    teamModalOverlay.addEventListener('click', (e) => {
+        if (e.target === teamModalOverlay) closeTeamModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeTeamModal();
+    });
 }
 
 // ========== INIT ==========

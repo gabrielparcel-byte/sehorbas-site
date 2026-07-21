@@ -289,10 +289,12 @@ ul, ol { list-style: none; }
     padding: 32px 24px;
     text-align: center;
     transition: all var(--transition);
+    cursor: pointer;
 }
 .team-card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-4px);
+    border-color: var(--azul);
 }
 .team-avatar {
     width: 72px;
@@ -333,6 +335,85 @@ ul, ol { list-style: none; }
     font-size: 13px;
     color: var(--cinza-500);
     line-height: 1.6;
+}
+
+/* ========== MODAL EQUIPE ========== */
+.team-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .6);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.team-modal-overlay.open {
+    display: flex;
+}
+.team-modal {
+    position: relative;
+    background: var(--branco);
+    border-radius: var(--radius);
+    padding: 48px 40px 40px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    max-height: 85vh;
+    overflow-y: auto;
+}
+.team-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--cinza-100);
+    color: var(--cinza-700);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+}
+.team-modal-close:hover {
+    background: var(--cinza-200);
+}
+.team-modal-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--azul), var(--azul-escuro));
+    color: var(--branco);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 700;
+    margin: 0 auto 20px;
+    overflow: hidden;
+}
+.team-modal-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.team-modal h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cinza-900);
+}
+.team-modal-desc {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--cinza-700);
+    line-height: 1.7;
+    text-align: left;
 }
 
 /* ========== CONVÊNIOS ========== */
