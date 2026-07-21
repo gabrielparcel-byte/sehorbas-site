@@ -510,20 +510,72 @@ ul, ol { list-style: none; }
 }
 .convenio-empty a { color: var(--azul); text-decoration: underline; }
 
-/* ========== NOTÍCIAS ========== */
-.noticias-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
-    justify-items: center;
+/* ========== CARROSSEL (Notícias / Convenção / Acordo / Modelos) ========== */
+.carousel-wrap {
+    position: relative;
+    padding: 0 8px;
 }
+.carousel-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    padding: 4px 4px 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--cinza-300) transparent;
+}
+.carousel-track::-webkit-scrollbar { height: 6px; }
+.carousel-track::-webkit-scrollbar-thumb {
+    background: var(--cinza-300);
+    border-radius: 10px;
+}
+.carousel-item {
+    flex: 0 0 auto;
+    width: min(320px, 82vw);
+    scroll-snap-align: start;
+}
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--cinza-200);
+    background: var(--branco);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--azul);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+}
+.carousel-btn:hover { background: var(--azul-claro); }
+.carousel-prev { left: -8px; }
+.carousel-next { right: -8px; }
+@media (max-width: 640px) {
+    .carousel-btn { display: none; }
+}
+
+/* Grid usada nas páginas "ver mais" (lista completa, sem carrossel) */
+.documentos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+/* ========== NOTÍCIAS ========== */
 .noticia-card {
     background: var(--branco);
     border: 1px solid var(--cinza-200);
     border-radius: var(--radius);
     padding: 16px;
-    width: 100%;
-    max-width: 400px;
+    height: 100%;
     transition: all var(--transition);
 }
 .noticia-card:hover {
@@ -542,21 +594,11 @@ ul, ol { list-style: none; }
     justify-content: center;
 }
 .noticia-embed-wrap iframe { max-width: 100%; }
-.noticias-seguir {
-    text-align: center;
-    margin-top: 32px;
-}
-.noticias-seguir a {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--azul);
-}
-.noticias-seguir a:hover { text-decoration: underline; }
 
 .ver-mais-wrap {
     display: flex;
     justify-content: center;
-    margin-top: 40px;
+    margin-top: 32px;
 }
 
 .back-to-home {
@@ -568,40 +610,38 @@ ul, ol { list-style: none; }
 }
 .back-to-home:hover { text-decoration: underline; }
 
-/* ========== CONVENÇÃO ========== */
-.convencao-list {
-    max-width: 700px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-.convencao-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+/* ========== DOCUMENTOS (Convenção / Acordo / Modelos de Acordo) ========== */
+.doc-card {
     background: var(--branco);
     border: 1px solid var(--cinza-200);
     border-radius: var(--radius);
-    padding: 20px 24px;
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     transition: all var(--transition);
 }
-.convencao-item:hover {
-    box-shadow: var(--shadow);
+.doc-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
     border-color: var(--azul);
 }
-.convencao-info h3 {
-    font-size: 16px;
-    font-weight: 600;
+.doc-card h3 {
+    font-size: 15px;
+    font-weight: 700;
     color: var(--cinza-900);
+    margin-bottom: 8px;
 }
-.convencao-info p {
+.doc-card p {
     font-size: 13px;
     color: var(--cinza-500);
-    margin-top: 4px;
+    line-height: 1.6;
+    flex: 1;
+    margin-bottom: 16px;
 }
 .convencao-download {
     display: inline-flex;
+    align-self: flex-start;
     align-items: center;
     gap: 6px;
     padding: 8px 18px;

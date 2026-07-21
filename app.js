@@ -126,10 +126,23 @@ async function renderConvenios(limit) {
     }
 }
 
-// ========== RENDER DOCUMENTOS (Convenções / Acordos) ==========
-async function renderDocumentos(tabela, listId, mensagemVazia) {
-    const list = document.getElementById(listId);
-    if (!list) return;
+// ========== RENDER DOCUMENTOS (Convenções / Acordos / Modelos) ==========
+function buildDocCardHTML(c) {
+    const arquivoUrlSeguro = safeUrl(c.arquivo_url);
+    return `
+    <div class="carousel-item">
+        <div class="doc-card">
+            <h3>${escapeHtml(c.titulo)}</h3>
+            <p>${escapeHtml(c.descricao || '')}</p>
+            ${arquivoUrlSeguro ? `<a href="${arquivoUrlSeguro}" target="_blank" rel="noopener" class="convencao-download">📄 Download</a>` : ''}
+        </div>
+    </div>
+    `;
+}
+
+async function renderDocumentos(tabela, containerId, mensagemVazia) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
     const { data: docs, error } = await sb
         .from(tabela)
@@ -138,39 +151,44 @@ async function renderDocumentos(tabela, listId, mensagemVazia) {
 
     if (error) {
         console.error(`Erro ao carregar ${tabela}:`, error);
-        list.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar no momento.</p></div>`;
+        container.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar no momento.</p></div>`;
         return;
     }
 
     if (!docs || docs.length === 0) {
-        list.innerHTML = `<div class="convenio-empty"><p>${mensagemVazia}</p></div>`;
+        container.innerHTML = `<div class="convenio-empty"><p>${mensagemVazia}</p></div>`;
         return;
     }
 
-    list.innerHTML = docs.map(c => {
-        const arquivoUrlSeguro = safeUrl(c.arquivo_url);
-        return `
-        <div class="convencao-item">
-            <div class="convencao-info">
-                <h3>${escapeHtml(c.titulo)}</h3>
-                <p>${escapeHtml(c.descricao || '')}</p>
-            </div>
-            ${arquivoUrlSeguro ? `<a href="${arquivoUrlSeguro}" target="_blank" rel="noopener" class="convencao-download">📄 Download</a>` : ''}
-        </div>
-        `;
-    }).join('');
+    container.innerHTML = docs.map(buildDocCardHTML).join('');
 }
 
 function renderConvencoes() {
-    return renderDocumentos('convencoes', 'convencaoList', 'Em breve, a convenção coletiva estará disponível para consulta.');
+    return renderDocumentos('convencoes', 'convencaoTrack', 'Em breve, a convenção coletiva estará disponível para consulta.');
 }
 
 function renderAcordos() {
-    return renderDocumentos('acordos', 'acordoList', 'Em breve, o acordo coletivo estará disponível para consulta.');
+    return renderDocumentos('acordos', 'acordoTrack', 'Em breve, o acordo coletivo estará disponível para consulta.');
 }
 
 function renderModelosAcordo() {
-    return renderDocumentos('modelos_acordo', 'modelosList', 'Em breve, modelos de acordo disponíveis para download.');
+    return renderDocumentos('modelos_acordo', 'modelosTrack', 'Em breve, modelos de acordo disponíveis para download.');
+}
+
+// ========== CARROSSEL (setas prev/next) ==========
+function wireCarousel(trackId, prevId, nextId) {
+    const track = document.getElementById(trackId);
+    const prevBtn = document.getElementById(prevId);
+    const nextBtn = document.getElementById(nextId);
+    if (!track || !prevBtn || !nextBtn) return;
+
+    const scrollAmount = () => {
+        const item = track.querySelector('.carousel-item');
+        return item ? item.getBoundingClientRect().width + 20 : 320;
+    };
+
+    prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
+    nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
 }
 
 // ========== RENDER NOTÍCIAS (posts do Instagram) ==========
@@ -187,18 +205,20 @@ function buildNoticiaCardHTML(n) {
     const linkSeguro = safeUrl(n.link);
     if (!linkSeguro) return '';
     return `
-    <div class="noticia-card">
-        ${n.titulo ? `<h3 class="noticia-titulo">${escapeHtml(n.titulo)}</h3>` : ''}
-        <div class="noticia-embed-wrap">
-            <blockquote class="instagram-media" data-instgrm-permalink="${linkSeguro}" data-instgrm-version="14"></blockquote>
+    <div class="carousel-item">
+        <div class="noticia-card">
+            ${n.titulo ? `<h3 class="noticia-titulo">${escapeHtml(n.titulo)}</h3>` : ''}
+            <div class="noticia-embed-wrap">
+                <blockquote class="instagram-media" data-instgrm-permalink="${linkSeguro}" data-instgrm-version="14"></blockquote>
+            </div>
         </div>
     </div>
     `;
 }
 
-async function renderNoticias(limit) {
-    const grid = document.getElementById('noticiasGrid');
-    if (!grid) return;
+async function renderNoticias() {
+    const track = document.getElementById('noticiasTrack');
+    if (!track) return;
 
     const { data: noticias, error } = await sb
         .from('noticias')
@@ -207,23 +227,17 @@ async function renderNoticias(limit) {
 
     if (error) {
         console.error('Erro ao carregar notícias:', error);
-        grid.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar as notícias no momento.</p></div>`;
+        track.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar as notícias no momento.</p></div>`;
         return;
     }
 
     if (!noticias || noticias.length === 0) {
-        grid.innerHTML = `<div class="convenio-empty"><p>Em breve, novidades por aqui.</p></div>`;
+        track.innerHTML = `<div class="convenio-empty"><p>Em breve, novidades por aqui.</p></div>`;
         return;
     }
 
-    const exibidas = limit ? noticias.slice(0, limit) : noticias;
-    grid.innerHTML = exibidas.map(buildNoticiaCardHTML).join('');
+    track.innerHTML = noticias.map(buildNoticiaCardHTML).join('');
     processInstagramEmbeds();
-
-    const verMaisWrap = document.getElementById('noticiasVerMais');
-    if (verMaisWrap) {
-        verMaisWrap.style.display = (limit && noticias.length > limit) ? 'flex' : 'none';
-    }
 }
 
 // ========== RENDER EQUIPE ==========
@@ -310,5 +324,10 @@ renderConvenios(document.getElementById('conveniosVerMais') ? 3 : undefined);
 renderConvencoes();
 renderAcordos();
 renderModelosAcordo();
-renderNoticias(document.getElementById('noticiasVerMais') ? 3 : undefined);
+renderNoticias();
 renderEquipeSite();
+
+wireCarousel('noticiasTrack', 'noticiasPrev', 'noticiasNext');
+wireCarousel('convencaoTrack', 'convencaoPrev', 'convencaoNext');
+wireCarousel('acordoTrack', 'acordoPrev', 'acordoNext');
+wireCarousel('modelosTrack', 'modelosPrev', 'modelosNext');

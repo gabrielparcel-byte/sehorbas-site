@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acordo Coletivo — SEHORBAS</title>
+    <meta name="description" content="Todos os acordos coletivos do SEHORBAS, vigentes e anteriores.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- HEADER / NAVBAR -->
+    <header class="header scrolled" id="header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo-link">
+                <img src="assets/logo.png" alt="SEHORBAS" class="logo-img">
+                <div class="logo-text">
+                    <span class="logo-name">SEHORBAS</span>
+                    <span class="logo-sub">Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares</span>
+                </div>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="index.html#sobre" class="nav-link">Sobre</a>
+                <a href="index.html#noticias" class="nav-link">Notícias</a>
+                <a href="index.html#equipe" class="nav-link">Equipe</a>
+                <a href="index.html#convenios" class="nav-link">Convênios</a>
+                <a href="index.html#convencao" class="nav-link">Convenção Coletiva</a>
+                <a href="index.html#acordo" class="nav-link">Acordo Coletivo</a>
+                <a href="index.html#modelos" class="nav-link">Modelos de Acordo</a>
+                <a href="index.html#agendamento" class="nav-link">Agendamento</a>
+                <a href="index.html#contato" class="nav-link">Contato</a>
+                <a href="admin.html" class="nav-link nav-admin">Área Admin</a>
+            </nav>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- PAGE HEADER -->
+    <section class="section" style="padding-top: 120px;">
+        <div class="container">
+            <a href="index.html" class="back-to-home">← Voltar para o site</a>
+            <h2 class="section-title">Acordo Coletivo</h2>
+            <p class="section-desc">Todos os acordos coletivos, vigentes e anteriores.</p>
+            <div class="documentos-grid" id="acordoTrack">
+                <div class="convenio-empty">
+                    <p>Carregando acordos...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <img src="assets/logo.png" alt="SEHORBAS" class="footer-logo">
+                <p>SEHORBAS — Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de Maringá e Região</p>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#sobre">Sobre</a>
+                <a href="index.html#noticias">Notícias</a>
+                <a href="index.html#equipe">Equipe</a>
+                <a href="index.html#convenios">Convênios</a>
+                <a href="index.html#convencao">Convenção Coletiva</a>
+                <a href="index.html#acordo">Acordo Coletivo</a>
+                <a href="index.html#modelos">Modelos de Acordo</a>
+                <a href="index.html#agendamento">Pré-Agendamento</a>
+                <a href="index.html#contato">Contato</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 SEHORBAS. Todos os direitos reservados.</p>
+                <p>CNPJ: 80.291.206/0001-57</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="supabase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
