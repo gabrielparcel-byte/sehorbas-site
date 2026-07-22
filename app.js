@@ -28,6 +28,23 @@ if (header) {
 const WHATSAPP_NUMBER = '5544988130165';
 const agendamentoForm = document.getElementById('agendamentoForm');
 
+async function carregarAssuntos() {
+    const sel = document.getElementById('assunto');
+    if (!sel) return;
+    const { data, error } = await sb
+        .from('assuntos')
+        .select('nome')
+        .eq('ativo', true)
+        .order('ordem', { ascending: true });
+    sel.innerHTML = '<option value="">Selecione o assunto</option>';
+    if (!error && data) {
+        data.forEach(a => {
+            sel.innerHTML += `<option value="${escapeHtml(a.nome)}">${escapeHtml(a.nome)}</option>`;
+        });
+    }
+}
+carregarAssuntos();
+
 if (agendamentoForm) {
     agendamentoForm.addEventListener('submit', (e) => {
         e.preventDefault();

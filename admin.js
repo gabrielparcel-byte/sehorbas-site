@@ -789,6 +789,90 @@ async function renderEquipe() {
     `).join('');
 }
 
+// ========== ASSUNTOS CRUD ==========
+const assuntoFormCard = document.getElementById('assuntoFormCard');
+const assuntoForm = document.getElementById('assuntoForm');
+
+document.getElementById('addAssuntoBtn').addEventListener('click', () => {
+    document.getElementById('assuntoId').value = '';
+    assuntoForm.reset();
+    document.getElementById('assuntoAtivo').checked = true;
+    document.getElementById('assuntoFormTitle').textContent = 'Novo Assunto';
+    assuntoFormCard.style.display = 'block';
+});
+
+document.getElementById('cancelAssunto').addEventListener('click', () => {
+    assuntoFormCard.style.display = 'none';
+});
+
+assuntoForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('assuntoId').value;
+    const item = {
+        nome: document.getElementById('assuntoNome').value.trim(),
+        ordem: parseInt(document.getElementById('assuntoOrdem').value) || 0,
+        ativo: document.getElementById('assuntoAtivo').checked
+    };
+
+    const { error } = id
+        ? await sb.from('assuntos').update(item).eq('id', id)
+        : await sb.from('assuntos').insert(item);
+
+    if (error) {
+        alert('Erro ao salvar assunto: ' + error.message);
+        return;
+    }
+    assuntoFormCard.style.display = 'none';
+    renderAssuntosAdmin();
+});
+
+async function editAssunto(id) {
+    const { data: a, error } = await sb.from('assuntos').select('*').eq('id', id).single();
+    if (error || !a) return;
+    document.getElementById('assuntoId').value = a.id;
+    document.getElementById('assuntoNome').value = a.nome;
+    document.getElementById('assuntoOrdem').value = a.ordem;
+    document.getElementById('assuntoAtivo').checked = a.ativo;
+    document.getElementById('assuntoFormTitle').textContent = 'Editar Assunto';
+    assuntoFormCard.style.display = 'block';
+}
+
+async function deleteAssunto(id) {
+    if (!confirm('Remover este assunto?')) return;
+    const { error } = await sb.from('assuntos').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
+    renderAssuntosAdmin();
+}
+
+async function renderAssuntosAdmin() {
+    const list = document.getElementById('assuntosList');
+    const { data: assuntos, error } = await sb
+        .from('assuntos')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        return;
+    }
+    if (!assuntos || assuntos.length === 0) {
+        list.innerHTML = '<div class="admin-list-empty">Nenhum assunto cadastrado.</div>';
+        return;
+    }
+    list.innerHTML = assuntos.map(a => `
+        <div class="admin-list-item">
+            <div class="admin-list-info">
+                <h4>${escapeHtml(a.nome)} ${a.ativo ? '' : '<span style="color:#999;font-size:12px;">(inativo)</span>'}</h4>
+                <p>Ordem: ${a.ordem}</p>
+            </div>
+            <div class="admin-list-actions">
+                <button class="btn btn-outline btn-sm" onclick="editAssunto('${a.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAssunto('${a.id}')">Remover</button>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ========== RENDER ALL ==========
 function renderAll() {
     renderConvenios();
@@ -797,4 +881,5 @@ function renderAll() {
     renderModelosAdmin();
     renderNoticiasAdmin();
     renderEquipe();
+    renderAssuntosAdmin();
 }
