@@ -778,7 +778,7 @@ ul, ol { list-style: none; }
     gap: 24px;
     text-align: center;
 }
-.footer-logo { height: 48px; margin: 0 auto 12px; filter: brightness(0) invert(1); opacity: .7; }
+.footer-logo { height: 80px; margin: 0 auto 12px; filter: brightness(0) invert(1); opacity: .7; }
 .footer-brand p { font-size: 13px; max-width: 400px; line-height: 1.5; }
 .footer-links {
     display: flex;
