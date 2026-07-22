@@ -220,11 +220,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="data">Data de preferência</label>
-                        <input type="date" id="data" required>
+                        <input type="text" id="data" required placeholder="Selecione a data" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
                     </div>
                     <div class="form-group">
                         <label for="horario">Horário de preferência</label>
-                        <input type="time" id="horario">
+                        <input type="text" id="horario" placeholder="Selecione o horário" onfocus="this.type='time'" onblur="if(!this.value)this.type='text'">
                     </div>
                 </div>
                 <div class="form-group">
