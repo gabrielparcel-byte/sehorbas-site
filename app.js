@@ -144,20 +144,24 @@ async function renderConvenios(limit) {
 }
 
 // ========== RENDER DOCUMENTOS (Convenções / Acordos / Modelos) ==========
-function buildDocCardHTML(c) {
+function buildDocCardHTML(c, showDownload = true) {
     const arquivoUrlSeguro = safeUrl(c.arquivo_url);
+    const descricao = escapeHtml(c.descricao || '');
     return `
     <div class="carousel-item">
-        <div class="doc-card">
+        <div class="doc-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.doc-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
             <h3>${escapeHtml(c.titulo)}</h3>
-            <p>${escapeHtml(c.descricao || '')}</p>
-            ${arquivoUrlSeguro ? `<a href="${arquivoUrlSeguro}" target="_blank" rel="noopener" class="convencao-download">📄 Download</a>` : ''}
+            <p class="doc-card-desc">${descricao}</p>
+            <div class="doc-card-footer">
+                ${descricao ? '<button type="button" class="doc-card-toggle">Ver mais</button>' : ''}
+                ${showDownload && arquivoUrlSeguro ? `<a href="${arquivoUrlSeguro}" target="_blank" rel="noopener" class="convencao-download" onclick="event.stopPropagation()">📄 Download</a>` : ''}
+            </div>
         </div>
     </div>
     `;
 }
 
-async function renderDocumentos(tabela, containerId, mensagemVazia) {
+async function renderDocumentos(tabela, containerId, mensagemVazia, showDownload = true) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -177,7 +181,7 @@ async function renderDocumentos(tabela, containerId, mensagemVazia) {
         return;
     }
 
-    container.innerHTML = docs.map(buildDocCardHTML).join('');
+    container.innerHTML = docs.map(d => buildDocCardHTML(d, showDownload)).join('');
 }
 
 function renderConvencoes() {
