@@ -724,6 +724,12 @@ ul, ol { list-style: none; }
     color: var(--cinza-500);
     text-align: center;
 }
+.form-group input[type="date"],
+.form-group input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 48px;
+}
 .form-group input[type="file"] {
     padding: 10px 12px;
     background: var(--cinza-50);
