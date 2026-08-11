@@ -26,6 +26,7 @@
             </a>
             <nav class="nav" id="nav">
                 <a href="#sobre" class="nav-link">Sobre</a>
+                <a href="#atuacao" class="nav-link">Atuação</a>
                 <a href="#noticias" class="nav-link">Notícias</a>
                 <a href="#vagas" class="nav-link">Vagas</a>
                 <a href="#equipe" class="nav-link">Equipe</a>
@@ -144,11 +145,14 @@
         </div>
     </section>
 
-    <!-- LIGHTBOX DE IMAGEM (Vagas) -->
-    <div class="team-modal-overlay" id="imgLightboxOverlay">
-        <div class="team-modal img-lightbox-modal">
-            <button type="button" class="team-modal-close" id="imgLightboxClose" aria-label="Fechar">&times;</button>
-            <img id="imgLightboxImg" src="" alt="">
+    <!-- MODAL DETALHE DA VAGA -->
+    <div class="team-modal-overlay" id="vagaModalOverlay">
+        <div class="team-modal vaga-modal">
+            <button type="button" class="team-modal-close" id="vagaModalClose" aria-label="Fechar">&times;</button>
+            <img class="vaga-modal-img" id="vagaModalImg" src="" alt="">
+            <h3 id="vagaModalTitulo"></h3>
+            <p class="vaga-modal-desc" id="vagaModalDesc"></p>
+            <div class="vaga-modal-actions" id="vagaModalActions"></div>
         </div>
     </div>
 

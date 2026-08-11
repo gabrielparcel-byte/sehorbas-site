@@ -192,14 +192,16 @@ async function renderCategorias() {
 }
 
 // ========== VAGAS DE EMPREGO ==========
+let vagasCache = [];
+
 function buildVagaCardHTML(v) {
     const imagemUrlSegura = safeUrl(v.imagem_url);
     if (!imagemUrlSegura) return '';
     return `
     <div class="carousel-item">
-        <div class="vaga-card" onclick="openImgLightbox('${imagemUrlSegura}', '${escapeHtml(v.titulo || 'Vaga de emprego').replace(/'/g, "\\'")}')">
+        <div class="vaga-card" onclick="openVagaModal('${v.id}')">
             <img src="${imagemUrlSegura}" alt="${escapeHtml(v.titulo || 'Vaga de emprego')}" loading="lazy">
-            ${v.titulo ? `<p class="vaga-titulo">${escapeHtml(v.titulo)}</p>` : ''}
+            <p class="vaga-titulo">${escapeHtml(v.titulo || 'Vaga de emprego')}</p>
         </div>
     </div>
     `;
@@ -223,35 +225,46 @@ async function renderVagas() {
         track.innerHTML = `<div class="convenio-empty"><p>Nenhuma vaga divulgada no momento.</p></div>`;
         return;
     }
+    vagasCache = vagas;
     track.innerHTML = vagas.map(buildVagaCardHTML).join('');
 }
 
-// ========== LIGHTBOX DE IMAGEM (usado pelas Vagas) ==========
-const imgLightboxOverlay = document.getElementById('imgLightboxOverlay');
+// ========== MODAL DETALHE DA VAGA ==========
+const vagaModalOverlay = document.getElementById('vagaModalOverlay');
 
-function openImgLightbox(url, alt) {
-    if (!imgLightboxOverlay) return;
-    const img = document.getElementById('imgLightboxImg');
-    img.src = url;
-    img.alt = alt || '';
-    imgLightboxOverlay.classList.add('open');
+function openVagaModal(id) {
+    const v = vagasCache.find(x => x.id === id);
+    if (!v || !vagaModalOverlay) return;
+
+    document.getElementById('vagaModalImg').src = safeUrl(v.imagem_url) || '';
+    document.getElementById('vagaModalTitulo').textContent = v.titulo || 'Vaga de emprego';
+    document.getElementById('vagaModalDesc').textContent = v.descricao || '';
+
+    const telefoneSeguro = (v.telefone || '').trim();
+    const linkSeguro = safeUrl(v.link);
+    const actions = document.getElementById('vagaModalActions');
+    actions.innerHTML = [
+        telefoneSeguro ? `<a href="tel:${escapeHtml(telefoneSeguro.replace(/\D/g, ''))}" class="btn btn-outline btn-sm">📞 ${escapeHtml(telefoneSeguro)}</a>` : '',
+        linkSeguro ? `<a href="${linkSeguro}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Mais informações</a>` : ''
+    ].join('');
+
+    vagaModalOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
-function closeImgLightbox() {
-    if (!imgLightboxOverlay) return;
-    imgLightboxOverlay.classList.remove('open');
+function closeVagaModal() {
+    if (!vagaModalOverlay) return;
+    vagaModalOverlay.classList.remove('open');
     document.body.style.overflow = '';
-    document.getElementById('imgLightboxImg').src = '';
 }
 
-if (imgLightboxOverlay) {
-    document.getElementById('imgLightboxClose').addEventListener('click', closeImgLightbox);
-    imgLightboxOverlay.addEventListener('click', (e) => {
-        if (e.target === imgLightboxOverlay) closeImgLightbox();
+if (vagaModalOverlay) {
+    document.getElementById('vagaModalClose').addEventListener('click', closeVagaModal);
+    vagaModalOverlay.addEventListener('click', (e) => {
+        if (e.target === vagaModalOverlay) closeVagaModal();
     });
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeImgLightbox();
+        if (e.key === 'Escape') closeVagaModal();
     });
 }
 

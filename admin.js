@@ -845,6 +845,8 @@ vagaForm.addEventListener('submit', async (e) => {
     const item = {
         titulo: document.getElementById('vagaTitulo').value.trim() || null,
         descricao: document.getElementById('vagaDescricao').value.trim() || null,
+        telefone: document.getElementById('vagaTelefone').value.trim() || null,
+        link: document.getElementById('vagaLink').value.trim() || null,
         imagem_url
     };
 
@@ -869,6 +871,8 @@ async function editVaga(id) {
     document.getElementById('vagaId').value = v.id;
     document.getElementById('vagaTitulo').value = v.titulo || '';
     document.getElementById('vagaDescricao').value = v.descricao || '';
+    document.getElementById('vagaTelefone').value = v.telefone || '';
+    document.getElementById('vagaLink').value = v.link || '';
     document.getElementById('vagaImagem').value = '';
     document.getElementById('vagaImagemAtual').value = v.imagem_url || '';
     document.getElementById('vagaImagemHint').textContent = v.imagem_url

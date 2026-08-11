@@ -21,7 +21,7 @@ Links internos usam `/` em vez de `index.html` (URLs limpas desde a migração p
 
 ## Tabelas no Supabase
 
-`convenios`, `convencoes`, `acordos`, `modelos_acordo`, `noticias`, `equipe`, `assuntos` (assuntos do pré-agendamento — migration 008), `cidades` (Base Territorial), `categorias` (Categorias Abrangidas, com `icone` em emoji), `vagas` (Vagas de Emprego, imagem obrigatória), `cursos` (cursos com desconto — migration 009).
+`convenios`, `convencoes`, `acordos`, `modelos_acordo`, `noticias`, `equipe`, `assuntos` (assuntos do pré-agendamento — migration 008), `cidades` (Base Territorial), `categorias` (Categorias Abrangidas, com `icone` em emoji), `vagas` (Vagas de Emprego, imagem obrigatória, com `telefone`/`link` opcionais — migration 010), `cursos` (cursos com desconto — migration 009).
 
 Todas com RLS: leitura pública (`select using (true)`), escrita só autenticado.
 
@@ -54,7 +54,7 @@ Formulário no `index.html` monta uma mensagem e abre o WhatsApp (`wa.me`) do n�
 - Cards de documento (`.doc-card`) são clicáveis: expandem no clique mostrando descrição completa, com botão "Ver mais"/"Ver menos". Botão de Download tem `stopPropagation` pra não disparar o toggle de expandir.
 - Convênios (`.convenio-card`) não têm botão de download — não faz sentido pro tipo de conteúdo (é cadastro de parceiro, não documento).
 - Logo é `assets/logo.png` (não SVG — a versão SVG recortada perdia o arco de texto circular; `<textPath>` não renderiza quando SVG é usado como `<img src>`).
-- Vagas de Emprego (`.vaga-card`) são só a imagem do flyer + título opcional, clicáveis pra abrir num lightbox (`#imgLightboxOverlay`, reaproveita o CSS do modal de equipe). Sem expiração automática — a dona do site remove manualmente pelo admin quando a vaga fecha.
+- Vagas de Emprego (`.vaga-card`) funcionam como um "post": imagem do flyer + título, clicáveis pra abrir um modal de detalhe (`#vagaModalOverlay`, reaproveita o CSS do modal de equipe) com descrição, telefone (`tel:`) e link de inscrição, quando cadastrados. Sem expiração automática — a dona do site remove manualmente pelo admin quando a vaga fecha.
 - Base Territorial (cidades) usa chips simples (`.cidade-chip`); Categorias Abrangidas usa grid de ícones (`.categoria-card`, campo `icone` é um emoji digitado no admin). Ambas seguem o mesmo padrão simples de lista da tabela `assuntos` (nome + ordem, sem upload).
 
 ## Deploy
