@@ -27,8 +27,10 @@
             <nav class="nav" id="nav">
                 <a href="#sobre" class="nav-link">Sobre</a>
                 <a href="#noticias" class="nav-link">Notícias</a>
+                <a href="#vagas" class="nav-link">Vagas</a>
                 <a href="#equipe" class="nav-link">Equipe</a>
                 <a href="#convenios" class="nav-link">Convênios</a>
+                <a href="#cursos" class="nav-link">Cursos</a>
                 <a href="#convencao" class="nav-link">Convenção</a>
                 <a href="#acordo" class="nav-link">Acordo Coletivo</a>
                 <a href="#modelos" class="nav-link">Modelos de Acordo</a>
@@ -86,6 +88,28 @@
         </div>
     </section>
 
+    <!-- ÁREA DE ATUAÇÃO -->
+    <section class="section" id="atuacao">
+        <div class="container">
+            <h2 class="section-title">Área de Atuação</h2>
+            <p class="section-desc">Cidades e categorias profissionais atendidas pelo SEHORBAS.</p>
+
+            <div class="atuacao-bloco">
+                <h3 class="atuacao-subtitulo">Base Territorial</h3>
+                <div class="cidades-chips" id="cidadesChips">
+                    <p class="convenio-empty">Carregando cidades...</p>
+                </div>
+            </div>
+
+            <div class="atuacao-bloco">
+                <h3 class="atuacao-subtitulo">Categorias Abrangidas</h3>
+                <div class="categorias-grid" id="categoriasGrid">
+                    <p class="convenio-empty">Carregando categorias...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- NOTÍCIAS -->
     <section class="section section-alt" id="noticias">
         <div class="container">
@@ -104,6 +128,29 @@
         </div>
     </section>
     <script async src="//www.instagram.com/embed.js"></script>
+
+    <!-- VAGAS DE EMPREGO -->
+    <section class="section" id="vagas">
+        <div class="container">
+            <h2 class="section-title">Vagas de Emprego</h2>
+            <p class="section-desc">Oportunidades de emprego divulgadas pelo SEHORBAS para o setor.</p>
+            <div class="carousel-wrap">
+                <button type="button" class="carousel-btn carousel-prev" id="vagasPrev" aria-label="Anterior">&#8249;</button>
+                <div class="carousel-track" id="vagasTrack">
+                    <div class="convenio-empty"><p>Nenhuma vaga divulgada no momento.</p></div>
+                </div>
+                <button type="button" class="carousel-btn carousel-next" id="vagasNext" aria-label="Próximo">&#8250;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIGHTBOX DE IMAGEM (Vagas) -->
+    <div class="team-modal-overlay" id="imgLightboxOverlay">
+        <div class="team-modal img-lightbox-modal">
+            <button type="button" class="team-modal-close" id="imgLightboxClose" aria-label="Fechar">&times;</button>
+            <img id="imgLightboxImg" src="" alt="">
+        </div>
+    </div>
 
     <!-- EQUIPE -->
     <section class="section" id="equipe">
@@ -139,6 +186,17 @@
             </div>
             <div class="ver-mais-wrap" id="conveniosVerMais" style="display:none;">
                 <a href="convenios.html" class="btn btn-outline">Ver todos os convênios</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CURSOS -->
+    <section class="section" id="cursos">
+        <div class="container">
+            <h2 class="section-title">Cursos com Desconto</h2>
+            <p class="section-desc">Cursos com condições especiais para os associados do SEHORBAS.</p>
+            <div class="convenios-grid" id="cursosGrid">
+                <div class="convenio-empty"><p>Em breve, cursos com desconto para você.</p></div>
             </div>
         </div>
     </section>
@@ -323,9 +381,12 @@
             </div>
             <div class="footer-links">
                 <a href="#sobre">Sobre</a>
+                <a href="#atuacao">Área de Atuação</a>
                 <a href="#noticias">Notícias</a>
+                <a href="#vagas">Vagas de Emprego</a>
                 <a href="#equipe">Equipe</a>
                 <a href="#convenios">Convênios</a>
+                <a href="#cursos">Cursos</a>
                 <a href="#convencao">Convenção</a>
                 <a href="#acordo">Acordo Coletivo</a>
                 <a href="#modelos">Modelos de Acordo</a>

@@ -143,6 +143,163 @@ async function renderConvenios(limit) {
     }
 }
 
+// ========== ÁREA DE ATUAÇÃO (Base Territorial + Categorias) ==========
+async function renderCidades() {
+    const wrap = document.getElementById('cidadesChips');
+    if (!wrap) return;
+
+    const { data: cidades, error } = await sb
+        .from('cidades')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+    if (error) {
+        console.error('Erro ao carregar cidades:', error);
+        wrap.innerHTML = `<p class="convenio-empty">Não foi possível carregar as cidades no momento.</p>`;
+        return;
+    }
+    if (!cidades || cidades.length === 0) {
+        wrap.innerHTML = `<p class="convenio-empty">Em breve, a lista de cidades atendidas.</p>`;
+        return;
+    }
+    wrap.innerHTML = cidades.map(c => `<span class="cidade-chip">${escapeHtml(c.nome)}</span>`).join('');
+}
+
+async function renderCategorias() {
+    const grid = document.getElementById('categoriasGrid');
+    if (!grid) return;
+
+    const { data: categorias, error } = await sb
+        .from('categorias')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+    if (error) {
+        console.error('Erro ao carregar categorias:', error);
+        grid.innerHTML = `<p class="convenio-empty">Não foi possível carregar as categorias no momento.</p>`;
+        return;
+    }
+    if (!categorias || categorias.length === 0) {
+        grid.innerHTML = `<p class="convenio-empty">Em breve, a lista de categorias abrangidas.</p>`;
+        return;
+    }
+    grid.innerHTML = categorias.map(c => `
+        <div class="categoria-card">
+            <div class="categoria-icon">${c.icone ? escapeHtml(c.icone) : '🏢'}</div>
+            <h4>${escapeHtml(c.nome)}</h4>
+        </div>
+    `).join('');
+}
+
+// ========== VAGAS DE EMPREGO ==========
+function buildVagaCardHTML(v) {
+    const imagemUrlSegura = safeUrl(v.imagem_url);
+    if (!imagemUrlSegura) return '';
+    return `
+    <div class="carousel-item">
+        <div class="vaga-card" onclick="openImgLightbox('${imagemUrlSegura}', '${escapeHtml(v.titulo || 'Vaga de emprego').replace(/'/g, "\\'")}')">
+            <img src="${imagemUrlSegura}" alt="${escapeHtml(v.titulo || 'Vaga de emprego')}" loading="lazy">
+            ${v.titulo ? `<p class="vaga-titulo">${escapeHtml(v.titulo)}</p>` : ''}
+        </div>
+    </div>
+    `;
+}
+
+async function renderVagas() {
+    const track = document.getElementById('vagasTrack');
+    if (!track) return;
+
+    const { data: vagas, error } = await sb
+        .from('vagas')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Erro ao carregar vagas:', error);
+        track.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar as vagas no momento.</p></div>`;
+        return;
+    }
+    if (!vagas || vagas.length === 0) {
+        track.innerHTML = `<div class="convenio-empty"><p>Nenhuma vaga divulgada no momento.</p></div>`;
+        return;
+    }
+    track.innerHTML = vagas.map(buildVagaCardHTML).join('');
+}
+
+// ========== LIGHTBOX DE IMAGEM (usado pelas Vagas) ==========
+const imgLightboxOverlay = document.getElementById('imgLightboxOverlay');
+
+function openImgLightbox(url, alt) {
+    if (!imgLightboxOverlay) return;
+    const img = document.getElementById('imgLightboxImg');
+    img.src = url;
+    img.alt = alt || '';
+    imgLightboxOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImgLightbox() {
+    if (!imgLightboxOverlay) return;
+    imgLightboxOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('imgLightboxImg').src = '';
+}
+
+if (imgLightboxOverlay) {
+    document.getElementById('imgLightboxClose').addEventListener('click', closeImgLightbox);
+    imgLightboxOverlay.addEventListener('click', (e) => {
+        if (e.target === imgLightboxOverlay) closeImgLightbox();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeImgLightbox();
+    });
+}
+
+// ========== CURSOS ==========
+function buildCursoCardHTML(c) {
+    const logoUrlSegura = safeUrl(c.logo_url);
+    const linkSeguro = safeUrl(c.link);
+    const logoHtml = logoUrlSegura
+        ? `<img src="${logoUrlSegura}" alt="${escapeHtml(c.nome)}">`
+        : escapeHtml(c.nome).charAt(0).toUpperCase();
+
+    return `
+    <div class="convenio-card">
+        <div class="convenio-card-header">
+            <div class="convenio-logo">${logoHtml}</div>
+            <h3>${escapeHtml(c.nome)}</h3>
+        </div>
+        <div class="convenio-card-body">
+            ${c.instituicao ? `<div class="convenio-detail"><span>🏫</span><span>${escapeHtml(c.instituicao)}</span></div>` : ''}
+            <p>${escapeHtml(c.descricao)}</p>
+            ${c.desconto ? `<span class="curso-desconto-badge">${escapeHtml(c.desconto)}</span>` : ''}
+            ${linkSeguro ? `<a href="${linkSeguro}" target="_blank" rel="noopener" class="convenio-site-link">🔗 Mais informações</a>` : ''}
+        </div>
+    </div>
+    `;
+}
+
+async function renderCursos() {
+    const grid = document.getElementById('cursosGrid');
+    if (!grid) return;
+
+    const { data: cursos, error } = await sb
+        .from('cursos')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Erro ao carregar cursos:', error);
+        grid.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar os cursos no momento.</p></div>`;
+        return;
+    }
+    if (!cursos || cursos.length === 0) {
+        grid.innerHTML = `<div class="convenio-empty"><p>Em breve, cursos com desconto para você.</p></div>`;
+        return;
+    }
+    grid.innerHTML = cursos.map(buildCursoCardHTML).join('');
+}
+
 // ========== RENDER DOCUMENTOS (Convenções / Acordos / Modelos) ==========
 function buildDocCardHTML(c, showDownload = true) {
     const arquivoUrlSeguro = safeUrl(c.arquivo_url);
@@ -411,13 +568,18 @@ if (teamModalOverlay) {
 
 // ========== INIT ==========
 renderConvenios(document.getElementById('conveniosVerMais') ? 3 : undefined);
+renderCursos();
 renderConvencoes();
 renderAcordos();
 renderModelosAcordo();
 renderNoticias();
+renderVagas();
 renderEquipeSite();
+renderCidades();
+renderCategorias();
 
 wireCarousel('noticiasTrack', 'noticiasPrev', 'noticiasNext');
 wireCarousel('convencaoTrack', 'convencaoPrev', 'convencaoNext');
 wireCarousel('acordoTrack', 'acordoPrev', 'acordoNext');
 wireCarousel('modelosTrack', 'modelosPrev', 'modelosNext');
+wireCarousel('vagasTrack', 'vagasPrev', 'vagasNext');
