@@ -1111,6 +1111,44 @@ async function renderCidadesAdmin() {
     `).join('');
 }
 
+// ========== SELETOR DE EMOJI (campo Ícone das Categorias) ==========
+const EMOJI_OPCOES = [
+    '🏨', '🛏️', '🍽️', '🍴', '🍺', '🍻', '🍷', '🍸', '🍹', '☕',
+    '🍕', '🍔', '🌭', '🍰', '🎂', '🍦', '🏪', '🏬', '🏢', '🏠',
+    '🛎️', '🚪', '🧹', '🧺', '🧑‍🍳', '👨‍🍳', '🧑‍💼', '💼', '🛍️', '🎉',
+    '🎊', '🎶', '🎤', '🌴', '🏖️', '🚗', '🚚', '🅿️', '📍', '⭐',
+    '❤️', '✅', '💈', '💇', '💅', '🧖', '🎳', '🎮', '⚽', '🏋️'
+];
+
+function setupEmojiPicker(inputId, btnId, panelId) {
+    const input = document.getElementById(inputId);
+    const btn = document.getElementById(btnId);
+    const panel = document.getElementById(panelId);
+    if (!input || !btn || !panel) return;
+
+    panel.innerHTML = EMOJI_OPCOES.map(e =>
+        `<button type="button" class="emoji-picker-option">${e}</button>`
+    ).join('');
+
+    panel.querySelectorAll('.emoji-picker-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            input.value = opt.textContent;
+            panel.classList.remove('open');
+        });
+    });
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!panel.contains(e.target) && e.target !== btn) panel.classList.remove('open');
+    });
+}
+
+setupEmojiPicker('categoriaIcone', 'categoriaIconePickerBtn', 'categoriaIconePicker');
+
 // ========== CATEGORIAS CRUD ==========
 const categoriaFormCard = document.getElementById('categoriaFormCard');
 const categoriaForm = document.getElementById('categoriaForm');

@@ -157,6 +157,40 @@
     margin-top: 8px;
 }
 
+/* EMOJI PICKER */
+.emoji-field { position: relative; }
+.emoji-input-row { display: flex; gap: 8px; }
+.emoji-input-row input { flex: 1; }
+.emoji-picker-btn { flex-shrink: 0; font-size: 16px; padding: 8px 12px; }
+.emoji-picker-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    z-index: 10;
+    background: var(--branco);
+    border: 1px solid var(--cinza-200);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 10px;
+    width: 260px;
+    max-height: 220px;
+    overflow-y: auto;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+.emoji-picker-panel.open { display: grid; }
+.emoji-picker-option {
+    background: none;
+    border: none;
+    font-size: 20px;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    line-height: 1;
+}
+.emoji-picker-option:hover { background: var(--azul-claro); }
+
 /* ADMIN LIST */
 .admin-list { display: flex; flex-direction: column; gap: 12px; }
 .admin-list-item {

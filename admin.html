@@ -459,9 +459,13 @@
                                     <label for="categoriaNome">Nome da categoria</label>
                                     <input type="text" id="categoriaNome" required placeholder="Ex: Restaurantes">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group emoji-field">
                                     <label for="categoriaIcone">Ícone (um emoji)</label>
-                                    <input type="text" id="categoriaIcone" placeholder="🍽️">
+                                    <div class="emoji-input-row">
+                                        <input type="text" id="categoriaIcone" placeholder="🍽️">
+                                        <button type="button" class="btn btn-outline btn-sm emoji-picker-btn" id="categoriaIconePickerBtn">😀</button>
+                                    </div>
+                                    <div class="emoji-picker-panel" id="categoriaIconePicker"></div>
                                 </div>
                             </div>
                             <div class="form-group">
