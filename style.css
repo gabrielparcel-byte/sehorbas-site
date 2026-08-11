@@ -22,7 +22,7 @@
 
 /* ========== RESET ========== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--cinza-900);
@@ -55,14 +55,14 @@ ul, ol { list-style: none; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 72px;
+    height: 96px;
 }
 .logo-link {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-.logo-img { height: 64px; width: 64px; object-fit: contain; }
+.logo-img { height: 84px; width: 84px; object-fit: contain; }
 .logo-text { display: flex; flex-direction: column; }
 .logo-name {
     font-size: 18px;
@@ -869,7 +869,7 @@ ul, ol { list-style: none; }
 
     .nav {
         position: fixed;
-        top: 72px; left: 0; right: 0;
+        top: 96px; left: 0; right: 0;
         background: var(--branco);
         flex-direction: column;
         padding: 16px 24px;
@@ -878,7 +878,7 @@ ul, ol { list-style: none; }
         transform: translateY(-120%);
         transition: transform var(--transition);
         z-index: 999;
-        max-height: calc(100vh - 72px);
+        max-height: calc(100vh - 96px);
         overflow-y: auto;
     }
     .nav.open { transform: translateY(0); }
