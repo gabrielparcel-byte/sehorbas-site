@@ -62,7 +62,7 @@ ul, ol { list-style: none; }
     align-items: center;
     gap: 12px;
 }
-.logo-img { height: 48px; width: 48px; object-fit: contain; }
+.logo-img { height: 64px; width: 64px; object-fit: contain; }
 .logo-text { display: flex; flex-direction: column; }
 .logo-name {
     font-size: 18px;
