@@ -11,9 +11,9 @@ Site do Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de 
 
 ## Estrutura de páginas
 
-- `index.html` — site público (Sobre, Área de Atuação [Base Territorial + Categorias Abrangidas], Notícias/Instagram, Vagas de Emprego, Equipe, Convênios, Cursos, Convenção Coletiva, Acordo Coletivo, Modelos de Acordo, Pré-Agendamento, Contato)
-- `admin.html` + `admin.js` — painel administrativo (login Supabase Auth), 11 abas: Convênios, Cursos, Convenções, Acordos, Modelos de Acordo, Notícias, Vagas de Emprego, Equipe, Base Territorial, Categorias, **Assuntos** (do pré-agendamento)
-- `convenios.html`, `convencao.html`, `acordo.html`, `modelos.html` — páginas "Ver mais" (listagem completa de cada seção)
+- `index.html` — site público (Sobre, Área de Atuação [Base Territorial + Categorias Abrangidas], Notícias/Instagram, Vagas de Emprego, Equipe, Convênios, Cursos, Convenção Coletiva, Comunicados, Modelos de Acordo, Pré-Agendamento, Contato)
+- `admin.html` + `admin.js` — painel administrativo (login Supabase Auth), 11 abas: Convênios, Cursos, Convenções, Comunicados, Modelos de Acordo, Notícias, Vagas de Emprego, Equipe, Base Territorial, Categorias, **Assuntos** (do pré-agendamento)
+- `convenios.html`, `convencao.html`, `modelos.html` — páginas "Ver mais" (listagem completa de cada seção)
 - `app.js` — lógica do site público (renderização, carrosséis, formulário WhatsApp)
 - `style.css` / `admin.css` — estilos
 
@@ -21,11 +21,11 @@ Links internos usam `/` em vez de `index.html` (URLs limpas desde a migração p
 
 ## Tabelas no Supabase
 
-`convenios`, `convencoes`, `acordos`, `modelos_acordo`, `noticias`, `equipe`, `assuntos` (assuntos do pré-agendamento — migration 008), `cidades` (Base Territorial), `categorias` (Categorias Abrangidas, com `icone` em emoji), `vagas` (Vagas de Emprego, imagem obrigatória, com `telefone`/`link` opcionais — migration 010), `cursos` (cursos com desconto — migration 009).
+`convenios`, `convencoes`, `comunicados` (título + descrição + PDF, mesmo formato de convenções — migration 011, substituiu a antiga tabela `acordos`), `modelos_acordo`, `noticias`, `equipe`, `assuntos` (assuntos do pré-agendamento — migration 008), `cidades` (Base Territorial), `categorias` (Categorias Abrangidas, com `icone` em emoji), `vagas` (Vagas de Emprego, imagem obrigatória, com `telefone`/`link` opcionais — migration 010), `cursos` (cursos com desconto — migration 009).
 
 Todas com RLS: leitura pública (`select using (true)`), escrita só autenticado.
 
-Buckets de Storage (públicos): `convenios-logos`, `convencoes-arquivos`, `acordos-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`.
+Buckets de Storage (públicos): `convenios-logos`, `convencoes-arquivos`, `comunicados-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`.
 
 Migrations em `migrations/`, numeradas e sequenciais — rodar manualmente no SQL Editor do Supabase quando adicionadas (não há CI de migration).
 
@@ -50,7 +50,7 @@ Formulário no `index.html` monta uma mensagem e abre o WhatsApp (`wa.me`) do n�
 
 ## Convenções de UI
 
-- Seções de documentos (Convenção, Acordo, Modelos) usam carrossel (`.carousel-wrap/.carousel-track/.carousel-item`) com auto-advance por `setInterval` (4s) — não usar scroll contínuo via `requestAnimationFrame`, conflita com `scroll-snap`.
+- Seções de documentos (Convenção, Comunicados, Modelos) usam carrossel (`.carousel-wrap/.carousel-track/.carousel-item`) com auto-advance por `setInterval` (4s) — não usar scroll contínuo via `requestAnimationFrame`, conflita com `scroll-snap`.
 - Cards de documento (`.doc-card`) são clicáveis: expandem no clique mostrando descrição completa, com botão "Ver mais"/"Ver menos". Botão de Download tem `stopPropagation` pra não disparar o toggle de expandir.
 - Convênios (`.convenio-card`) não têm botão de download — não faz sentido pro tipo de conteúdo (é cadastro de parceiro, não documento).
 - Logo é `assets/logo.png` (não SVG — a versão SVG recortada perdia o arco de texto circular; `<textPath>` não renderiza quando SVG é usado como `<img src>`).

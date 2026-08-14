@@ -313,7 +313,7 @@ async function renderCursos() {
     grid.innerHTML = cursos.map(buildCursoCardHTML).join('');
 }
 
-// ========== RENDER DOCUMENTOS (Convenções / Acordos / Modelos) ==========
+// ========== RENDER DOCUMENTOS (Convenções / Comunicados / Modelos) ==========
 function buildDocCardHTML(c, showDownload = true) {
     const arquivoUrlSeguro = safeUrl(c.arquivo_url);
     const descricao = escapeHtml(c.descricao || '');
@@ -358,8 +358,8 @@ function renderConvencoes() {
     return renderDocumentos('convencoes', 'convencaoTrack', 'Em breve, a convenção coletiva estará disponível para consulta.');
 }
 
-function renderAcordos() {
-    return renderDocumentos('acordos', 'acordoTrack', 'Em breve, o acordo coletivo estará disponível para consulta.');
+function renderComunicados() {
+    return renderDocumentos('comunicados', 'comunicadosTrack', 'Em breve, comunicados disponíveis para consulta.');
 }
 
 function renderModelosAcordo() {
@@ -583,7 +583,7 @@ if (teamModalOverlay) {
 renderConvenios(document.getElementById('conveniosVerMais') ? 3 : undefined);
 renderCursos();
 renderConvencoes();
-renderAcordos();
+renderComunicados();
 renderModelosAcordo();
 renderNoticias();
 renderVagas();
@@ -593,6 +593,6 @@ renderCategorias();
 
 wireCarousel('noticiasTrack', 'noticiasPrev', 'noticiasNext');
 wireCarousel('convencaoTrack', 'convencaoPrev', 'convencaoNext');
-wireCarousel('acordoTrack', 'acordoPrev', 'acordoNext');
+wireCarousel('comunicadosTrack', 'comunicadosPrev', 'comunicadosNext');
 wireCarousel('modelosTrack', 'modelosPrev', 'modelosNext');
 wireCarousel('vagasTrack', 'vagasPrev', 'vagasNext');

@@ -484,29 +484,29 @@ async function renderConvencoes() {
     `).join('');
 }
 
-// ========== ACORDOS CRUD ==========
-const acordoFormCard = document.getElementById('acordoFormCard');
-const acordoForm = document.getElementById('acordoForm');
+// ========== COMUNICADOS CRUD ==========
+const comunicadoFormCard = document.getElementById('comunicadoFormCard');
+const comunicadoForm = document.getElementById('comunicadoForm');
 
-document.getElementById('addAcordoBtn').addEventListener('click', () => {
-    document.getElementById('acordoId').value = '';
-    document.getElementById('acordoArquivoAtual').value = '';
-    document.getElementById('acordoArquivoHint').textContent = '';
-    acordoForm.reset();
-    document.getElementById('acordoFormTitle').textContent = 'Novo Acordo';
-    acordoFormCard.style.display = 'block';
+document.getElementById('addComunicadoBtn').addEventListener('click', () => {
+    document.getElementById('comunicadoId').value = '';
+    document.getElementById('comunicadoArquivoAtual').value = '';
+    document.getElementById('comunicadoArquivoHint').textContent = '';
+    comunicadoForm.reset();
+    document.getElementById('comunicadoFormTitle').textContent = 'Novo Comunicado';
+    comunicadoFormCard.style.display = 'block';
 });
 
-document.getElementById('cancelAcordo').addEventListener('click', () => {
-    acordoFormCard.style.display = 'none';
+document.getElementById('cancelComunicado').addEventListener('click', () => {
+    comunicadoFormCard.style.display = 'none';
 });
 
-acordoForm.addEventListener('submit', async (e) => {
+comunicadoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const submitBtn = acordoForm.querySelector('button[type="submit"]');
-    const id = document.getElementById('acordoId').value;
-    const arquivoAtual = document.getElementById('acordoArquivoAtual').value;
-    const fileInput = document.getElementById('acordoArquivo');
+    const submitBtn = comunicadoForm.querySelector('button[type="submit"]');
+    const id = document.getElementById('comunicadoId').value;
+    const arquivoAtual = document.getElementById('comunicadoArquivoAtual').value;
+    const fileInput = document.getElementById('comunicadoArquivo');
     const file = fileInput.files[0];
 
     let arquivo_url = arquivoAtual || null;
@@ -515,64 +515,64 @@ acordoForm.addEventListener('submit', async (e) => {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando arquivo...';
         const filePath = `${Date.now()}_${file.name}`;
-        const { error: uploadError } = await sb.storage.from('acordos-arquivos').upload(filePath, file);
+        const { error: uploadError } = await sb.storage.from('comunicados-arquivos').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar arquivo: ' + uploadError.message);
             submitBtn.disabled = false;
             submitBtn.textContent = 'Salvar';
             return;
         }
-        const { data: { publicUrl } } = sb.storage.from('acordos-arquivos').getPublicUrl(filePath);
+        const { data: { publicUrl } } = sb.storage.from('comunicados-arquivos').getPublicUrl(filePath);
         arquivo_url = publicUrl;
     }
 
     const item = {
-        titulo: document.getElementById('acordoTitulo').value.trim(),
-        descricao: document.getElementById('acordoDescricao').value.trim(),
+        titulo: document.getElementById('comunicadoTitulo').value.trim(),
+        descricao: document.getElementById('comunicadoDescricao').value.trim(),
         arquivo_url
     };
 
     const { error } = id
-        ? await sb.from('acordos').update(item).eq('id', id)
-        : await sb.from('acordos').insert(item);
+        ? await sb.from('comunicados').update(item).eq('id', id)
+        : await sb.from('comunicados').insert(item);
 
     submitBtn.disabled = false;
     submitBtn.textContent = 'Salvar';
 
     if (error) {
-        alert('Erro ao salvar acordo: ' + error.message);
+        alert('Erro ao salvar comunicado: ' + error.message);
         return;
     }
-    acordoFormCard.style.display = 'none';
-    renderAcordosAdmin();
+    comunicadoFormCard.style.display = 'none';
+    renderComunicadosAdmin();
 });
 
-async function editAcordo(id) {
-    const { data: c, error } = await sb.from('acordos').select('*').eq('id', id).single();
+async function editComunicado(id) {
+    const { data: c, error } = await sb.from('comunicados').select('*').eq('id', id).single();
     if (error || !c) return;
-    document.getElementById('acordoId').value = c.id;
-    document.getElementById('acordoTitulo').value = c.titulo;
-    document.getElementById('acordoDescricao').value = c.descricao || '';
-    document.getElementById('acordoArquivo').value = '';
-    document.getElementById('acordoArquivoAtual').value = c.arquivo_url || '';
-    document.getElementById('acordoArquivoHint').textContent = c.arquivo_url
+    document.getElementById('comunicadoId').value = c.id;
+    document.getElementById('comunicadoTitulo').value = c.titulo;
+    document.getElementById('comunicadoDescricao').value = c.descricao || '';
+    document.getElementById('comunicadoArquivo').value = '';
+    document.getElementById('comunicadoArquivoAtual').value = c.arquivo_url || '';
+    document.getElementById('comunicadoArquivoHint').textContent = c.arquivo_url
         ? 'Já existe um arquivo enviado. Escolha um novo apenas se quiser substituí-lo.'
         : '';
-    document.getElementById('acordoFormTitle').textContent = 'Editar Acordo';
-    acordoFormCard.style.display = 'block';
+    document.getElementById('comunicadoFormTitle').textContent = 'Editar Comunicado';
+    comunicadoFormCard.style.display = 'block';
 }
 
-async function deleteAcordo(id) {
-    if (!confirm('Remover este acordo?')) return;
-    const { error } = await sb.from('acordos').delete().eq('id', id);
+async function deleteComunicado(id) {
+    if (!confirm('Remover este comunicado?')) return;
+    const { error } = await sb.from('comunicados').delete().eq('id', id);
     if (error) { alert('Erro ao remover: ' + error.message); return; }
-    renderAcordosAdmin();
+    renderComunicadosAdmin();
 }
 
-async function renderAcordosAdmin() {
-    const list = document.getElementById('acordosList');
-    const { data: acordos, error } = await sb
-        .from('acordos')
+async function renderComunicadosAdmin() {
+    const list = document.getElementById('comunicadosList');
+    const { data: comunicados, error } = await sb
+        .from('comunicados')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -580,19 +580,19 @@ async function renderAcordosAdmin() {
         list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
         return;
     }
-    if (!acordos || acordos.length === 0) {
-        list.innerHTML = '<div class="admin-list-empty">Nenhum acordo cadastrado.</div>';
+    if (!comunicados || comunicados.length === 0) {
+        list.innerHTML = '<div class="admin-list-empty">Nenhum comunicado cadastrado.</div>';
         return;
     }
-    list.innerHTML = acordos.map(c => `
+    list.innerHTML = comunicados.map(c => `
         <div class="admin-list-item">
             <div class="admin-list-info">
                 <h4>${escapeHtml(c.titulo)}</h4>
                 <p>${escapeHtml(c.descricao || 'Sem descrição')}</p>
             </div>
             <div class="admin-list-actions">
-                <button class="btn btn-outline btn-sm" onclick="editAcordo('${c.id}')">Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteAcordo('${c.id}')">Remover</button>
+                <button class="btn btn-outline btn-sm" onclick="editComunicado('${c.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteComunicado('${c.id}')">Remover</button>
             </div>
         </div>
     `).join('');
@@ -1325,7 +1325,7 @@ function renderAll() {
     renderConvenios();
     renderCursosAdmin();
     renderConvencoes();
-    renderAcordosAdmin();
+    renderComunicadosAdmin();
     renderModelosAdmin();
     renderNoticiasAdmin();
     renderVagasAdmin();
