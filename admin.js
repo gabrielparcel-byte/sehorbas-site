@@ -1324,14 +1324,36 @@ async function renderAssuntosAdmin() {
 const bannerForm = document.getElementById('bannerForm');
 const bannerPreviewWrap = document.getElementById('bannerPreviewWrap');
 const bannerPreviewImg = document.getElementById('bannerPreviewImg');
+const bannerPositionInput = document.getElementById('bannerPosition');
+
+function setBannerPosition(pos) {
+    bannerPositionInput.value = pos;
+    bannerPreviewImg.style.objectPosition = pos;
+    document.querySelectorAll('.banner-position-dot').forEach(dot => {
+        dot.classList.toggle('active', dot.dataset.pos === pos);
+    });
+}
+
+document.querySelectorAll('.banner-position-dot').forEach(dot => {
+    dot.addEventListener('click', () => setBannerPosition(dot.dataset.pos));
+});
+
+document.getElementById('bannerImagem').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    bannerPreviewImg.src = URL.createObjectURL(file);
+    bannerPreviewWrap.style.display = 'block';
+});
 
 async function renderBannerAdmin() {
-    const { data, error } = await sb.from('configuracoes_site').select('hero_banner_url').eq('id', 1).single();
+    const { data, error } = await sb.from('configuracoes_site').select('hero_banner_url, hero_banner_position').eq('id', 1).single();
     if (error || !data || !data.hero_banner_url) {
         bannerPreviewWrap.style.display = 'none';
+        setBannerPosition('center center');
         return;
     }
     bannerPreviewImg.src = data.hero_banner_url;
+    setBannerPosition(data.hero_banner_position || 'center center');
     bannerPreviewWrap.style.display = 'block';
 }
 
@@ -1340,34 +1362,32 @@ bannerForm.addEventListener('submit', async (e) => {
     const submitBtn = bannerForm.querySelector('button[type="submit"]');
     const fileInput = document.getElementById('bannerImagem');
     const file = fileInput.files[0];
+    const position = bannerPositionInput.value;
 
-    if (!file) {
-        alert('Escolha uma imagem antes de salvar.');
-        return;
-    }
+    if (file) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando...';
+        const filePath = `${Date.now()}_${file.name}`;
+        const { error: uploadError } = await sb.storage.from('banner-fundo').upload(filePath, file);
+        if (uploadError) {
+            alert('Erro ao enviar imagem: ' + uploadError.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar';
+            return;
+        }
+        const { data: { publicUrl } } = sb.storage.from('banner-fundo').getPublicUrl(filePath);
 
-    const filePath = `${Date.now()}_${file.name}`;
-    const { error: uploadError } = await sb.storage.from('banner-fundo').upload(filePath, file);
-    if (uploadError) {
-        alert('Erro ao enviar imagem: ' + uploadError.message);
+        const { error } = await sb.from('configuracoes_site').update({ hero_banner_url: publicUrl, hero_banner_position: position }).eq('id', 1);
         submitBtn.disabled = false;
         submitBtn.textContent = 'Salvar';
-        return;
+        if (error) { alert('Erro ao salvar: ' + error.message); return; }
+    } else {
+        // Sem imagem nova: só atualiza o foco da imagem já cadastrada
+        const { error } = await sb.from('configuracoes_site').update({ hero_banner_position: position }).eq('id', 1);
+        if (error) { alert('Erro ao salvar: ' + error.message); return; }
     }
-    const { data: { publicUrl } } = sb.storage.from('banner-fundo').getPublicUrl(filePath);
 
-    const { error } = await sb.from('configuracoes_site').update({ hero_banner_url: publicUrl }).eq('id', 1);
-
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Salvar';
-
-    if (error) {
-        alert('Erro ao salvar: ' + error.message);
-        return;
-    }
     bannerForm.reset();
     document.getElementById('bannerImagemHint').textContent = 'Banner atualizado! Confira na página principal.';
     renderBannerAdmin();
