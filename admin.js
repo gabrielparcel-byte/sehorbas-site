@@ -1320,6 +1320,66 @@ async function renderAssuntosAdmin() {
     `).join('');
 }
 
+// ========== BANNER DE FUNDO ==========
+const bannerForm = document.getElementById('bannerForm');
+const bannerPreviewWrap = document.getElementById('bannerPreviewWrap');
+const bannerPreviewImg = document.getElementById('bannerPreviewImg');
+
+async function renderBannerAdmin() {
+    const { data, error } = await sb.from('configuracoes_site').select('hero_banner_url').eq('id', 1).single();
+    if (error || !data || !data.hero_banner_url) {
+        bannerPreviewWrap.style.display = 'none';
+        return;
+    }
+    bannerPreviewImg.src = data.hero_banner_url;
+    bannerPreviewWrap.style.display = 'block';
+}
+
+bannerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = bannerForm.querySelector('button[type="submit"]');
+    const fileInput = document.getElementById('bannerImagem');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert('Escolha uma imagem antes de salvar.');
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    const filePath = `${Date.now()}_${file.name}`;
+    const { error: uploadError } = await sb.storage.from('banner-fundo').upload(filePath, file);
+    if (uploadError) {
+        alert('Erro ao enviar imagem: ' + uploadError.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Salvar';
+        return;
+    }
+    const { data: { publicUrl } } = sb.storage.from('banner-fundo').getPublicUrl(filePath);
+
+    const { error } = await sb.from('configuracoes_site').update({ hero_banner_url: publicUrl }).eq('id', 1);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar';
+
+    if (error) {
+        alert('Erro ao salvar: ' + error.message);
+        return;
+    }
+    bannerForm.reset();
+    document.getElementById('bannerImagemHint').textContent = 'Banner atualizado! Confira na página principal.';
+    renderBannerAdmin();
+});
+
+document.getElementById('removeBannerBtn').addEventListener('click', async () => {
+    if (!confirm('Remover o banner de fundo? O site volta a mostrar só o degradê, sem foto.')) return;
+    const { error } = await sb.from('configuracoes_site').update({ hero_banner_url: null }).eq('id', 1);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
+    renderBannerAdmin();
+});
+
 // ========== RENDER ALL ==========
 function renderAll() {
     renderConvenios();
@@ -1333,4 +1393,5 @@ function renderAll() {
     renderCidadesAdmin();
     renderCategoriasAdmin();
     renderAssuntosAdmin();
+    renderBannerAdmin();
 }

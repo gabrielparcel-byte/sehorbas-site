@@ -12,7 +12,7 @@ Site do Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de 
 ## Estrutura de páginas
 
 - `index.html` — site público (Sobre, Área de Atuação [Base Territorial + Categorias Abrangidas], Notícias/Instagram, Vagas de Emprego, Equipe, Convênios, Cursos, Convenção Coletiva, Comunicados, Modelos de Acordo, Pré-Agendamento, Contato)
-- `admin.html` + `admin.js` — painel administrativo (login Supabase Auth), 11 abas: Convênios, Cursos, Convenções, Comunicados, Modelos de Acordo, Notícias, Vagas de Emprego, Equipe, Base Territorial, Categorias, **Assuntos** (do pré-agendamento)
+- `admin.html` + `admin.js` — painel administrativo (login Supabase Auth), 12 abas: Convênios, Cursos, Convenções, Comunicados, Modelos de Acordo, Notícias, Vagas de Emprego, Equipe, Base Territorial, Categorias, Assuntos (do pré-agendamento), **Banner** (imagem de fundo do hero)
 - `convenios.html`, `convencao.html`, `modelos.html` — páginas "Ver mais" (listagem completa de cada seção)
 - `app.js` — lógica do site público (renderização, carrosséis, formulário WhatsApp)
 - `style.css` / `admin.css` — estilos
@@ -25,7 +25,9 @@ Links internos usam `/` em vez de `index.html` (URLs limpas desde a migração p
 
 Todas com RLS: leitura pública (`select using (true)`), escrita só autenticado.
 
-Buckets de Storage (públicos): `convenios-logos`, `convencoes-arquivos`, `comunicados-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`.
+Buckets de Storage (públicos): `convenios-logos`, `convencoes-arquivos`, `comunicados-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`, `banner-fundo`.
+
+Configuração de site (linha única, id fixo 1): tabela `configuracoes_site` (migration 012) guarda `hero_banner_url` — a foto de fundo do hero, opcional, editável na aba **Banner** do admin. Aplicada com `opacity: .16` + `mix-blend-mode: luminosity` sobre o degradê existente (`.hero-banner-img` em `style.css`), pra aparecer só sutilmente atrás do texto, sem prejudicar a legibilidade.
 
 Migrations em `migrations/`, numeradas e sequenciais — rodar manualmente no SQL Editor do Supabase quando adicionadas (não há CI de migration).
 

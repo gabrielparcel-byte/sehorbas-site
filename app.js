@@ -1,3 +1,18 @@
+// ========== BANNER DE FUNDO DO HERO ==========
+async function renderHeroBanner() {
+    const img = document.getElementById('heroBannerImg');
+    if (!img) return;
+
+    const { data, error } = await sb.from('configuracoes_site').select('hero_banner_url').eq('id', 1).single();
+    if (error || !data) return;
+
+    const urlSegura = safeUrl(data.hero_banner_url);
+    if (!urlSegura) return;
+    img.src = urlSegura;
+    img.style.display = 'block';
+}
+renderHeroBanner();
+
 // ========== MOBILE MENU ==========
 const menuToggle = document.getElementById('menuToggle');
 const nav = document.getElementById('nav');
