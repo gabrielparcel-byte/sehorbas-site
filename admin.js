@@ -1180,6 +1180,7 @@ categoriaForm.addEventListener('submit', async (e) => {
     const item = {
         nome: document.getElementById('categoriaNome').value.trim(),
         icone: document.getElementById('categoriaIcone').value.trim() || null,
+        descricao: document.getElementById('categoriaDescricao').value.trim() || null,
         ordem: parseInt(document.getElementById('categoriaOrdem').value) || 0
     };
 
@@ -1201,6 +1202,7 @@ async function editCategoria(id) {
     document.getElementById('categoriaId').value = c.id;
     document.getElementById('categoriaNome').value = c.nome;
     document.getElementById('categoriaIcone').value = c.icone || '';
+    document.getElementById('categoriaDescricao').value = c.descricao || '';
     document.getElementById('categoriaOrdem').value = c.ordem;
     document.getElementById('categoriaFormTitle').textContent = 'Editar Categoria';
     categoriaFormCard.style.display = 'block';

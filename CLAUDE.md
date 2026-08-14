@@ -59,7 +59,7 @@ Formulário no `index.html` monta uma mensagem e abre o WhatsApp (`wa.me`) do n�
 - Convênios (`.convenio-card`) não têm botão de download — não faz sentido pro tipo de conteúdo (é cadastro de parceiro, não documento).
 - Logo é `assets/logo.png` (não SVG — a versão SVG recortada perdia o arco de texto circular; `<textPath>` não renderiza quando SVG é usado como `<img src>`).
 - Vagas de Emprego (`.vaga-card`) funcionam como um "post": imagem do flyer + título, clicáveis pra abrir um modal de detalhe (`#vagaModalOverlay`, reaproveita o CSS do modal de equipe) com descrição, telefone (`tel:`) e link de inscrição, quando cadastrados. Sem expiração automática — a dona do site remove manualmente pelo admin quando a vaga fecha.
-- Base Territorial (cidades) usa chips simples (`.cidade-chip`); Categorias Abrangidas usa grid de ícones (`.categoria-card`, campo `icone` é um emoji digitado no admin). Ambas seguem o mesmo padrão simples de lista da tabela `assuntos` (nome + ordem, sem upload).
+- Base Territorial (cidades) usa chips simples (`.cidade-chip`); Categorias Abrangidas usa grid de ícones (`.categoria-card`, campo `icone` é um emoji digitado no admin). Categoria tem `descricao` opcional (lista detalhada dos termos jurídicos, ex: "Restaurantes, buffets, rotisserias...") que expande no clique do card (mesmo padrão "Ver mais" do `.doc-card`) — usado pra agrupar a base territorial jurídica completa (~50 termos) em poucas categorias amplas sem poluir o grid visualmente (migrations 016/017).
 
 ## Deploy
 

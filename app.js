@@ -224,12 +224,16 @@ async function renderCategorias() {
         grid.innerHTML = `<p class="convenio-empty">Em breve, a lista de categorias abrangidas.</p>`;
         return;
     }
-    grid.innerHTML = categorias.map(c => `
-        <div class="categoria-card">
+    grid.innerHTML = categorias.map(c => {
+        const descricao = escapeHtml(c.descricao || '');
+        return `
+        <div class="categoria-card" ${descricao ? `onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'"` : ''}>
             <div class="categoria-icon">${c.icone ? escapeHtml(c.icone) : '🏢'}</div>
             <h4>${escapeHtml(c.nome)}</h4>
+            ${descricao ? `<p class="categoria-card-desc">${descricao}</p><button type="button" class="categoria-card-toggle">Ver mais</button>` : ''}
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // ========== VAGAS DE EMPREGO ==========
