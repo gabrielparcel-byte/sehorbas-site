@@ -1,7 +1,11 @@
 // ========== BANNER DE FUNDO DO HERO ==========
+// Mesmo esquema de dimensionamento do admin: a imagem mantém o tamanho
+// real que cobre a seção (em px, não em %), pra respeitar exatamente o
+// enquadramento (zoom + posição) escolhido no admin em qualquer tela.
 async function renderHeroBanner() {
     const img = document.getElementById('heroBannerImg');
-    if (!img) return;
+    const heroSection = img ? img.closest('.hero') : null;
+    if (!img || !heroSection) return;
 
     const { data, error } = await sb
         .from('configuracoes_site')
@@ -12,13 +16,26 @@ async function renderHeroBanner() {
 
     const urlSegura = safeUrl(data.hero_banner_url);
     if (!urlSegura) return;
-    img.src = urlSegura;
 
     const zoom = data.hero_banner_zoom || 1;
     const panX = data.hero_banner_pan_x || 0;
     const panY = data.hero_banner_pan_y || 0;
-    img.style.transform = `translate(calc(-50% + ${panX}%), calc(-50% + ${panY}%)) scale(${zoom})`;
-    img.style.display = 'block';
+
+    function sizeAndPosition() {
+        const rect = heroSection.getBoundingClientRect();
+        if (!img.naturalWidth || !rect.width || !rect.height) return;
+        const scale = Math.max(rect.width / img.naturalWidth, rect.height / img.naturalHeight);
+        img.style.width = (img.naturalWidth * scale) + 'px';
+        img.style.height = (img.naturalHeight * scale) + 'px';
+        img.style.transform = `translate(calc(-50% + ${panX}%), calc(-50% + ${panY}%)) scale(${zoom})`;
+    }
+
+    img.onload = () => {
+        sizeAndPosition();
+        img.style.display = 'block';
+    };
+    window.addEventListener('resize', sizeAndPosition);
+    img.src = urlSegura;
 }
 renderHeroBanner();
 

@@ -127,6 +127,12 @@ document.querySelectorAll('.tab').forEach(tab => {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+        // A aba Banner fica display:none até ser aberta, então o
+        // tamanho das prévias só dá pra medir depois de ficar visível.
+        if (tab.dataset.tab === 'banner' && typeof sizeBannerImgs === 'function') {
+            sizeBannerImgs();
+            applyBannerTransform();
+        }
     });
 });
 
@@ -1331,13 +1337,62 @@ const bannerZoomHidden = document.getElementById('bannerZoomInput');
 const bannerPanXHidden = document.getElementById('bannerPanX');
 const bannerPanYHidden = document.getElementById('bannerPanY');
 
+const bannerMobilePreview = document.querySelector('.banner-crop-preview--mobile');
+let bannerNaturalSize = null;
+let bannerRatios = { desktop: { rx: 1, ry: 1 }, mobile: { rx: 1, ry: 1 } };
+
+// Dimensiona cada prévia pro tamanho real que "cobre" o quadro (igual
+// object-fit:cover faria), mas como width/height explícitos em px —
+// assim sobra imagem de verdade pra revelar ao arrastar/dar zoom, em
+// vez de já vir pré-cortada no tamanho do quadro.
+function sizeBannerImgs() {
+    if (!bannerNaturalSize) return;
+    [bannerCropPreview, bannerMobilePreview].forEach((container, i) => {
+        const rect = container.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const scale = Math.max(rect.width / bannerNaturalSize.w, rect.height / bannerNaturalSize.h);
+        const w = bannerNaturalSize.w * scale;
+        const h = bannerNaturalSize.h * scale;
+        bannerPreviewImgs[i].style.width = w + 'px';
+        bannerPreviewImgs[i].style.height = h + 'px';
+        const ratios = { rx: w / rect.width, ry: h / rect.height };
+        if (i === 0) bannerRatios.desktop = ratios; else bannerRatios.mobile = ratios;
+    });
+}
+
 function setBannerImgSrc(url) {
-    bannerPreviewImgs.forEach(img => { img.src = url; });
+    bannerPreviewImgs.forEach(img => {
+        img.onload = () => {
+            bannerNaturalSize = { w: img.naturalWidth, h: img.naturalHeight };
+            sizeBannerImgs();
+            applyBannerTransform();
+        };
+        img.src = url;
+    });
 }
 
 let bannerState = { zoom: 1, panX: 0, panY: 0 };
 
+// Nunca deixa arrastar/zoom revelar espaço vazio: o limite depende de
+// quanta imagem "sobra" além do quadro em cada prévia, e usamos o mais
+// restritivo das duas (desktop/celular) pra nenhuma delas ficar com buraco.
+function maxPanPercent(zoom, r) {
+    return Math.max(0, 50 * zoom - 50 / r);
+}
+function clampBannerPan(zoom, panX, panY) {
+    const boundX = Math.min(maxPanPercent(zoom, bannerRatios.desktop.rx), maxPanPercent(zoom, bannerRatios.mobile.rx));
+    const boundY = Math.min(maxPanPercent(zoom, bannerRatios.desktop.ry), maxPanPercent(zoom, bannerRatios.mobile.ry));
+    return {
+        panX: Math.max(-boundX, Math.min(boundX, panX)),
+        panY: Math.max(-boundY, Math.min(boundY, panY))
+    };
+}
+
 function applyBannerTransform() {
+    const clamped = clampBannerPan(bannerState.zoom, bannerState.panX, bannerState.panY);
+    bannerState.panX = clamped.panX;
+    bannerState.panY = clamped.panY;
+
     const transform = `translate(calc(-50% + ${bannerState.panX}%), calc(-50% + ${bannerState.panY}%)) scale(${bannerState.zoom})`;
     bannerPreviewImgs.forEach(img => { img.style.transform = transform; });
     bannerZoomHidden.value = bannerState.zoom;
@@ -1398,6 +1453,13 @@ window.addEventListener('touchmove', (e) => {
     dragMove(t.clientX, t.clientY);
 }, { passive: true });
 window.addEventListener('touchend', dragEnd);
+
+window.addEventListener('resize', () => {
+    if (document.getElementById('tab-banner').classList.contains('active')) {
+        sizeBannerImgs();
+        applyBannerTransform();
+    }
+});
 
 document.getElementById('bannerImagem').addEventListener('change', (e) => {
     const file = e.target.files[0];
