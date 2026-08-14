@@ -433,10 +433,12 @@ ul, ol { list-style: none; }
 
 /* ========== CONVÊNIOS ========== */
 .convenios-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 24px;
 }
+.convenios-grid .convenio-card { flex: 1 1 300px; max-width: 360px; }
 .convenio-card {
     background: var(--branco);
     border: 1px solid var(--cinza-200);
@@ -551,12 +553,14 @@ ul, ol { list-style: none; }
     border-radius: 20px;
 }
 .categorias-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
     max-width: 1000px;
     margin: 0 auto;
 }
+.categorias-grid .categoria-card { flex: 1 1 200px; max-width: 260px; }
 .categoria-card {
     background: var(--branco);
     border: 1px solid var(--cinza-200);

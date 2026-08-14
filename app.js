@@ -338,8 +338,12 @@ function buildCursoCardHTML(c) {
 }
 
 async function renderCursos() {
+    // Na home usa o carrossel (#cursosTrack); na página "Ver mais" (cursos.html)
+    // usa um grid comum com todos (#cursosGrid).
+    const track = document.getElementById('cursosTrack');
     const grid = document.getElementById('cursosGrid');
-    if (!grid) return;
+    const container = track || grid;
+    if (!container) return;
 
     const { data: cursos, error } = await sb
         .from('cursos')
@@ -348,14 +352,16 @@ async function renderCursos() {
 
     if (error) {
         console.error('Erro ao carregar cursos:', error);
-        grid.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar os cursos no momento.</p></div>`;
+        container.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar os cursos no momento.</p></div>`;
         return;
     }
     if (!cursos || cursos.length === 0) {
-        grid.innerHTML = `<div class="convenio-empty"><p>Em breve, cursos com desconto para você.</p></div>`;
+        container.innerHTML = `<div class="convenio-empty"><p>Em breve, cursos com desconto para você.</p></div>`;
         return;
     }
-    grid.innerHTML = cursos.map(buildCursoCardHTML).join('');
+    container.innerHTML = track
+        ? cursos.map(c => `<div class="carousel-item">${buildCursoCardHTML(c)}</div>`).join('')
+        : cursos.map(buildCursoCardHTML).join('');
 }
 
 // ========== RENDER DOCUMENTOS (Convenções / Comunicados / Modelos) ==========
@@ -641,3 +647,4 @@ wireCarousel('convencaoTrack', 'convencaoPrev', 'convencaoNext');
 wireCarousel('comunicadosTrack', 'comunicadosPrev', 'comunicadosNext');
 wireCarousel('modelosTrack', 'modelosPrev', 'modelosNext');
 wireCarousel('vagasTrack', 'vagasPrev', 'vagasNext');
+wireCarousel('cursosTrack', 'cursosPrev', 'cursosNext');
