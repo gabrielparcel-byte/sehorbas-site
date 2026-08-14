@@ -537,9 +537,20 @@
 
                     <div class="admin-form-card" style="display:block; margin-top:16px;">
                         <div id="bannerPreviewWrap" style="display:none; margin-bottom:20px;">
-                            <p class="field-hint" style="margin-bottom:8px;">Arraste a imagem pra posicionar, e use o zoom abaixo (proporção igual ao topo real do site):</p>
-                            <div class="banner-crop-preview" id="bannerCropPreview">
-                                <img id="bannerPreviewImg" src="" alt="" draggable="false">
+                            <p class="field-hint" style="margin-bottom:8px;">Arraste na prévia do Desktop pra posicionar (a do Celular acompanha sozinha) — o formato do topo do site muda bastante entre os dois:</p>
+                            <div class="banner-preview-row">
+                                <div class="banner-preview-col">
+                                    <p class="banner-preview-label">Desktop</p>
+                                    <div class="banner-crop-preview banner-crop-preview--desktop" id="bannerCropPreview">
+                                        <img class="banner-preview-img" id="bannerPreviewImg" src="" alt="" draggable="false">
+                                    </div>
+                                </div>
+                                <div class="banner-preview-col banner-preview-col--mobile">
+                                    <p class="banner-preview-label">Celular</p>
+                                    <div class="banner-crop-preview banner-crop-preview--mobile">
+                                        <img class="banner-preview-img" id="bannerPreviewImgMobile" src="" alt="" draggable="false">
+                                    </div>
+                                </div>
                             </div>
                             <div class="banner-zoom-row">
                                 <span class="field-hint" style="margin:0;">Zoom</span>

@@ -192,18 +192,36 @@
 .emoji-picker-option:hover { background: var(--azul-claro); }
 
 /* BANNER DE FUNDO */
+.banner-preview-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+.banner-preview-col { flex: 1; min-width: 0; }
+.banner-preview-col--mobile { flex: 0 0 140px; }
+.banner-preview-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cinza-500);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
 .banner-crop-preview {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 1;
     border-radius: var(--radius);
     overflow: hidden;
     background: var(--cinza-100);
     border: 1px solid var(--cinza-200);
+}
+.banner-crop-preview--desktop {
+    aspect-ratio: 5 / 2;
     cursor: grab;
     touch-action: none;
 }
-.banner-crop-preview.dragging { cursor: grabbing; }
+.banner-crop-preview--desktop.dragging { cursor: grabbing; }
+.banner-crop-preview--mobile { aspect-ratio: 9 / 17; }
 .banner-crop-preview img {
     position: absolute;
     top: 50%; left: 50%;
@@ -281,4 +299,6 @@
     .admin-section-header { flex-direction: column; gap: 12px; align-items: flex-start; }
     .admin-list-item { flex-direction: column; align-items: flex-start; }
     .admin-list-actions { width: 100%; }
+    .banner-preview-row { flex-direction: column; }
+    .banner-preview-col--mobile { flex: 1; max-width: 220px; }
 }

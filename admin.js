@@ -1323,7 +1323,7 @@ async function renderAssuntosAdmin() {
 // ========== BANNER DE FUNDO (zoom + arraste) ==========
 const bannerForm = document.getElementById('bannerForm');
 const bannerPreviewWrap = document.getElementById('bannerPreviewWrap');
-const bannerPreviewImg = document.getElementById('bannerPreviewImg');
+const bannerPreviewImgs = document.querySelectorAll('.banner-preview-img');
 const bannerCropPreview = document.getElementById('bannerCropPreview');
 const bannerZoomInput = document.getElementById('bannerZoom');
 const bannerZoomValue = document.getElementById('bannerZoomValue');
@@ -1331,11 +1331,15 @@ const bannerZoomHidden = document.getElementById('bannerZoomInput');
 const bannerPanXHidden = document.getElementById('bannerPanX');
 const bannerPanYHidden = document.getElementById('bannerPanY');
 
+function setBannerImgSrc(url) {
+    bannerPreviewImgs.forEach(img => { img.src = url; });
+}
+
 let bannerState = { zoom: 1, panX: 0, panY: 0 };
 
 function applyBannerTransform() {
-    bannerPreviewImg.style.transform =
-        `translate(calc(-50% + ${bannerState.panX}%), calc(-50% + ${bannerState.panY}%)) scale(${bannerState.zoom})`;
+    const transform = `translate(calc(-50% + ${bannerState.panX}%), calc(-50% + ${bannerState.panY}%)) scale(${bannerState.zoom})`;
+    bannerPreviewImgs.forEach(img => { img.style.transform = transform; });
     bannerZoomHidden.value = bannerState.zoom;
     bannerPanXHidden.value = bannerState.panX;
     bannerPanYHidden.value = bannerState.panY;
@@ -1398,7 +1402,7 @@ window.addEventListener('touchend', dragEnd);
 document.getElementById('bannerImagem').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    bannerPreviewImg.src = URL.createObjectURL(file);
+    setBannerImgSrc(URL.createObjectURL(file));
     bannerPreviewWrap.style.display = 'block';
     setBannerState(1, 0, 0);
 });
@@ -1415,7 +1419,7 @@ async function renderBannerAdmin() {
         setBannerState(1, 0, 0);
         return;
     }
-    bannerPreviewImg.src = data.hero_banner_url;
+    setBannerImgSrc(data.hero_banner_url);
     setBannerState(data.hero_banner_zoom || 1, data.hero_banner_pan_x || 0, data.hero_banner_pan_y || 0);
     bannerPreviewWrap.style.display = 'block';
 }
