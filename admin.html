@@ -537,25 +537,21 @@
 
                     <div class="admin-form-card" style="display:block; margin-top:16px;">
                         <div id="bannerPreviewWrap" style="display:none; margin-bottom:20px;">
-                            <p class="field-hint" style="margin-bottom:8px;">Prévia de como vai ficar recortado no site (a mesma proporção do topo da página):</p>
-                            <div class="banner-crop-preview">
-                                <img id="bannerPreviewImg" src="" alt="">
+                            <p class="field-hint" style="margin-bottom:8px;">Arraste a imagem pra posicionar, e use o zoom abaixo (proporção igual ao topo real do site):</p>
+                            <div class="banner-crop-preview" id="bannerCropPreview">
+                                <img id="bannerPreviewImg" src="" alt="" draggable="false">
                             </div>
-                            <p class="field-hint" style="margin:12px 0 6px;">Foco da imagem (o que fica visível quando ela é cortada):</p>
-                            <div class="banner-position-grid" id="bannerPositionGrid">
-                                <button type="button" class="banner-position-dot" data-pos="left top" aria-label="Superior esquerda"></button>
-                                <button type="button" class="banner-position-dot" data-pos="center top" aria-label="Superior centro"></button>
-                                <button type="button" class="banner-position-dot" data-pos="right top" aria-label="Superior direita"></button>
-                                <button type="button" class="banner-position-dot" data-pos="left center" aria-label="Meio esquerda"></button>
-                                <button type="button" class="banner-position-dot active" data-pos="center center" aria-label="Centro"></button>
-                                <button type="button" class="banner-position-dot" data-pos="right center" aria-label="Meio direita"></button>
-                                <button type="button" class="banner-position-dot" data-pos="left bottom" aria-label="Inferior esquerda"></button>
-                                <button type="button" class="banner-position-dot" data-pos="center bottom" aria-label="Inferior centro"></button>
-                                <button type="button" class="banner-position-dot" data-pos="right bottom" aria-label="Inferior direita"></button>
+                            <div class="banner-zoom-row">
+                                <span class="field-hint" style="margin:0;">Zoom</span>
+                                <input type="range" id="bannerZoom" min="60" max="220" value="100">
+                                <span class="banner-zoom-value" id="bannerZoomValue">100%</span>
+                                <button type="button" class="btn btn-outline btn-sm" id="resetBannerPositionBtn">Centralizar</button>
                             </div>
                         </div>
                         <form id="bannerForm">
-                            <input type="hidden" id="bannerPosition" value="center center">
+                            <input type="hidden" id="bannerZoomInput" value="1">
+                            <input type="hidden" id="bannerPanX" value="0">
+                            <input type="hidden" id="bannerPanY" value="0">
                             <div class="form-group">
                                 <label for="bannerImagem">Nova imagem (PNG ou JPEG)</label>
                                 <input type="file" id="bannerImagem" accept="image/png,image/jpeg">

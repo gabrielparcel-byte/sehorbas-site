@@ -3,13 +3,21 @@ async function renderHeroBanner() {
     const img = document.getElementById('heroBannerImg');
     if (!img) return;
 
-    const { data, error } = await sb.from('configuracoes_site').select('hero_banner_url, hero_banner_position').eq('id', 1).single();
+    const { data, error } = await sb
+        .from('configuracoes_site')
+        .select('hero_banner_url, hero_banner_zoom, hero_banner_pan_x, hero_banner_pan_y')
+        .eq('id', 1)
+        .single();
     if (error || !data) return;
 
     const urlSegura = safeUrl(data.hero_banner_url);
     if (!urlSegura) return;
     img.src = urlSegura;
-    img.style.objectPosition = data.hero_banner_position || 'center center';
+
+    const zoom = data.hero_banner_zoom || 1;
+    const panX = data.hero_banner_pan_x || 0;
+    const panY = data.hero_banner_pan_y || 0;
+    img.style.transform = `translate(calc(-50% + ${panX}%), calc(-50% + ${panY}%)) scale(${zoom})`;
     img.style.display = 'block';
 }
 renderHeroBanner();

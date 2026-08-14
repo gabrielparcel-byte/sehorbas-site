@@ -1320,40 +1320,103 @@ async function renderAssuntosAdmin() {
     `).join('');
 }
 
-// ========== BANNER DE FUNDO ==========
+// ========== BANNER DE FUNDO (zoom + arraste) ==========
 const bannerForm = document.getElementById('bannerForm');
 const bannerPreviewWrap = document.getElementById('bannerPreviewWrap');
 const bannerPreviewImg = document.getElementById('bannerPreviewImg');
-const bannerPositionInput = document.getElementById('bannerPosition');
+const bannerCropPreview = document.getElementById('bannerCropPreview');
+const bannerZoomInput = document.getElementById('bannerZoom');
+const bannerZoomValue = document.getElementById('bannerZoomValue');
+const bannerZoomHidden = document.getElementById('bannerZoomInput');
+const bannerPanXHidden = document.getElementById('bannerPanX');
+const bannerPanYHidden = document.getElementById('bannerPanY');
 
-function setBannerPosition(pos) {
-    bannerPositionInput.value = pos;
-    bannerPreviewImg.style.objectPosition = pos;
-    document.querySelectorAll('.banner-position-dot').forEach(dot => {
-        dot.classList.toggle('active', dot.dataset.pos === pos);
-    });
+let bannerState = { zoom: 1, panX: 0, panY: 0 };
+
+function applyBannerTransform() {
+    bannerPreviewImg.style.transform =
+        `translate(calc(-50% + ${bannerState.panX}%), calc(-50% + ${bannerState.panY}%)) scale(${bannerState.zoom})`;
+    bannerZoomHidden.value = bannerState.zoom;
+    bannerPanXHidden.value = bannerState.panX;
+    bannerPanYHidden.value = bannerState.panY;
+    bannerZoomInput.value = Math.round(bannerState.zoom * 100);
+    bannerZoomValue.textContent = Math.round(bannerState.zoom * 100) + '%';
 }
 
-document.querySelectorAll('.banner-position-dot').forEach(dot => {
-    dot.addEventListener('click', () => setBannerPosition(dot.dataset.pos));
+function setBannerState(zoom, panX, panY) {
+    bannerState = { zoom, panX, panY };
+    applyBannerTransform();
+}
+
+bannerZoomInput.addEventListener('input', () => {
+    bannerState.zoom = bannerZoomInput.value / 100;
+    applyBannerTransform();
 });
+
+document.getElementById('resetBannerPositionBtn').addEventListener('click', () => {
+    setBannerState(1, 0, 0);
+});
+
+// Arraste com mouse e toque
+let dragging = false;
+let dragStart = { x: 0, y: 0, panX: 0, panY: 0 };
+
+function dragBegin(clientX, clientY) {
+    dragging = true;
+    dragStart = { x: clientX, y: clientY, panX: bannerState.panX, panY: bannerState.panY };
+    bannerCropPreview.classList.add('dragging');
+}
+function dragMove(clientX, clientY) {
+    if (!dragging) return;
+    const rect = bannerCropPreview.getBoundingClientRect();
+    const deltaXPercent = ((clientX - dragStart.x) / rect.width) * 100;
+    const deltaYPercent = ((clientY - dragStart.y) / rect.height) * 100;
+    bannerState.panX = dragStart.panX + deltaXPercent;
+    bannerState.panY = dragStart.panY + deltaYPercent;
+    applyBannerTransform();
+}
+function dragEnd() {
+    dragging = false;
+    bannerCropPreview.classList.remove('dragging');
+}
+
+bannerCropPreview.addEventListener('mousedown', (e) => { e.preventDefault(); dragBegin(e.clientX, e.clientY); });
+window.addEventListener('mousemove', (e) => dragMove(e.clientX, e.clientY));
+window.addEventListener('mouseup', dragEnd);
+
+bannerCropPreview.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    dragBegin(t.clientX, t.clientY);
+}, { passive: true });
+window.addEventListener('touchmove', (e) => {
+    if (!dragging) return;
+    const t = e.touches[0];
+    dragMove(t.clientX, t.clientY);
+}, { passive: true });
+window.addEventListener('touchend', dragEnd);
 
 document.getElementById('bannerImagem').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
     bannerPreviewImg.src = URL.createObjectURL(file);
     bannerPreviewWrap.style.display = 'block';
+    setBannerState(1, 0, 0);
 });
 
 async function renderBannerAdmin() {
-    const { data, error } = await sb.from('configuracoes_site').select('hero_banner_url, hero_banner_position').eq('id', 1).single();
+    const { data, error } = await sb
+        .from('configuracoes_site')
+        .select('hero_banner_url, hero_banner_zoom, hero_banner_pan_x, hero_banner_pan_y')
+        .eq('id', 1)
+        .single();
+
     if (error || !data || !data.hero_banner_url) {
         bannerPreviewWrap.style.display = 'none';
-        setBannerPosition('center center');
+        setBannerState(1, 0, 0);
         return;
     }
     bannerPreviewImg.src = data.hero_banner_url;
-    setBannerPosition(data.hero_banner_position || 'center center');
+    setBannerState(data.hero_banner_zoom || 1, data.hero_banner_pan_x || 0, data.hero_banner_pan_y || 0);
     bannerPreviewWrap.style.display = 'block';
 }
 
@@ -1362,7 +1425,11 @@ bannerForm.addEventListener('submit', async (e) => {
     const submitBtn = bannerForm.querySelector('button[type="submit"]');
     const fileInput = document.getElementById('bannerImagem');
     const file = fileInput.files[0];
-    const position = bannerPositionInput.value;
+    const transformData = {
+        hero_banner_zoom: bannerState.zoom,
+        hero_banner_pan_x: bannerState.panX,
+        hero_banner_pan_y: bannerState.panY
+    };
 
     if (file) {
         submitBtn.disabled = true;
@@ -1378,18 +1445,20 @@ bannerForm.addEventListener('submit', async (e) => {
         }
         const { data: { publicUrl } } = sb.storage.from('banner-fundo').getPublicUrl(filePath);
 
-        const { error } = await sb.from('configuracoes_site').update({ hero_banner_url: publicUrl, hero_banner_position: position }).eq('id', 1);
+        const { error } = await sb.from('configuracoes_site')
+            .update({ hero_banner_url: publicUrl, ...transformData })
+            .eq('id', 1);
         submitBtn.disabled = false;
         submitBtn.textContent = 'Salvar';
         if (error) { alert('Erro ao salvar: ' + error.message); return; }
     } else {
-        // Sem imagem nova: só atualiza o foco da imagem já cadastrada
-        const { error } = await sb.from('configuracoes_site').update({ hero_banner_position: position }).eq('id', 1);
+        // Sem imagem nova: só atualiza zoom/posição da imagem já cadastrada
+        const { error } = await sb.from('configuracoes_site').update(transformData).eq('id', 1);
         if (error) { alert('Erro ao salvar: ' + error.message); return; }
     }
 
-    bannerForm.reset();
     document.getElementById('bannerImagemHint').textContent = 'Banner atualizado! Confira na página principal.';
+    fileInput.value = '';
     renderBannerAdmin();
 });
 

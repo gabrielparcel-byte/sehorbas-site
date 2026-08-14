@@ -27,7 +27,7 @@ Todas com RLS: leitura pública (`select using (true)`), escrita só autenticado
 
 Buckets de Storage (públicos): `convenios-logos`, `convencoes-arquivos`, `comunicados-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`, `banner-fundo`.
 
-Configuração de site (linha única, id fixo 1): tabela `configuracoes_site` (migration 012, `hero_banner_position` na 013) guarda `hero_banner_url` — a foto de fundo do hero, opcional, editável na aba **Banner** do admin — e `hero_banner_position` (grid de 9 pontos no admin, vira `object-position` no CSS, default `center center`). Aplicada com `opacity: .16` + `mix-blend-mode: luminosity` sobre o degradê existente (`.hero-banner-img` em `style.css`), pra aparecer só sutilmente atrás do texto, sem prejudicar a legibilidade. O admin mostra uma prévia com a mesma proporção do hero antes de salvar, pra evitar cortar parte importante da foto.
+Configuração de site (linha única, id fixo 1): tabela `configuracoes_site` (migration 012; `hero_banner_zoom`/`hero_banner_pan_x`/`hero_banner_pan_y` na 014, substituíram o `hero_banner_position` da 013 que não é mais usado) guarda `hero_banner_url` — a foto de fundo do hero, opcional, editável na aba **Banner** do admin, com zoom (slider) e arraste livre (mouse/touch) numa prévia com a mesma proporção do hero real, igual editor de foto de capa. Aplicada via CSS `transform: translate(...) scale(...)` + `opacity: .16` + `mix-blend-mode: luminosity` sobre o degradê existente (`.hero-banner-img` em `style.css`), pra aparecer só sutilmente atrás do texto, sem prejudicar a legibilidade.
 
 Migrations em `migrations/`, numeradas e sequenciais — rodar manualmente no SQL Editor do Supabase quando adicionadas (não há CI de migration).
 
