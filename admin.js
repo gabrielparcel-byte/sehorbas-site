@@ -153,7 +153,7 @@ convenioForm.addEventListener('submit', async (e) => {
     const id = document.getElementById('convenioId').value;
     const logoAtual = document.getElementById('convenioLogoAtual').value;
     const fileInput = document.getElementById('convenioLogo');
-    const file = fileInput.files[0];
+    const file = await compressImage(fileInput.files[0], { maxWidth: 500, maxHeight: 500, quality: 0.85 });
 
     let logo_url = logoAtual || null;
 
@@ -273,7 +273,7 @@ cursoForm.addEventListener('submit', async (e) => {
     const id = document.getElementById('cursoId').value;
     const logoAtual = document.getElementById('cursoLogoAtual').value;
     const fileInput = document.getElementById('cursoLogo');
-    const file = fileInput.files[0];
+    const file = await compressImage(fileInput.files[0], { maxWidth: 500, maxHeight: 500, quality: 0.85 });
 
     let logo_url = logoAtual || null;
 
@@ -816,7 +816,7 @@ vagaForm.addEventListener('submit', async (e) => {
     const id = document.getElementById('vagaId').value;
     const imagemAtual = document.getElementById('vagaImagemAtual').value;
     const fileInput = document.getElementById('vagaImagem');
-    const file = fileInput.files[0];
+    const file = await compressImage(fileInput.files[0], { maxWidth: 1000, maxHeight: 1400, quality: 0.82 });
 
     let imagem_url = imagemAtual || null;
 
@@ -941,7 +941,7 @@ funcForm.addEventListener('submit', async (e) => {
     const id = document.getElementById('funcIdx').value;
     const fotoAtual = document.getElementById('funcFotoAtual').value;
     const fileInput = document.getElementById('funcFoto');
-    const file = fileInput.files[0];
+    const file = await compressImage(fileInput.files[0], { maxWidth: 500, maxHeight: 500, quality: 0.85 });
 
     let foto_url = fotoAtual || null;
 
@@ -1424,7 +1424,7 @@ bannerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const submitBtn = bannerForm.querySelector('button[type="submit"]');
     const fileInput = document.getElementById('bannerImagem');
-    const file = fileInput.files[0];
+    const file = await compressImage(fileInput.files[0], { maxWidth: 1920, maxHeight: 1920, quality: 0.8 });
     const transformData = {
         hero_banner_zoom: bannerState.zoom,
         hero_banner_pan_x: bannerState.panX,
