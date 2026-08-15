@@ -70,6 +70,10 @@ Push na branch `main` já publica direto (GitHub Pages serve a partir da raiz do
 - GitHub Actions secrets do workflow `supabase-keepalive.yml` ainda não configurados.
 - Arquivo solto `nova logo sehorbas.png` na raiz — é a logo original enviada pelo usuário, mantida como backup fora do Git (duplicata de `assets/logo.png`).
 
+## Ideias futuras (ainda não implementadas)
+
+- **Carteirinha de sócio automatizada**: tela (provavelmente no admin) pra gerar a carteirinha da associada — sobe/tira uma foto 3x4, preenche os campos (nome, cargo/função, número de sócio, validade etc.) e sai a carteirinha pronta pra imprimir/baixar. O usuário vai trazer um modelo existente como referência de layout, mas quer 100% editável (não fixo no modelo de referência) e com a identidade visual atual do SEHORBAS (azul/dourado, logo). Ainda em aberto: se fica só visual (gera imagem/PDF) ou se integra com um cadastro de sócios com numeração sequencial no banco; e se quem preenche é a própria associada ou só o admin. Aguardando o modelo de referência pra desenhar a implementação.
+
 ## Regra de manutenção deste arquivo
 
 Manter este CLAUDE.md atualizado a cada mudança relevante de arquitetura, convenção ou decisão de produto — é a forma de levar contexto entre máquinas diferentes, já que a memória local do Claude Code não sincroniza entre PCs.
