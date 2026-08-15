@@ -641,8 +641,7 @@ ul, ol { list-style: none; }
 .vaga-modal-img {
     display: block;
     width: 100%;
-    max-height: 320px;
-    object-fit: cover;
+    height: auto;
     border-radius: var(--radius);
     margin-bottom: 20px;
 }
