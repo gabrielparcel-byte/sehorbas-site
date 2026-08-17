@@ -50,7 +50,7 @@ Formulário no `index.html` monta uma mensagem e abre o WhatsApp (`wa.me`) do n�
 
 ## Segurança
 
-`supabase-config.js` expõe `escapeHtml()` e `safeUrl()` — **sempre** usar ao injetar dados do banco em `innerHTML` (evita XSS armazenado). `safeUrl()` só libera `http:`/`https:`.
+`supabase-config.js` expõe `escapeHtml()` e `safeUrl()` — **sempre** usar ao injetar dados do banco em `innerHTML` (evita XSS armazenado). `safeUrl()` só libera `http:`/`https:`. Também expõe `sanitizeFileName()` — **sempre** usar no nome do arquivo antes de montar o `filePath` de qualquer upload pro Storage (o Supabase rejeita chaves com acento/espaço/parênteses com erro "Invalid key").
 
 ## Convenções de UI
 

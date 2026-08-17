@@ -36,6 +36,30 @@ function safeUrl(url) {
 // upload (evita subir fotos de celular/drone com vários MB pro
 // Supabase). PDFs e arquivos que não são imagem passam direto.
 // ============================================================
+// ============================================================
+// NOME DE ARQUIVO SEGURO — o Storage do Supabase rejeita chaves com
+// acento, espaço, parênteses etc. ("Invalid key"). Troca tudo isso
+// por "_" antes de montar o caminho do upload.
+// ============================================================
+function sanitizeFileName(name) {
+    const pontoIdx = name.lastIndexOf('.');
+    const base = pontoIdx > 0 ? name.slice(0, pontoIdx) : name;
+    const ext = pontoIdx > 0 ? name.slice(pontoIdx) : '';
+
+    const baseLimpa = base
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+        .replace(/[^a-zA-Z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .slice(0, 80) || 'arquivo';
+
+    const extLimpa = ext
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9.]/g, '');
+
+    return baseLimpa + extLimpa;
+}
+
 function compressImage(file, options) {
     options = options || {};
     const maxWidth = options.maxWidth || 1600;

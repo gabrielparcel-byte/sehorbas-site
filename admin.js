@@ -166,7 +166,7 @@ convenioForm.addEventListener('submit', async (e) => {
     if (file) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando logo...';
-        const filePath = `${Date.now()}_${file.name}`;
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
         const { error: uploadError } = await sb.storage.from('convenios-logos').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar logo: ' + uploadError.message);
@@ -286,7 +286,7 @@ cursoForm.addEventListener('submit', async (e) => {
     if (file) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando logo...';
-        const filePath = `${Date.now()}_${file.name}`;
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
         const { error: uploadError } = await sb.storage.from('cursos-logos').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar logo: ' + uploadError.message);
@@ -406,7 +406,7 @@ convencaoForm.addEventListener('submit', async (e) => {
     if (file) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando arquivo...';
-        const filePath = `${Date.now()}_${file.name}`;
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
         const { error: uploadError } = await sb.storage.from('convencoes-arquivos').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar arquivo: ' + uploadError.message);
@@ -520,7 +520,7 @@ comunicadoForm.addEventListener('submit', async (e) => {
     if (file) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando arquivo...';
-        const filePath = `${Date.now()}_${file.name}`;
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
         const { error: uploadError } = await sb.storage.from('comunicados-arquivos').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar arquivo: ' + uploadError.message);
@@ -634,7 +634,7 @@ modeloForm.addEventListener('submit', async (e) => {
     if (file) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando arquivo...';
-        const filePath = `${Date.now()}_${file.name}`;
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
         const { error: uploadError } = await sb.storage.from('modelos-acordo-arquivos').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar arquivo: ' + uploadError.message);
@@ -829,7 +829,7 @@ vagaForm.addEventListener('submit', async (e) => {
     if (file) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando flyer...';
-        const filePath = `${Date.now()}_${file.name}`;
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
         const { error: uploadError } = await sb.storage.from('vagas-flyers').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar flyer: ' + uploadError.message);
@@ -954,7 +954,7 @@ funcForm.addEventListener('submit', async (e) => {
     if (file) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando foto...';
-        const filePath = `${Date.now()}_${file.name}`;
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
         const { error: uploadError } = await sb.storage.from('equipe-fotos').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar foto: ' + uploadError.message);
@@ -1503,7 +1503,7 @@ bannerForm.addEventListener('submit', async (e) => {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando...';
 
-        const filePath = `${Date.now()}_${file.name}`;
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
         const { error: uploadError } = await sb.storage.from('banner-fundo').upload(filePath, file);
         if (uploadError) {
             alert('Erro ao enviar imagem: ' + uploadError.message);
