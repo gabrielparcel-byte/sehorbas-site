@@ -11,8 +11,8 @@ Site do Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de 
 
 ## Estrutura de páginas
 
-- `index.html` — site público (Sobre, Área de Atuação [Base Territorial + Categorias Abrangidas], Notícias/Instagram, Vagas de Emprego, Equipe, Convênios, Cursos, Convenção Coletiva, Comunicados, Modelos de Acordo, Pré-Agendamento, Contato)
-- `admin.html` + `admin.js` — painel administrativo (login Supabase Auth), 12 abas: Convênios, Cursos, Convenções, Comunicados, Modelos de Acordo, Notícias, Vagas de Emprego, Equipe, Base Territorial, Categorias, Assuntos (do pré-agendamento), **Banner** (imagem de fundo do hero)
+- `index.html` — site público (Sobre, Somos Filiados, Área de Atuação [Base Territorial + Categorias Abrangidas], Notícias/Instagram, Vagas de Emprego, Equipe, Convênios, Cursos, Convenção Coletiva, Comunicados, Modelos de Acordo, Pré-Agendamento, Contato)
+- `admin.html` + `admin.js` — painel administrativo (login Supabase Auth), 13 abas: Convênios, Cursos, Somos Filiados, Convenções, Comunicados, Modelos de Acordo, Notícias, Vagas de Emprego, Equipe, Base Territorial, Categorias, Assuntos (do pré-agendamento), **Banner** (imagem de fundo do hero)
 - `convenios.html`, `convencao.html`, `modelos.html` — páginas "Ver mais" (listagem completa de cada seção)
 - `app.js` — lógica do site público (renderização, carrosséis, formulário WhatsApp)
 - `style.css` / `admin.css` — estilos
@@ -21,11 +21,11 @@ Links internos usam `/` em vez de `index.html` (URLs limpas desde a migração p
 
 ## Tabelas no Supabase
 
-`convenios`, `convencoes`, `comunicados` (título + descrição + PDF, mesmo formato de convenções — migration 011, substituiu a antiga tabela `acordos`), `modelos_acordo`, `noticias`, `equipe`, `assuntos` (assuntos do pré-agendamento — migration 008), `cidades` (Base Territorial), `categorias` (Categorias Abrangidas, com `icone` em emoji), `vagas` (Vagas de Emprego, imagem obrigatória, com `telefone`/`link` opcionais — migration 010), `cursos` (cursos com desconto — migration 009).
+`convenios`, `convencoes`, `comunicados` (título + descrição + PDF, mesmo formato de convenções — migration 011, substituiu a antiga tabela `acordos`), `modelos_acordo`, `noticias`, `equipe`, `assuntos` (assuntos do pré-agendamento — migration 008), `cidades` (Base Territorial), `categorias` (Categorias Abrangidas, com `icone` em emoji), `vagas` (Vagas de Emprego, imagem obrigatória, com `telefone`/`link` opcionais — migration 010), `cursos` (cursos com desconto — migration 009), `filiados` (entidades sindicais que o SEHORBAS integra — migration 018).
 
 Todas com RLS: leitura pública (`select using (true)`), escrita só autenticado.
 
-Buckets de Storage (públicos): `convenios-logos`, `convencoes-arquivos`, `comunicados-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`, `banner-fundo`.
+Buckets de Storage (públicos): `convenios-logos`, `convencoes-arquivos`, `comunicados-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`, `banner-fundo`, `filiados-logos`.
 
 Configuração de site (linha única, id fixo 1): tabela `configuracoes_site` (migration 012; `hero_banner_zoom`/`hero_banner_pan_x`/`hero_banner_pan_y` na 014, substituíram o `hero_banner_position` da 013 que não é mais usado) guarda `hero_banner_url` — a foto de fundo do hero, opcional, editável na aba **Banner** do admin, com zoom (slider, mínimo 100% pra nunca sobrar espaço vazio) e arraste livre (mouse/touch), igual editor de foto de capa. O admin mostra **duas prévias simultâneas** (desktop ~5:2 e celular ~9:17, `.banner-preview-img`) porque o hero muda muito de proporção entre os dois — no mobile a logo fica empilhada em cima do texto, ficando bem mais alto e estreito.
 

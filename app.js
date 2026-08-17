@@ -184,6 +184,43 @@ async function renderConvenios(limit) {
     }
 }
 
+// ========== SOMOS FILIADOS ==========
+async function renderFiliados() {
+    const grid = document.getElementById('filiadosGrid');
+    if (!grid) return;
+
+    const { data: filiados, error } = await sb
+        .from('filiados')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+    if (error) {
+        console.error('Erro ao carregar filiados:', error);
+        grid.innerHTML = `<p class="convenio-empty">Não foi possível carregar no momento.</p>`;
+        return;
+    }
+    if (!filiados || filiados.length === 0) {
+        grid.innerHTML = `<p class="convenio-empty">Em breve, os órgãos aos quais o SEHORBAS é filiado.</p>`;
+        return;
+    }
+
+    grid.innerHTML = filiados.map(f => {
+        const logoUrlSegura = safeUrl(f.logo_url);
+        const linkSeguro = safeUrl(f.link);
+        const logoHtml = logoUrlSegura
+            ? `<img src="${logoUrlSegura}" alt="${escapeHtml(f.nome)}">`
+            : escapeHtml(f.nome).charAt(0).toUpperCase();
+        const conteudo = `
+            <div class="filiado-logo">${logoHtml}</div>
+            <h4>${escapeHtml(f.nome)}</h4>
+            ${linkSeguro ? `<span class="filiado-link-hint">Visitar site →</span>` : ''}
+        `;
+        return linkSeguro
+            ? `<a href="${linkSeguro}" target="_blank" rel="noopener" class="filiado-card">${conteudo}</a>`
+            : `<div class="filiado-card" style="cursor:default;">${conteudo}</div>`;
+    }).join('');
+}
+
 // ========== ÁREA DE ATUAÇÃO (Base Territorial + Categorias) ==========
 async function renderCidades() {
     const wrap = document.getElementById('cidadesChips');
@@ -640,6 +677,7 @@ renderNoticias();
 renderVagas();
 renderEquipeSite();
 renderCidades();
+renderFiliados();
 renderCategorias();
 
 wireCarousel('noticiasTrack', 'noticiasPrev', 'noticiasNext');

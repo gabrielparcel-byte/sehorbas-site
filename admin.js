@@ -376,6 +376,122 @@ async function renderCursosAdmin() {
     `).join('');
 }
 
+// ========== SOMOS FILIADOS CRUD ==========
+const filiadoFormCard = document.getElementById('filiadoFormCard');
+const filiadoForm = document.getElementById('filiadoForm');
+
+document.getElementById('addFiliadoBtn').addEventListener('click', () => {
+    document.getElementById('filiadoId').value = '';
+    document.getElementById('filiadoLogoAtual').value = '';
+    document.getElementById('filiadoLogoHint').textContent = '';
+    filiadoForm.reset();
+    document.getElementById('filiadoFormTitle').textContent = 'Novo Filiado';
+    filiadoFormCard.style.display = 'block';
+});
+
+document.getElementById('cancelFiliado').addEventListener('click', () => {
+    filiadoFormCard.style.display = 'none';
+});
+
+filiadoForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = filiadoForm.querySelector('button[type="submit"]');
+    const id = document.getElementById('filiadoId').value;
+    const logoAtual = document.getElementById('filiadoLogoAtual').value;
+    const fileInput = document.getElementById('filiadoLogo');
+    const file = await compressImage(fileInput.files[0], { maxWidth: 400, maxHeight: 400, quality: 0.85 });
+
+    let logo_url = logoAtual || null;
+
+    if (file) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando logo...';
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
+        const { error: uploadError } = await sb.storage.from('filiados-logos').upload(filePath, file);
+        if (uploadError) {
+            alert('Erro ao enviar logo: ' + uploadError.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar';
+            return;
+        }
+        const { data: { publicUrl } } = sb.storage.from('filiados-logos').getPublicUrl(filePath);
+        logo_url = publicUrl;
+    }
+
+    const item = {
+        nome: document.getElementById('filiadoNome').value.trim(),
+        link: document.getElementById('filiadoLink').value.trim() || null,
+        ordem: parseInt(document.getElementById('filiadoOrdem').value) || 0,
+        logo_url
+    };
+
+    const { error } = id
+        ? await sb.from('filiados').update(item).eq('id', id)
+        : await sb.from('filiados').insert(item);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar';
+
+    if (error) {
+        alert('Erro ao salvar filiado: ' + error.message);
+        return;
+    }
+    filiadoFormCard.style.display = 'none';
+    renderFiliadosAdmin();
+});
+
+async function editFiliado(id) {
+    const { data: f, error } = await sb.from('filiados').select('*').eq('id', id).single();
+    if (error || !f) return;
+    document.getElementById('filiadoId').value = f.id;
+    document.getElementById('filiadoNome').value = f.nome;
+    document.getElementById('filiadoLink').value = f.link || '';
+    document.getElementById('filiadoOrdem').value = f.ordem;
+    document.getElementById('filiadoLogo').value = '';
+    document.getElementById('filiadoLogoAtual').value = f.logo_url || '';
+    document.getElementById('filiadoLogoHint').textContent = f.logo_url
+        ? 'Já existe uma logo enviada. Escolha uma nova apenas se quiser substituí-la.'
+        : '';
+    document.getElementById('filiadoFormTitle').textContent = 'Editar Filiado';
+    filiadoFormCard.style.display = 'block';
+}
+
+async function deleteFiliado(id) {
+    if (!confirm('Remover este filiado?')) return;
+    const { error } = await sb.from('filiados').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
+    renderFiliadosAdmin();
+}
+
+async function renderFiliadosAdmin() {
+    const list = document.getElementById('filiadosList');
+    const { data: filiados, error } = await sb
+        .from('filiados')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        return;
+    }
+    if (!filiados || filiados.length === 0) {
+        list.innerHTML = '<div class="admin-list-empty">Nenhum filiado cadastrado.</div>';
+        return;
+    }
+    list.innerHTML = filiados.map(f => `
+        <div class="admin-list-item">
+            <div class="admin-list-info">
+                <h4>${escapeHtml(f.nome)}</h4>
+                <p>Ordem: ${f.ordem}${f.link ? ' · ' + escapeHtml(f.link) : ''}</p>
+            </div>
+            <div class="admin-list-actions">
+                <button class="btn btn-outline btn-sm" onclick="editFiliado('${f.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteFiliado('${f.id}')">Remover</button>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ========== CONVENÇÕES CRUD ==========
 const convencaoFormCard = document.getElementById('convencaoFormCard');
 const convencaoForm = document.getElementById('convencaoForm');
@@ -1541,6 +1657,7 @@ document.getElementById('removeBannerBtn').addEventListener('click', async () =>
 function renderAll() {
     renderConvenios();
     renderCursosAdmin();
+    renderFiliadosAdmin();
     renderConvencoes();
     renderComunicadosAdmin();
     renderModelosAdmin();

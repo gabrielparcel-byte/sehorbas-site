@@ -92,6 +92,7 @@
                 <div class="admin-tabs">
                     <button class="tab active" data-tab="convenios">Convênios e Parcerias</button>
                     <button class="tab" data-tab="cursos">Cursos</button>
+                    <button class="tab" data-tab="filiados">Somos Filiados</button>
                     <button class="tab" data-tab="convencoes">Convenções</button>
                     <button class="tab" data-tab="comunicados">Comunicados</button>
                     <button class="tab" data-tab="modelos">Modelos de Acordo</button>
@@ -199,6 +200,47 @@
                     </div>
 
                     <div class="admin-list" id="cursosList"></div>
+                </div>
+
+                <!-- TAB: SOMOS FILIADOS -->
+                <div class="tab-content" id="tab-filiados">
+                    <div class="admin-section-header">
+                        <h2>Somos Filiados</h2>
+                        <button class="btn btn-primary btn-sm" id="addFiliadoBtn">+ Adicionar</button>
+                    </div>
+
+                    <div class="admin-form-card" id="filiadoFormCard" style="display:none;">
+                        <h3 id="filiadoFormTitle">Novo Filiado</h3>
+                        <form id="filiadoForm">
+                            <input type="hidden" id="filiadoId">
+                            <input type="hidden" id="filiadoLogoAtual">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="filiadoNome">Nome do órgão</label>
+                                    <input type="text" id="filiadoNome" required placeholder="Ex: Federação Estadual dos Trabalhadores">
+                                </div>
+                                <div class="form-group">
+                                    <label for="filiadoOrdem">Ordem</label>
+                                    <input type="number" id="filiadoOrdem" value="0" min="0" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="filiadoLink">Site do órgão (opcional)</label>
+                                <input type="text" id="filiadoLink" placeholder="https://...">
+                            </div>
+                            <div class="form-group">
+                                <label for="filiadoLogo">Logo (PNG ou JPEG, opcional)</label>
+                                <input type="file" id="filiadoLogo" accept="image/png,image/jpeg">
+                                <p class="field-hint" id="filiadoLogoHint"></p>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline btn-sm" id="cancelFiliado">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="admin-list" id="filiadosList"></div>
                 </div>
 
                 <!-- TAB: CONVENÇÕES -->
