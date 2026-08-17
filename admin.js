@@ -235,7 +235,7 @@ async function renderConvenios() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!convenios || convenios.length === 0) {
@@ -355,7 +355,7 @@ async function renderCursosAdmin() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!cursos || cursos.length === 0) {
@@ -471,7 +471,7 @@ async function renderFiliadosAdmin() {
         .order('ordem', { ascending: true });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!filiados || filiados.length === 0) {
@@ -585,7 +585,7 @@ async function renderConvencoes() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!convencoes || convencoes.length === 0) {
@@ -699,7 +699,7 @@ async function renderComunicadosAdmin() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!comunicados || comunicados.length === 0) {
@@ -813,7 +813,7 @@ async function renderModelosAdmin() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!modelos || modelos.length === 0) {
@@ -894,7 +894,7 @@ async function renderNoticiasAdmin() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!noticias || noticias.length === 0) {
@@ -1019,7 +1019,7 @@ async function renderVagasAdmin() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!vagas || vagas.length === 0) {
@@ -1135,7 +1135,7 @@ async function renderEquipe() {
         .order('ordem', { ascending: true });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!equipe || equipe.length === 0) {
@@ -1216,7 +1216,7 @@ async function renderCidadesAdmin() {
         .order('ordem', { ascending: true });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!cidades || cidades.length === 0) {
@@ -1339,7 +1339,7 @@ async function renderCategoriasAdmin() {
         .order('ordem', { ascending: true });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!categorias || categorias.length === 0) {
@@ -1423,7 +1423,7 @@ async function renderAssuntosAdmin() {
         .order('ordem', { ascending: true });
 
     if (error) {
-        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${error.message}</div>`;
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
         return;
     }
     if (!assuntos || assuntos.length === 0) {
