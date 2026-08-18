@@ -1694,12 +1694,47 @@ document.getElementById('socioFoto').addEventListener('change', (e) => {
     handleSocioFotoSelecionada(e.target.files[0]);
 });
 
-document.getElementById('tirarFotoBtn').addEventListener('click', () => {
-    document.getElementById('socioFotoCamera').click();
+// ========== CÂMERA (tirar foto direto na página) ==========
+let cameraStream = null;
+
+async function abrirCamera() {
+    const overlay = document.getElementById('cameraModalOverlay');
+    overlay.classList.add('open');
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+        document.getElementById('cameraVideo').srcObject = cameraStream;
+    } catch (err) {
+        alert('Não foi possível acessar a câmera: ' + err.message);
+        fecharCamera();
+    }
+}
+
+function fecharCamera() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+    document.getElementById('cameraModalOverlay').classList.remove('open');
+}
+
+document.getElementById('tirarFotoBtn').addEventListener('click', abrirCamera);
+document.getElementById('cameraCancelBtn').addEventListener('click', fecharCamera);
+document.getElementById('cameraModalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'cameraModalOverlay') fecharCamera();
 });
 
-document.getElementById('socioFotoCamera').addEventListener('change', (e) => {
-    handleSocioFotoSelecionada(e.target.files[0]);
+document.getElementById('cameraCaptureBtn').addEventListener('click', () => {
+    const video = document.getElementById('cameraVideo');
+    const canvas = document.getElementById('cameraCanvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => {
+        if (!blob) return;
+        const file = new File([blob], `foto_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        handleSocioFotoSelecionada(file);
+        fecharCamera();
+    }, 'image/jpeg', 0.9);
 });
 
 function updateCarteirinhaPreview() {
@@ -1804,7 +1839,6 @@ async function editSocio(id) {
     const [mes, ano] = (s.validade || '').split('/');
     document.getElementById('socioValidade').value = (ano && mes) ? `${ano}-${mes}` : '';
     document.getElementById('socioFoto').value = '';
-    document.getElementById('socioFotoCamera').value = '';
     document.getElementById('socioFormTitle').textContent = 'Editar Carteirinha';
     document.getElementById('cancelSocio').style.display = 'inline-flex';
     document.getElementById('socioFotoHint').textContent = s.foto_url

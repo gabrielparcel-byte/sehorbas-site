@@ -661,7 +661,6 @@
                                 <div class="socio-foto-inputs">
                                     <input type="file" id="socioFoto" accept="image/png,image/jpeg">
                                     <button type="button" class="btn btn-outline btn-sm" id="tirarFotoBtn">📷 Tirar foto agora</button>
-                                    <input type="file" id="socioFotoCamera" accept="image/*" capture="user" style="display:none;">
                                 </div>
                                 <p class="field-hint" id="socioFotoHint"></p>
                             </div>
@@ -755,6 +754,17 @@
                         <h3 style="font-size:17px;">Sócios cadastrados</h3>
                     </div>
                     <div class="admin-list" id="sociosList"></div>
+
+                    <div class="camera-modal-overlay" id="cameraModalOverlay">
+                        <div class="camera-modal">
+                            <video id="cameraVideo" autoplay playsinline muted></video>
+                            <canvas id="cameraCanvas" style="display:none;"></canvas>
+                            <div class="camera-modal-actions">
+                                <button type="button" class="btn btn-outline btn-sm" id="cameraCancelBtn">Cancelar</button>
+                                <button type="button" class="btn btn-primary btn-sm" id="cameraCaptureBtn">Capturar foto</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 </div>
             </div>

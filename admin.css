@@ -304,9 +304,43 @@
 /* ========== CARTEIRINHA DE ASSOCIADO ========== */
 .socio-foto-inputs { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
+.camera-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .75);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.camera-modal-overlay.open { display: flex; }
+.camera-modal {
+    background: var(--cinza-900);
+    border-radius: var(--radius);
+    padding: 16px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+}
+.camera-modal video {
+    width: 100%;
+    border-radius: 8px;
+    background: #000;
+    display: block;
+    transform: scaleX(-1);
+}
+.camera-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
 .carteirinha-preview-wrap {
     display: flex;
-    gap: 32px;
+    flex-direction: column;
+    gap: 24px;
     overflow-x: auto;
     padding-bottom: 8px;
 }
