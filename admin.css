@@ -302,6 +302,8 @@
 }
 
 /* ========== CARTEIRINHA DE ASSOCIADO ========== */
+.socio-foto-inputs { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
 .carteirinha-preview-wrap {
     display: flex;
     gap: 32px;

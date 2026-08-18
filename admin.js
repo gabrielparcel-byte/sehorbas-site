@@ -1675,9 +1675,11 @@ document.getElementById('socioCpf').addEventListener('input', (e) => {
 ['socioNome', 'socioValidade', 'socioCargo'].forEach(id => {
     document.getElementById(id).addEventListener('input', updateCarteirinhaPreview);
 });
-document.getElementById('socioFoto').addEventListener('change', (e) => {
-    const file = e.target.files[0];
+let socioFotoSelecionada = null;
+
+function handleSocioFotoSelecionada(file) {
     if (!file) return;
+    socioFotoSelecionada = file;
     const reader = new FileReader();
     reader.onload = () => {
         const img = document.getElementById('carteirinhaFotoImg');
@@ -1686,6 +1688,18 @@ document.getElementById('socioFoto').addEventListener('change', (e) => {
         document.getElementById('carteirinhaFotoPlaceholder').style.display = 'none';
     };
     reader.readAsDataURL(file);
+}
+
+document.getElementById('socioFoto').addEventListener('change', (e) => {
+    handleSocioFotoSelecionada(e.target.files[0]);
+});
+
+document.getElementById('tirarFotoBtn').addEventListener('click', () => {
+    document.getElementById('socioFotoCamera').click();
+});
+
+document.getElementById('socioFotoCamera').addEventListener('change', (e) => {
+    handleSocioFotoSelecionada(e.target.files[0]);
 });
 
 function updateCarteirinhaPreview() {
@@ -1701,6 +1715,7 @@ document.getElementById('cancelSocio').addEventListener('click', () => {
 
 function resetSocioForm() {
     document.getElementById('socioForm').reset();
+    socioFotoSelecionada = null;
     document.getElementById('socioId').value = '';
     document.getElementById('socioFotoAtual').value = '';
     document.getElementById('socioNumeroAtual').value = '';
@@ -1720,8 +1735,7 @@ document.getElementById('socioForm').addEventListener('submit', async (e) => {
     const submitBtn = document.querySelector('#socioForm button[type="submit"]');
     const id = document.getElementById('socioId').value;
     const fotoAtual = document.getElementById('socioFotoAtual').value;
-    const fileInput = document.getElementById('socioFoto');
-    const file = await compressImage(fileInput.files[0], { maxWidth: 360, maxHeight: 448, quality: 0.85 });
+    const file = await compressImage(socioFotoSelecionada, { maxWidth: 360, maxHeight: 448, quality: 0.85 });
 
     let foto_url = fotoAtual || null;
 
@@ -1772,6 +1786,7 @@ document.getElementById('socioForm').addEventListener('submit', async (e) => {
     document.getElementById('socioFotoHint').textContent = 'Já existe uma foto enviada. Escolha uma nova apenas se quiser substituí-la.';
     document.getElementById('baixarCarteirinhaBtn').disabled = false;
     document.getElementById('carteirinhaDownloadHint').textContent = `Carteirinha nº ${saved.numero} salva.`;
+    socioFotoSelecionada = null;
     updateCarteirinhaPreview();
     renderSociosAdmin();
 });
@@ -1779,6 +1794,7 @@ document.getElementById('socioForm').addEventListener('submit', async (e) => {
 async function editSocio(id) {
     const { data: s, error } = await sb.from('socios').select('*').eq('id', id).single();
     if (error || !s) return;
+    socioFotoSelecionada = null;
     document.getElementById('socioId').value = s.id;
     document.getElementById('socioFotoAtual').value = s.foto_url || '';
     document.getElementById('socioNumeroAtual').value = s.numero;
@@ -1788,6 +1804,7 @@ async function editSocio(id) {
     const [mes, ano] = (s.validade || '').split('/');
     document.getElementById('socioValidade').value = (ano && mes) ? `${ano}-${mes}` : '';
     document.getElementById('socioFoto').value = '';
+    document.getElementById('socioFotoCamera').value = '';
     document.getElementById('socioFormTitle').textContent = 'Editar Carteirinha';
     document.getElementById('cancelSocio').style.display = 'inline-flex';
     document.getElementById('socioFotoHint').textContent = s.foto_url

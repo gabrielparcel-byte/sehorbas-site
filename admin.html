@@ -658,7 +658,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="socioFoto">Foto 3x4 (PNG ou JPEG)</label>
-                                <input type="file" id="socioFoto" accept="image/png,image/jpeg">
+                                <div class="socio-foto-inputs">
+                                    <input type="file" id="socioFoto" accept="image/png,image/jpeg">
+                                    <button type="button" class="btn btn-outline btn-sm" id="tirarFotoBtn">📷 Tirar foto agora</button>
+                                    <input type="file" id="socioFotoCamera" accept="image/*" capture="user" style="display:none;">
+                                </div>
                                 <p class="field-hint" id="socioFotoHint"></p>
                             </div>
                             <div class="form-actions">
