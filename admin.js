@@ -1653,6 +1653,232 @@ document.getElementById('removeBannerBtn').addEventListener('click', async () =>
     renderBannerAdmin();
 });
 
+// ========== CARTEIRINHAS (SÓCIOS) CRUD ==========
+function formatCpf(digits) {
+    digits = digits.replace(/\D/g, '').slice(0, 11);
+    let out = digits;
+    if (digits.length > 9) out = `${digits.slice(0,3)}.${digits.slice(3,6)}.${digits.slice(6,9)}-${digits.slice(9)}`;
+    else if (digits.length > 6) out = `${digits.slice(0,3)}.${digits.slice(3,6)}.${digits.slice(6)}`;
+    else if (digits.length > 3) out = `${digits.slice(0,3)}.${digits.slice(3)}`;
+    return out;
+}
+function monthInputToValidade(value) {
+    if (!value) return '';
+    const [ano, mes] = value.split('-');
+    return `${mes}/${ano}`;
+}
+
+document.getElementById('socioCpf').addEventListener('input', (e) => {
+    e.target.value = formatCpf(e.target.value);
+    updateCarteirinhaPreview();
+});
+['socioNome', 'socioValidade', 'socioCargo'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateCarteirinhaPreview);
+});
+document.getElementById('socioFoto').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        const img = document.getElementById('carteirinhaFotoImg');
+        img.src = reader.result;
+        img.style.display = 'block';
+        document.getElementById('carteirinhaFotoPlaceholder').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+});
+
+function updateCarteirinhaPreview() {
+    document.getElementById('carteirinhaNome').textContent = document.getElementById('socioNome').value.trim().toUpperCase() || '—';
+    document.getElementById('carteirinhaCpf').textContent = document.getElementById('socioCpf').value || '—';
+    document.getElementById('carteirinhaValidade').textContent = monthInputToValidade(document.getElementById('socioValidade').value) || '—';
+    document.getElementById('carteirinhaCargo').textContent = document.getElementById('socioCargo').value.trim() || '—';
+}
+
+document.getElementById('cancelSocio').addEventListener('click', () => {
+    resetSocioForm();
+});
+
+function resetSocioForm() {
+    document.getElementById('socioForm').reset();
+    document.getElementById('socioId').value = '';
+    document.getElementById('socioFotoAtual').value = '';
+    document.getElementById('socioNumeroAtual').value = '';
+    document.getElementById('socioFormTitle').textContent = 'Nova Carteirinha';
+    document.getElementById('cancelSocio').style.display = 'none';
+    document.getElementById('socioFotoHint').textContent = '';
+    document.getElementById('carteirinhaFotoImg').style.display = 'none';
+    document.getElementById('carteirinhaFotoImg').src = '';
+    document.getElementById('carteirinhaFotoPlaceholder').style.display = 'block';
+    document.getElementById('baixarCarteirinhaBtn').disabled = true;
+    document.getElementById('carteirinhaDownloadHint').textContent = 'Salve o cadastro acima pra liberar o download.';
+    updateCarteirinhaPreview();
+}
+
+document.getElementById('socioForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.querySelector('#socioForm button[type="submit"]');
+    const id = document.getElementById('socioId').value;
+    const fotoAtual = document.getElementById('socioFotoAtual').value;
+    const fileInput = document.getElementById('socioFoto');
+    const file = await compressImage(fileInput.files[0], { maxWidth: 360, maxHeight: 448, quality: 0.85 });
+
+    let foto_url = fotoAtual || null;
+
+    if (file) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando foto...';
+        const filePath = `${Date.now()}_${sanitizeFileName(file.name)}`;
+        const { error: uploadError } = await sb.storage.from('socios-fotos').upload(filePath, file);
+        if (uploadError) {
+            alert('Erro ao enviar foto: ' + uploadError.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Salvar e gerar prévia';
+            return;
+        }
+        const { data: { publicUrl } } = sb.storage.from('socios-fotos').getPublicUrl(filePath);
+        foto_url = publicUrl;
+    }
+
+    const item = {
+        nome: document.getElementById('socioNome').value.trim(),
+        cpf: document.getElementById('socioCpf').value.trim(),
+        cargo_empresa: document.getElementById('socioCargo').value.trim(),
+        validade: monthInputToValidade(document.getElementById('socioValidade').value),
+        foto_url
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = id ? 'Salvando...' : 'Gerando...';
+
+    const query = id
+        ? sb.from('socios').update(item).eq('id', id).select().single()
+        : sb.from('socios').insert(item).select().single();
+    const { data: saved, error } = await query;
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar e gerar prévia';
+
+    if (error) {
+        alert('Erro ao salvar sócio: ' + error.message);
+        return;
+    }
+
+    document.getElementById('socioId').value = saved.id;
+    document.getElementById('socioFotoAtual').value = saved.foto_url || '';
+    document.getElementById('socioNumeroAtual').value = saved.numero;
+    document.getElementById('socioFormTitle').textContent = 'Editar Carteirinha';
+    document.getElementById('cancelSocio').style.display = 'inline-flex';
+    document.getElementById('socioFotoHint').textContent = 'Já existe uma foto enviada. Escolha uma nova apenas se quiser substituí-la.';
+    document.getElementById('baixarCarteirinhaBtn').disabled = false;
+    document.getElementById('carteirinhaDownloadHint').textContent = `Carteirinha nº ${saved.numero} salva.`;
+    updateCarteirinhaPreview();
+    renderSociosAdmin();
+});
+
+async function editSocio(id) {
+    const { data: s, error } = await sb.from('socios').select('*').eq('id', id).single();
+    if (error || !s) return;
+    document.getElementById('socioId').value = s.id;
+    document.getElementById('socioFotoAtual').value = s.foto_url || '';
+    document.getElementById('socioNumeroAtual').value = s.numero;
+    document.getElementById('socioNome').value = s.nome;
+    document.getElementById('socioCpf').value = s.cpf;
+    document.getElementById('socioCargo').value = s.cargo_empresa;
+    const [mes, ano] = (s.validade || '').split('/');
+    document.getElementById('socioValidade').value = (ano && mes) ? `${ano}-${mes}` : '';
+    document.getElementById('socioFoto').value = '';
+    document.getElementById('socioFormTitle').textContent = 'Editar Carteirinha';
+    document.getElementById('cancelSocio').style.display = 'inline-flex';
+    document.getElementById('socioFotoHint').textContent = s.foto_url
+        ? 'Já existe uma foto enviada. Escolha uma nova apenas se quiser substituí-la.'
+        : '';
+
+    const img = document.getElementById('carteirinhaFotoImg');
+    if (s.foto_url) {
+        img.src = s.foto_url;
+        img.style.display = 'block';
+        document.getElementById('carteirinhaFotoPlaceholder').style.display = 'none';
+    } else {
+        img.style.display = 'none';
+        document.getElementById('carteirinhaFotoPlaceholder').style.display = 'block';
+    }
+
+    document.getElementById('baixarCarteirinhaBtn').disabled = false;
+    document.getElementById('carteirinhaDownloadHint').textContent = `Carteirinha nº ${s.numero}.`;
+    updateCarteirinhaPreview();
+    document.querySelector('[data-tab="carteirinhas"]').scrollIntoView({ block: 'nearest' });
+}
+
+async function deleteSocio(id) {
+    if (!confirm('Remover este sócio e sua carteirinha?')) return;
+    const { error } = await sb.from('socios').delete().eq('id', id);
+    if (error) { alert('Erro ao remover: ' + error.message); return; }
+    if (document.getElementById('socioId').value === id) resetSocioForm();
+    renderSociosAdmin();
+}
+
+document.getElementById('baixarCarteirinhaBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('baixarCarteirinhaBtn');
+    btn.disabled = true;
+    const textoOriginal = btn.textContent;
+    btn.textContent = 'Gerando imagem...';
+    try {
+        const frontCanvas = await html2canvas(document.getElementById('carteirinhaFront'), { scale: 2, useCORS: true });
+        const backCanvas = await html2canvas(document.getElementById('carteirinhaBack'), { scale: 2, useCORS: true });
+
+        const gap = 40 * 2;
+        const combined = document.createElement('canvas');
+        combined.width = frontCanvas.width;
+        combined.height = frontCanvas.height + backCanvas.height + gap;
+        const ctx = combined.getContext('2d');
+        ctx.fillStyle = '#eef2f5';
+        ctx.fillRect(0, 0, combined.width, combined.height);
+        ctx.drawImage(frontCanvas, 0, 0);
+        ctx.drawImage(backCanvas, 0, frontCanvas.height + gap);
+
+        const numero = document.getElementById('socioNumeroAtual').value || '0';
+        const nomeArquivo = sanitizeFileName(document.getElementById('socioNome').value.trim() || 'socio');
+        const link = document.createElement('a');
+        link.download = `carteirinha_${numero}_${nomeArquivo}.png`;
+        link.href = combined.toDataURL('image/png');
+        link.click();
+    } catch (err) {
+        alert('Erro ao gerar a imagem: ' + err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+});
+
+async function renderSociosAdmin() {
+    const list = document.getElementById('sociosList');
+    const { data: socios, error } = await sb
+        .from('socios')
+        .select('*')
+        .order('numero', { ascending: false });
+
+    if (error) {
+        list.innerHTML = `<div class="admin-list-empty">Erro ao carregar: ${escapeHtml(error.message)}</div>`;
+        return;
+    }
+    if (!socios || socios.length === 0) {
+        list.innerHTML = '<div class="admin-list-empty">Nenhum sócio cadastrado ainda.</div>';
+        return;
+    }
+    list.innerHTML = socios.map(s => `
+        <div class="admin-list-item">
+            <div class="admin-list-info">
+                <h4>#${s.numero} — ${escapeHtml(s.nome)}</h4>
+                <p>${escapeHtml(s.cpf)} · válida até ${escapeHtml(s.validade)}</p>
+            </div>
+            <div class="admin-list-actions">
+                <button class="btn btn-outline btn-sm" onclick="editSocio('${s.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteSocio('${s.id}')">Remover</button>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ========== RENDER ALL ==========
 function renderAll() {
     renderConvenios();
@@ -1668,4 +1894,5 @@ function renderAll() {
     renderCategoriasAdmin();
     renderAssuntosAdmin();
     renderBannerAdmin();
+    renderSociosAdmin();
 }

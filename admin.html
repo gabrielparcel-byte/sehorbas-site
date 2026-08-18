@@ -6,7 +6,7 @@
     <title>SEHORBAS — Área Administrativa</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="admin.css">
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -103,6 +103,7 @@
                     <button class="tab" data-tab="categorias">Categorias</button>
                     <button class="tab" data-tab="assuntos">Assuntos</button>
                     <button class="tab" data-tab="banner">Banner</button>
+                    <button class="tab" data-tab="carteirinhas">Carteirinhas</button>
                 </div>
                 <div class="admin-content">
 
@@ -623,11 +624,140 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- TAB: CARTEIRINHAS -->
+                <div class="tab-content" id="tab-carteirinhas">
+                    <div class="admin-section-header">
+                        <h2>Carteirinhas de Associado</h2>
+                    </div>
+                    <p class="field-hint">Preenche os dados da associada, confere a prévia (frente e verso) e baixa a carteirinha pronta pra imprimir. Cada carteirinha gerada fica salva aqui, com número sequencial.</p>
+
+                    <div class="admin-form-card" style="margin-top:16px;">
+                        <h3 id="socioFormTitle">Nova Carteirinha</h3>
+                        <form id="socioForm">
+                            <input type="hidden" id="socioId">
+                            <input type="hidden" id="socioFotoAtual">
+                            <input type="hidden" id="socioNumeroAtual">
+                            <div class="form-group">
+                                <label for="socioNome">Nome completo</label>
+                                <input type="text" id="socioNome" required placeholder="Ex: João da Silva">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="socioCpf">CPF</label>
+                                    <input type="text" id="socioCpf" required placeholder="000.000.000-00" maxlength="14">
+                                </div>
+                                <div class="form-group">
+                                    <label for="socioValidade">Validade</label>
+                                    <input type="month" id="socioValidade" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="socioCargo">Cargo / Empresa</label>
+                                <input type="text" id="socioCargo" required placeholder="Ex: Garçom — Restaurante Exemplo">
+                            </div>
+                            <div class="form-group">
+                                <label for="socioFoto">Foto 3x4 (PNG ou JPEG)</label>
+                                <input type="file" id="socioFoto" accept="image/png,image/jpeg">
+                                <p class="field-hint" id="socioFotoHint"></p>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline btn-sm" id="cancelSocio" style="display:none;">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Salvar e gerar prévia</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="admin-form-card">
+                        <h3>Prévia</h3>
+                        <div class="carteirinha-preview-wrap">
+                            <div class="carteirinha-card" id="carteirinhaFront">
+                                <div class="carteirinha-header carteirinha-header--front">
+                                    <div class="carteirinha-logo-circle" style="width:150px;height:150px;padding:10px;">
+                                        <img src="assets/logo.png" alt="SEHORBAS">
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;gap:4px;">
+                                        <div class="carteirinha-wordmark" style="font-size:34px;">SEHORBAS</div>
+                                        <div class="carteirinha-fullname">SINDICATO DOS EMPREGADOS EM HOTÉIS, RESTAURANTES,<br>BARES E SIMILARES DE MARINGÁ E REGIÃO</div>
+                                    </div>
+                                    <div style="margin-left:auto;text-align:right;color:#fff;">
+                                        <div style="font-size:13px;font-weight:600;letter-spacing:2px;opacity:0.85;">CARTEIRINHA DE</div>
+                                        <div style="font-size:22px;font-weight:800;letter-spacing:1px;">ASSOCIADO</div>
+                                    </div>
+                                </div>
+                                <div class="carteirinha-body-front">
+                                    <div class="carteirinha-foto-slot" id="carteirinhaFotoSlot">
+                                        <span id="carteirinhaFotoPlaceholder">Foto 3x4</span>
+                                        <img id="carteirinhaFotoImg" src="" alt="" style="display:none;">
+                                    </div>
+                                    <div style="flex:1;display:flex;flex-direction:column;gap:16px;padding-top:6px;">
+                                        <div>
+                                            <div class="carteirinha-label">NOME COMPLETO</div>
+                                            <div class="carteirinha-value" style="font-size:26px;" id="carteirinhaNome">—</div>
+                                        </div>
+                                        <div style="display:flex;gap:40px;">
+                                            <div>
+                                                <div class="carteirinha-label">CPF</div>
+                                                <div class="carteirinha-value" style="font-size:20px;" id="carteirinhaCpf">—</div>
+                                            </div>
+                                            <div>
+                                                <div class="carteirinha-label">VALIDADE</div>
+                                                <div class="carteirinha-value" style="font-size:20px;" id="carteirinhaValidade">—</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="carteirinha-label">CARGO / EMPRESA</div>
+                                            <div class="carteirinha-value" style="font-size:18px;" id="carteirinhaCargo">—</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carteirinha-accent"></div>
+                            </div>
+
+                            <div class="carteirinha-card" id="carteirinhaBack">
+                                <div class="carteirinha-header carteirinha-header--back">
+                                    <div class="carteirinha-logo-circle" style="width:120px;height:120px;padding:8px;">
+                                        <img src="assets/logo.png" alt="SEHORBAS">
+                                    </div>
+                                    <div class="carteirinha-wordmark" style="font-size:32px;letter-spacing:0.6px;">SEHORBAS</div>
+                                </div>
+                                <div class="carteirinha-body-back">
+                                    <div style="font-size:14px;line-height:1.7;color:#3a4a58;">
+                                        <div class="carteirinha-label" style="margin-bottom:6px;">SEDE DO SINDICATO</div>
+                                        <div>Rua Joubert de Carvalho, 623 — Sala 505, Centro — Maringá/PR — CEP 87013-911</div>
+                                        <div>Telefone/WhatsApp: (44) 3222-5952 · sehorbasmaringa@outlook.com</div>
+                                        <div>sehorbas.com.br</div>
+                                    </div>
+                                    <div class="carteirinha-disclaimer">
+                                        Esta carteirinha comprova a condição de associado(a) ao SEHORBAS e deve ser apresentada, junto a documento
+                                        oficial com foto, para acesso aos benefícios e convênios oferecidos pelo sindicato. Em caso de perda ou roubo,
+                                        comunique imediatamente a secretaria para emissão de segunda via.
+                                    </div>
+                                    <div class="carteirinha-signatures">
+                                        <div class="carteirinha-sig-col">Assinatura do associado</div>
+                                        <div class="carteirinha-sig-col">Presidente — SEHORBAS</div>
+                                    </div>
+                                </div>
+                                <div class="carteirinha-accent"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top:20px;">
+                            <button type="button" class="btn btn-primary btn-sm" id="baixarCarteirinhaBtn" disabled>Baixar carteirinha (PNG)</button>
+                        </div>
+                        <p class="field-hint" id="carteirinhaDownloadHint">Salve o cadastro acima pra liberar o download.</p>
+                    </div>
+
+                    <div class="admin-section-header" style="margin-top:32px;">
+                        <h3 style="font-size:17px;">Sócios cadastrados</h3>
+                    </div>
+                    <div class="admin-list" id="sociosList"></div>
+                </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script defer src="supabase-config.js"></script>
     <script defer src="admin.js"></script>
 </body>

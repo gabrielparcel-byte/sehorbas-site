@@ -12,7 +12,7 @@ Site do Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de 
 ## Estrutura de páginas
 
 - `index.html` — site público (Sobre, Somos Filiados, Área de Atuação [Base Territorial + Categorias Abrangidas], Notícias/Instagram, Vagas de Emprego, Equipe, Convênios, Cursos, Convenção Coletiva, Comunicados, Modelos de Acordo, Pré-Agendamento, Contato)
-- `admin.html` + `admin.js` — painel administrativo (login Supabase Auth), 13 abas: Convênios, Cursos, Somos Filiados, Convenções, Comunicados, Modelos de Acordo, Notícias, Vagas de Emprego, Equipe, Base Territorial, Categorias, Assuntos (do pré-agendamento), **Banner** (imagem de fundo do hero)
+- `admin.html` + `admin.js` — painel administrativo (login Supabase Auth), 14 abas: Convênios, Cursos, Somos Filiados, Convenções, Comunicados, Modelos de Acordo, Notícias, Vagas de Emprego, Equipe, Base Territorial, Categorias, Assuntos (do pré-agendamento), Banner (imagem de fundo do hero), **Carteirinhas** (gera a carteirinha de associado)
 - `convenios.html`, `convencao.html`, `modelos.html` — páginas "Ver mais" (listagem completa de cada seção)
 - `app.js` — lógica do site público (renderização, carrosséis, formulário WhatsApp)
 - `style.css` / `admin.css` — estilos
@@ -21,11 +21,11 @@ Links internos usam `/` em vez de `index.html` (URLs limpas desde a migração p
 
 ## Tabelas no Supabase
 
-`convenios`, `convencoes`, `comunicados` (título + descrição + PDF, mesmo formato de convenções — migration 011, substituiu a antiga tabela `acordos`), `modelos_acordo`, `noticias`, `equipe`, `assuntos` (assuntos do pré-agendamento — migration 008), `cidades` (Base Territorial), `categorias` (Categorias Abrangidas, com `icone` em emoji), `vagas` (Vagas de Emprego, imagem obrigatória, com `telefone`/`link` opcionais — migration 010), `cursos` (cursos com desconto — migration 009), `filiados` (entidades sindicais que o SEHORBAS integra — migration 018).
+`convenios`, `convencoes`, `comunicados` (título + descrição + PDF, mesmo formato de convenções — migration 011, substituiu a antiga tabela `acordos`), `modelos_acordo`, `noticias`, `equipe`, `assuntos` (assuntos do pré-agendamento — migration 008), `cidades` (Base Territorial), `categorias` (Categorias Abrangidas, com `icone` em emoji), `vagas` (Vagas de Emprego, imagem obrigatória, com `telefone`/`link` opcionais — migration 010), `cursos` (cursos com desconto — migration 009), `filiados` (entidades sindicais que o SEHORBAS integra — migration 018), `socios` (cadastro de associados pra gerar a Carteirinha — migration 019).
 
-Todas com RLS: leitura pública (`select using (true)`), escrita só autenticado.
+Todas com RLS: leitura pública (`select using (true)`), escrita só autenticado — **exceto `socios`**, que guarda CPF e por isso não tem select público nenhum, só leitura/escrita autenticada.
 
-Buckets de Storage (públicos): `convenios-logos`, `convencoes-arquivos`, `comunicados-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`, `banner-fundo`, `filiados-logos`.
+Buckets de Storage: `convenios-logos`, `convencoes-arquivos`, `comunicados-arquivos`, `modelos-acordo-arquivos`, `equipe-fotos`, `vagas-flyers`, `cursos-logos`, `banner-fundo`, `filiados-logos` (todos públicos), `socios-fotos` (público, mas a associação foto↔CPF só é possível pra quem tem acesso autenticado à tabela `socios`).
 
 Configuração de site (linha única, id fixo 1): tabela `configuracoes_site` (migration 012; `hero_banner_zoom`/`hero_banner_pan_x`/`hero_banner_pan_y` na 014, substituíram o `hero_banner_position` da 013 que não é mais usado) guarda `hero_banner_url` — a foto de fundo do hero, opcional, editável na aba **Banner** do admin, com zoom (slider, mínimo 100% pra nunca sobrar espaço vazio) e arraste livre (mouse/touch), igual editor de foto de capa. O admin mostra **duas prévias simultâneas** (desktop ~5:2 e celular ~9:17, `.banner-preview-img`) porque o hero muda muito de proporção entre os dois — no mobile a logo fica empilhada em cima do texto, ficando bem mais alto e estreito.
 
@@ -70,9 +70,11 @@ Push na branch `main` já publica direto (GitHub Pages serve a partir da raiz do
 - GitHub Actions secrets do workflow `supabase-keepalive.yml` ainda não configurados.
 - Arquivo solto `nova logo sehorbas.png` na raiz — é a logo original enviada pelo usuário, mantida como backup fora do Git (duplicata de `assets/logo.png`).
 
-## Ideias futuras (ainda não implementadas)
+## Carteirinha de Associado
 
-- **Carteirinha de sócio automatizada**: tela (provavelmente no admin) pra gerar a carteirinha da associada — sobe/tira uma foto 3x4, preenche os campos (nome, cargo/função, número de sócio, validade etc.) e sai a carteirinha pronta pra imprimir/baixar. O usuário vai trazer um modelo existente como referência de layout, mas quer 100% editável (não fixo no modelo de referência) e com a identidade visual atual do SEHORBAS (azul/dourado, logo). Ainda em aberto: se fica só visual (gera imagem/PDF) ou se integra com um cadastro de sócios com numeração sequencial no banco; e se quem preenche é a própria associada ou só o admin. Aguardando o modelo de referência pra desenhar a implementação.
+Aba **Carteirinhas** no admin (`tab-carteirinhas`): formulário (Nome completo, CPF com máscara, Cargo/Empresa, Validade mês/ano, Foto 3x4) com prévia ao vivo da carteirinha (frente e verso) atualizando conforme digita, e botão "Baixar carteirinha (PNG)" que rasteriza os dois lados via `html2canvas` (carregado por CDN, `admin.html`) e baixa uma imagem única (frente + verso empilhados). Só o admin preenche — não é uma página pública. Cada carteirinha gerada fica salva na tabela `socios`, com número sequencial automático (`numero serial`) que também aparece impresso na carteirinha.
+
+O layout é um design final entregue pelo cliente (handoff em `.dc.html` com paleta e tipografia próprias da carteirinha — azul `#1C9AD6`, dourado `#F0C93B`, fonte Barlow via Google Fonts — **diferentes** das tokens do resto do site), reproduzido pixel a pixel nas classes `.carteirinha-*` em `admin.css`: card 856×540px, header com logo circular + wordmark, corpo com foto 3x4 + campos, barra dourada inferior; verso com endereço/contato, aviso legal e linhas de assinatura.
 
 ## Regra de manutenção deste arquivo
 
