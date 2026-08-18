@@ -232,13 +232,16 @@
         <div class="container">
             <h2 class="section-title">Convênios e Parcerias</h2>
             <p class="section-desc">Confira os convênios disponíveis para os trabalhadores associados ao SEHORBAS.</p>
-            <div class="convenios-grid" id="conveniosGrid">
-                <!-- Populated by JS from localStorage or default data -->
-                <div class="convenio-empty">
-                    <p>Nenhum convênio cadastrado ainda. Acesse a <a href="admin.html">área administrativa</a> para adicionar.</p>
+            <div class="carousel-wrap">
+                <button type="button" class="carousel-btn carousel-prev" id="conveniosPrev" aria-label="Anterior">&#8249;</button>
+                <div class="carousel-track" id="conveniosTrack">
+                    <div class="convenio-empty">
+                        <p>Nenhum convênio cadastrado ainda. Acesse a <a href="admin.html">área administrativa</a> para adicionar.</p>
+                    </div>
                 </div>
+                <button type="button" class="carousel-btn carousel-next" id="conveniosNext" aria-label="Próximo">&#8250;</button>
             </div>
-            <div class="ver-mais-wrap" id="conveniosVerMais" style="display:none;">
+            <div class="ver-mais-wrap">
                 <a href="convenios.html" class="btn btn-outline">Ver todos os convênios</a>
             </div>
         </div>

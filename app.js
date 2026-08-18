@@ -155,9 +155,13 @@ function buildConvenioCardHTML(c) {
     `;
 }
 
-async function renderConvenios(limit) {
+async function renderConvenios() {
+    // Na home usa o carrossel (#conveniosTrack); na página "Ver mais"
+    // (convenios.html) usa um grid comum com todos (#conveniosGrid).
+    const track = document.getElementById('conveniosTrack');
     const grid = document.getElementById('conveniosGrid');
-    if (!grid) return;
+    const container = track || grid;
+    if (!container) return;
 
     const { data: convenios, error } = await sb
         .from('convenios')
@@ -166,22 +170,18 @@ async function renderConvenios(limit) {
 
     if (error) {
         console.error('Erro ao carregar convênios:', error);
-        grid.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar os convênios no momento.</p></div>`;
+        container.innerHTML = `<div class="convenio-empty"><p>Não foi possível carregar os convênios no momento.</p></div>`;
         return;
     }
 
     if (!convenios || convenios.length === 0) {
-        grid.innerHTML = `<div class="convenio-empty"><p>Em breve, novos convênios e parcerias para você.</p></div>`;
+        container.innerHTML = `<div class="convenio-empty"><p>Em breve, novos convênios e parcerias para você.</p></div>`;
         return;
     }
 
-    const exibidos = limit ? convenios.slice(0, limit) : convenios;
-    grid.innerHTML = exibidos.map(buildConvenioCardHTML).join('');
-
-    const verMaisWrap = document.getElementById('conveniosVerMais');
-    if (verMaisWrap) {
-        verMaisWrap.style.display = (limit && convenios.length > limit) ? 'flex' : 'none';
-    }
+    container.innerHTML = track
+        ? convenios.map(c => `<div class="carousel-item">${buildConvenioCardHTML(c)}</div>`).join('')
+        : convenios.map(buildConvenioCardHTML).join('');
 }
 
 // ========== SOMOS FILIADOS ==========
@@ -668,7 +668,7 @@ if (teamModalOverlay) {
 }
 
 // ========== INIT ==========
-renderConvenios(document.getElementById('conveniosVerMais') ? 3 : undefined);
+renderConvenios();
 renderCursos();
 renderConvencoes();
 renderComunicados();
@@ -686,3 +686,4 @@ wireCarousel('comunicadosTrack', 'comunicadosPrev', 'comunicadosNext');
 wireCarousel('modelosTrack', 'modelosPrev', 'modelosNext');
 wireCarousel('vagasTrack', 'vagasPrev', 'vagasNext');
 wireCarousel('cursosTrack', 'cursosPrev', 'cursosNext');
+wireCarousel('conveniosTrack', 'conveniosPrev', 'conveniosNext');
