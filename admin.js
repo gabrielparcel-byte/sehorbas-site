@@ -1873,29 +1873,23 @@ document.getElementById('baixarCarteirinhaBtn').addEventListener('click', async 
     const btn = document.getElementById('baixarCarteirinhaBtn');
     btn.disabled = true;
     const textoOriginal = btn.textContent;
-    btn.textContent = 'Gerando imagem...';
+    btn.textContent = 'Gerando PDF...';
     try {
-        const frontCanvas = await html2canvas(document.getElementById('carteirinhaFront'), { scale: 2, useCORS: true });
-        const backCanvas = await html2canvas(document.getElementById('carteirinhaBack'), { scale: 2, useCORS: true });
+        const frontCanvas = await html2canvas(document.getElementById('carteirinhaFront'), { scale: 4, useCORS: true });
+        const backCanvas = await html2canvas(document.getElementById('carteirinhaBack'), { scale: 4, useCORS: true });
 
-        const gap = 40 * 2;
-        const combined = document.createElement('canvas');
-        combined.width = frontCanvas.width;
-        combined.height = frontCanvas.height + backCanvas.height + gap;
-        const ctx = combined.getContext('2d');
-        ctx.fillStyle = '#eef2f5';
-        ctx.fillRect(0, 0, combined.width, combined.height);
-        ctx.drawImage(frontCanvas, 0, 0);
-        ctx.drawImage(backCanvas, 0, frontCanvas.height + gap);
+        // Cartão padrão CR80: 85,6 x 54 mm
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [85.6, 54] });
+        doc.addImage(frontCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 85.6, 54);
+        doc.addPage([85.6, 54], 'landscape');
+        doc.addImage(backCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 85.6, 54);
 
         const numero = document.getElementById('socioNumeroAtual').value || '0';
         const nomeArquivo = sanitizeFileName(document.getElementById('socioNome').value.trim() || 'socio');
-        const link = document.createElement('a');
-        link.download = `carteirinha_${numero}_${nomeArquivo}.png`;
-        link.href = combined.toDataURL('image/png');
-        link.click();
+        doc.save(`carteirinha_${numero}_${nomeArquivo}.pdf`);
     } catch (err) {
-        alert('Erro ao gerar a imagem: ' + err.message);
+        alert('Erro ao gerar o PDF: ' + err.message);
     }
     btn.disabled = false;
     btn.textContent = textoOriginal;
