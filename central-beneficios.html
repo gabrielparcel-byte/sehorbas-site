@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Benefícios — SEHORBAS</title>
+    <meta name="description" content="Conheça o Programa Bem-Estar Integral, em parceria com a Central dos Benefícios: assistências e coberturas para você e sua família.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body>
+
+    <!-- HEADER / NAVBAR -->
+    <header class="header scrolled" id="header">
+        <div class="container header-inner">
+            <a href="/" class="logo-link">
+                <img src="assets/logo.png" alt="SEHORBAS" class="logo-img">
+                <div class="logo-text">
+                    <span class="logo-name">SEHORBAS</span>
+                    <span class="logo-sub">Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares</span>
+                </div>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="/#sobre" class="nav-link">Sobre</a>
+                <a href="/#atuacao" class="nav-link">Atuação</a>
+                <a href="/#noticias" class="nav-link">Notícias</a>
+                <a href="/#vagas" class="nav-link">Vagas</a>
+                <a href="/#equipe" class="nav-link">Equipe</a>
+                <a href="/#convenios" class="nav-link">Convênios</a>
+                <a href="/#central-beneficios" class="nav-link">Benefícios</a>
+                <a href="/#cursos" class="nav-link">Cursos</a>
+                <a href="/#convencao" class="nav-link">Convenção Coletiva</a>
+                <a href="/#comunicados" class="nav-link">Comunicados</a>
+                <a href="/#modelos" class="nav-link">Modelos de Acordo</a>
+                <a href="/#agendamento" class="nav-link">Agendamento</a>
+                <a href="/#contato" class="nav-link">Contato</a>
+                <a href="admin.html" class="nav-link nav-admin">Área Admin</a>
+            </nav>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- PAGE HEADER -->
+    <section class="section" style="padding-top: 120px; padding-bottom: 0;">
+        <div class="container">
+            <a href="/" class="back-to-home">← Voltar para o site</a>
+            <h2 class="section-title">Central de Benefícios</h2>
+            <p class="section-desc">Programa Bem-Estar Integral — assistências e coberturas para você, sua família e sua empresa.</p>
+            <p class="central-beneficios-intro">
+                Este é um programa de assistências, serviços e coberturas securitárias oferecido em parceria com a
+                <strong>Central dos Benefícios</strong>, disponível para os associados do SEHORBAS. Os benefícios variam
+                conforme o plano contratado (Bronze, Prata, Ouro, Diamante ou Safira). Abaixo você confere um resumo de
+                cada um — clique em um item para ver mais detalhes.
+            </p>
+        </div>
+    </section>
+
+    <!-- BENEFÍCIOS -->
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <div class="atuacao-bloco">
+                <h3 class="atuacao-subtitulo">Assistências para Você (Colaborador)</h3>
+                <div class="categorias-grid">
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">👶</div>
+                    <h4>Kit Natalidade</h4>
+                    <span class="beneficio-planos">Diamante, Ouro, Prata e Bronze 2</span>
+                    <p class="categoria-card-desc">Kit de produtos para o cuidado da mãe e do bebê, para titular puérpera ou mãe adotante de criança de até 12 meses.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🛒</div>
+                    <h4>Cesta Básica</h4>
+                    <span class="beneficio-planos">Diamante, Ouro e Prata</span>
+                    <p class="categoria-card-desc">Cartão alimentação para quem fica afastado do trabalho por doença, por período superior a 60 dias, deferido pelo INSS.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">💰</div>
+                    <h4>Complemento de Remuneração por Afastamento</h4>
+                    <span class="beneficio-planos">Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Complemento de renda para quem fica afastado do trabalho por doença por mais de 90 dias, deferido pelo INSS.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🏫</div>
+                    <h4>Reembolso Creche</h4>
+                    <span class="beneficio-planos">Diamante, Ouro, Prata e Bronze 1</span>
+                    <p class="categoria-card-desc">Reembolso da matrícula ou primeira mensalidade em creche particular, para filho de até 36 meses.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">💍</div>
+                    <h4>Casamento</h4>
+                    <span class="beneficio-planos">Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Gratificação financeira na ocorrência de casamento civil ou união estável firmados em cartório.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🎉</div>
+                    <h4>Aposentadoria</h4>
+                    <span class="beneficio-planos">Diamante e Ouro</span>
+                    <p class="categoria-card-desc">Gratificação financeira ao titular quando da sua aposentadoria por tempo de contribuição, idade ou invalidez.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">📚</div>
+                    <h4>Reembolso Material Escolar</h4>
+                    <span class="beneficio-planos">Diamante, Ouro e Prata</span>
+                    <p class="categoria-card-desc">Reembolso de gastos com material escolar do(s) filho(s) matriculado(s) no ensino fundamental I, em escola particular.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🥗</div>
+                    <h4>Assistência Nutricional</h4>
+                    <span class="beneficio-planos">Safira, Diamante e Ouro</span>
+                    <p class="categoria-card-desc">Orientação nutricional mensal, por telefone ou videochamada, com profissionais legalmente habilitados.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🏋️</div>
+                    <h4>Assistência Fitness</h4>
+                    <span class="beneficio-planos">Safira, Diamante e Ouro</span>
+                    <p class="categoria-card-desc">Orientação em treinamento físico mensal, por telefone ou videochamada, com profissionais legalmente habilitados.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🧠</div>
+                    <h4>Assistência Psicológica</h4>
+                    <span class="beneficio-planos">Safira, Diamante e Ouro</span>
+                    <p class="categoria-card-desc">Atendimento psicológico por telefone ou videochamada, com até 2 utilizações no período de 30 dias.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">⚖️</div>
+                    <h4>Assistência Jurídica</h4>
+                    <span class="beneficio-planos">Diamante e Ouro</span>
+                    <p class="categoria-card-desc">Orientações jurídicas nas áreas trabalhista, previdenciária, de família e de consumo.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🩺</div>
+                    <h4>Assistência Consulta Presencial Nacional</h4>
+                    <span class="beneficio-planos">Safira</span>
+                    <p class="categoria-card-desc">Uma consulta mensal com especialista (cardiologia, urologia, ginecologia, ortopedia, dermatologia ou oftalmologia) por R$ 50.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">💊</div>
+                    <h4>Assistência Reembolso Medicamentos</h4>
+                    <span class="beneficio-planos">Safira</span>
+                    <p class="categoria-card-desc">Reembolso dos valores pagos na compra de medicamentos genéricos, prescritos via telemedicina ou consulta do plano.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🎁</div>
+                    <h4>Clube de Vantagens</h4>
+                    <span class="beneficio-planos">Safira, Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Rede com descontos e cashback em lojas físicas e virtuais, disponível 72h após a adesão.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🔧</div>
+                    <h4>Assistência Reembolso Reparo Emergencial Residencial</h4>
+                    <span class="beneficio-planos">Diamante</span>
+                    <p class="categoria-card-desc">Reembolso da mão de obra para emergências elétricas e hidráulicas que comprometam o funcionamento do imóvel.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">📱</div>
+                    <h4>CDB Saúde (Telemedicina)</h4>
+                    <span class="beneficio-planos">Safira e Diamante</span>
+                    <p class="categoria-card-desc">Atendimento médico on-line 24h por dia, em mais de 15 especialidades, pelo celular ou computador.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🎓</div>
+                    <h4>CDB Qualifica</h4>
+                    <span class="beneficio-planos">Todos os planos</span>
+                    <p class="categoria-card-desc">Plataforma de capacitação digital com mais de 300 cursos on-line, organizados em trilhas de conhecimento.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">📈</div>
+                    <h4>Orientação Financeira</h4>
+                    <span class="beneficio-planos">Ouro e Diamante</span>
+                    <p class="categoria-card-desc">Acompanhamento mensal com profissional de educação financeira para organização do orçamento e metas.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🕊️</div>
+                    <h4>Kit Acolhimento</h4>
+                    <span class="beneficio-planos">Diamante, Ouro e Prata</span>
+                    <p class="categoria-card-desc">Kit de apoio ao titular em caso de falecimento de familiar ou parente de primeiro grau.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🤝</div>
+                    <h4>Assistência Social</h4>
+                    <span class="beneficio-planos">Todos os planos</span>
+                    <p class="categoria-card-desc">Suporte social e emocional em momentos críticos, como falecimento, acidente, afastamento ou nascimento.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🧘</div>
+                    <h4>Plataforma de Bem-Estar e Saúde Mental</h4>
+                    <span class="beneficio-planos">NR1 Básico e NR1 Completo</span>
+                    <p class="categoria-card-desc">Acesso ao ecossistema Wellhub, com treinos on-demand, meditação e planos de academias em todo o Brasil.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                </div>
+            </div>
+            <div class="atuacao-bloco">
+                <h3 class="atuacao-subtitulo">Coberturas Securitárias para Você (Colaborador)</h3>
+                <div class="categorias-grid">
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🛡️</div>
+                    <h4>Morte Acidental (MA)</h4>
+                    <span class="beneficio-planos">Safira, Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Indenização aos beneficiários em caso de morte do segurado em consequência exclusiva de acidente pessoal coberto.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🏥</div>
+                    <h4>Diária de Internação Hospitalar por Acidente (DIHA)</h4>
+                    <span class="beneficio-planos">Safira, Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Indenização diária em caso de hospitalização causada exclusivamente por acidente pessoal coberto (até 30 diárias).</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🎰</div>
+                    <h4>Quatro Sorteios Mensais</h4>
+                    <span class="beneficio-planos">Safira, Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Participação em 4 sorteios mensais líquidos de R$ 500, pela Loteria Federal, via Título de Capitalização.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                </div>
+            </div>
+            <div class="atuacao-bloco">
+                <h3 class="atuacao-subtitulo">Assistências para sua Empresa</h3>
+                <div class="categorias-grid">
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">📄</div>
+                    <h4>Reembolso de Rescisão</h4>
+                    <span class="beneficio-planos">Safira, Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Reembolso à empresa dos valores pagos em rescisão de colaborador com no mínimo 7 anos de vínculo CLT ininterrupto.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">⚖️</div>
+                    <h4>Assistência Jurídica Empresarial</h4>
+                    <span class="beneficio-planos">Diamante e Ouro</span>
+                    <p class="categoria-card-desc">Consultoria jurídica remota para a empresa nas áreas de Direito Civil e do Trabalho, incluindo gestão trabalhista e compliance.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🎓</div>
+                    <h4>Capacitação Profissional</h4>
+                    <span class="beneficio-planos">Diamante e Ouro</span>
+                    <p class="categoria-card-desc">Verba para capacitação de colaborador com 60 anos ou mais, com deficiência, ou de estagiário recém-contratado.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">👨‍👧</div>
+                    <h4>Licença-Paternidade</h4>
+                    <span class="beneficio-planos">Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Pagamento de quantia única à empresa para as despesas decorrentes da licença-paternidade do colaborador.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🤰</div>
+                    <h4>Licença-Maternidade</h4>
+                    <span class="beneficio-planos">Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Pagamento de quantia única à empresa para as despesas decorrentes da licença-maternidade da colaboradora.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🚑</div>
+                    <h4>Afastamento por Acidente de Colaborador</h4>
+                    <span class="beneficio-planos">Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Pagamento à empresa para cobrir despesas de afastamento superior a 30 dias por auxílio-acidente deferido pelo INSS.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">👥</div>
+                    <h4>Assistência BEM+ RH</h4>
+                    <span class="beneficio-planos">NR1 Básico e NR1 Completo</span>
+                    <p class="categoria-card-desc">Acompanhamento personalizado de especialista de RH, com sessões mensais e materiais de apoio organizacional.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">📊</div>
+                    <h4>Plataforma de Análise e Monitoramento dos Riscos Psicossociais</h4>
+                    <span class="beneficio-planos">NR1 Básico e NR1 Completo</span>
+                    <p class="categoria-card-desc">Ferramenta para mapear e monitorar riscos psicossociais no ambiente de trabalho, apoiando o PGR (NR-1).</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🩺</div>
+                    <h4>Plataforma de Saúde Ocupacional</h4>
+                    <span class="beneficio-planos">NR1 Completo</span>
+                    <p class="categoria-card-desc">Gestão completa de exames médicos ocupacionais (admissional, demissional, periódico) e do PCMSO.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">📈</div>
+                    <h4>Orientação Financeira Empresarial</h4>
+                    <span class="beneficio-planos">Diamante e Ouro</span>
+                    <p class="categoria-card-desc">Consultoria financeira mensal voltada à realidade da empresa, com apoio na definição de metas e organização orçamentária.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🔧</div>
+                    <h4>Assistência Reembolso Reparo Emergencial Empresarial</h4>
+                    <span class="beneficio-planos">Diamante</span>
+                    <p class="categoria-card-desc">Reembolso da mão de obra para emergências elétricas e hidráulicas no estabelecimento da empresa.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                </div>
+            </div>
+            <div class="atuacao-bloco">
+                <h3 class="atuacao-subtitulo">Cobertura Securitária para sua Empresa</h3>
+                <div class="categorias-grid">
+                <div class="categoria-card" onclick="this.classList.toggle('expanded');var b=this.querySelector('.categoria-card-toggle');if(b)b.textContent=this.classList.contains('expanded')?'Ver menos':'Ver mais'">
+                    <div class="categoria-icon">🛡️</div>
+                    <h4>Rescisão Trabalhista em Caso de Morte Acidental</h4>
+                    <span class="beneficio-planos">Safira, Diamante, Ouro, Prata, Bronze 1 e Bronze 2</span>
+                    <p class="categoria-card-desc">Reembolso à empresa das verbas rescisórias pagas em consequência exclusiva de morte acidental do colaborador.</p>
+                    <button type="button" class="categoria-card-toggle">Ver mais</button>
+                </div>
+                </div>
+            </div>
+
+            <div class="central-beneficios-contato">
+                <h3>Ficou com alguma dúvida?</h3>
+                <p>
+                    Para saber os valores exatos de cada benefício no seu plano, tirar dúvidas sobre coberturas ou
+                    acionar algum atendimento, fale direto com a Central dos Benefícios — eles são os responsáveis
+                    pela gestão do programa.
+                </p>
+                <a href="https://centraldosbeneficios.com.br/" target="_blank" rel="noopener" class="btn btn-primary">Acessar site da Central dos Benefícios</a>
+                <p class="central-beneficios-contato-canais">
+                    📞 (31) 3297-5353 e 0800 941 0123 &nbsp;·&nbsp;
+                    💬 WhatsApp: (31) 3297-5353 &nbsp;·&nbsp;
+                    ✉️ atendimento@centraldosbeneficios.com.br<br>
+                    Atendimento de segunda a sexta-feira (dias úteis), das 8h às 18h (horário de Brasília).
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <img src="assets/logo.png" alt="SEHORBAS" class="footer-logo">
+                <p>SEHORBAS — Sindicato dos Empregados em Hotéis, Restaurantes, Bares e Similares de Maringá e Região</p>
+            </div>
+            <div class="footer-links">
+                <a href="/#sobre">Sobre</a>
+                <a href="/#atuacao">Área de Atuação</a>
+                <a href="/#noticias">Notícias</a>
+                <a href="/#vagas">Vagas de Emprego</a>
+                <a href="/#equipe">Equipe</a>
+                <a href="/#convenios">Convênios</a>
+                <a href="/#central-beneficios">Central de Benefícios</a>
+                <a href="/#cursos">Cursos</a>
+                <a href="/#convencao">Convenção</a>
+                <a href="/#comunicados">Comunicados</a>
+                <a href="/#modelos">Modelos de Acordo</a>
+                <a href="/#agendamento">Pré-Agendamento</a>
+                <a href="/#contato">Contato</a>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2026 SEHORBAS. Todos os direitos reservados.</p>
+                <p>CNPJ: 80.291.206/0001-57</p>
+            </div>
+        </div>
+    </footer>
+
+    <script defer src="supabase-config.js"></script>
+    <script defer src="app.js"></script>
+</body>
+</html>
