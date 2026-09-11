@@ -129,18 +129,19 @@ if (telefoneInput) {
 }
 
 // ========== CONVÊNIOS ==========
+let conveniosCache = [];
+
 function buildConvenioCardHTML(c) {
     const logoUrlSegura = safeUrl(c.logo_url);
-    const siteUrlSeguro = safeUrl(c.site_url);
     const logoEhPdf = logoUrlSegura && logoUrlSegura.toLowerCase().endsWith('.pdf');
     const logoHtml = logoUrlSegura
         ? (logoEhPdf
-            ? `<a href="${logoUrlSegura}" target="_blank" rel="noopener" title="Ver logo (PDF)">📄</a>`
+            ? '📄'
             : `<img src="${logoUrlSegura}" alt="${escapeHtml(c.nome)}">`)
         : escapeHtml(c.nome).charAt(0).toUpperCase();
 
     return `
-    <div class="convenio-card">
+    <div class="convenio-card curso-card" onclick="openConvenioModal('${c.id}')">
         <div class="convenio-card-header">
             <div class="convenio-logo">${logoHtml}</div>
             <h3>${escapeHtml(c.nome)}</h3>
@@ -149,7 +150,7 @@ function buildConvenioCardHTML(c) {
             <p>${escapeHtml(c.descricao)}</p>
             ${c.endereco ? `<div class="convenio-detail"><span>📍</span><span>${escapeHtml(c.endereco)}</span></div>` : ''}
             ${c.telefone ? `<div class="convenio-detail"><span>📞</span><span>${escapeHtml(c.telefone)}</span></div>` : ''}
-            ${siteUrlSeguro ? `<a href="${siteUrlSeguro}" target="_blank" rel="noopener" class="convenio-site-link">🔗 Visitar site</a>` : ''}
+            <span class="curso-card-hint">Ver mais →</span>
         </div>
     </div>
     `;
@@ -179,9 +180,55 @@ async function renderConvenios() {
         return;
     }
 
+    conveniosCache = convenios;
     container.innerHTML = track
         ? convenios.map(c => `<div class="carousel-item">${buildConvenioCardHTML(c)}</div>`).join('')
         : convenios.map(buildConvenioCardHTML).join('');
+}
+
+// ========== MODAL DETALHE DO CONVÊNIO ==========
+const convenioModalOverlay = document.getElementById('convenioModalOverlay');
+
+function openConvenioModal(id) {
+    const c = conveniosCache.find(x => x.id === id);
+    if (!c || !convenioModalOverlay) return;
+
+    const logoUrlSegura = safeUrl(c.logo_url);
+    const logoEhPdf = logoUrlSegura && logoUrlSegura.toLowerCase().endsWith('.pdf');
+    document.getElementById('convenioModalAvatar').innerHTML = (logoUrlSegura && !logoEhPdf)
+        ? `<img src="${logoUrlSegura}" alt="${escapeHtml(c.nome)}">`
+        : (logoEhPdf ? '📄' : escapeHtml(c.nome).charAt(0).toUpperCase());
+    document.getElementById('convenioModalTitulo').textContent = c.nome || '';
+    document.getElementById('convenioModalDesc').textContent = c.descricao || '';
+
+    const siteUrlSeguro = safeUrl(c.site_url);
+    const logoUrlPdf = logoEhPdf ? logoUrlSegura : null;
+    const actions = document.getElementById('convenioModalActions');
+    actions.innerHTML = [
+        c.endereco ? `<div class="convenio-detail"><span>📍</span><span>${escapeHtml(c.endereco)}</span></div>` : '',
+        c.telefone ? `<div class="convenio-detail"><span>📞</span><span>${escapeHtml(c.telefone)}</span></div>` : '',
+        siteUrlSeguro ? `<a href="${siteUrlSeguro}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">🔗 Visitar site</a>` : '',
+        logoUrlPdf ? `<a href="${logoUrlPdf}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">📄 Ver logo (PDF)</a>` : ''
+    ].join('');
+
+    convenioModalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeConvenioModal() {
+    if (!convenioModalOverlay) return;
+    convenioModalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+if (convenioModalOverlay) {
+    document.getElementById('convenioModalClose').addEventListener('click', closeConvenioModal);
+    convenioModalOverlay.addEventListener('click', (e) => {
+        if (e.target === convenioModalOverlay) closeConvenioModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeConvenioModal();
+    });
 }
 
 // ========== SOMOS FILIADOS ==========
