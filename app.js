@@ -351,15 +351,16 @@ if (vagaModalOverlay) {
 }
 
 // ========== CURSOS ==========
+let cursosCache = [];
+
 function buildCursoCardHTML(c) {
     const logoUrlSegura = safeUrl(c.logo_url);
-    const linkSeguro = safeUrl(c.link);
     const logoHtml = logoUrlSegura
         ? `<img src="${logoUrlSegura}" alt="${escapeHtml(c.nome)}">`
         : escapeHtml(c.nome).charAt(0).toUpperCase();
 
     return `
-    <div class="convenio-card">
+    <div class="convenio-card curso-card" onclick="openCursoModal('${c.id}')">
         <div class="convenio-card-header">
             <div class="convenio-logo">${logoHtml}</div>
             <h3>${escapeHtml(c.nome)}</h3>
@@ -368,7 +369,7 @@ function buildCursoCardHTML(c) {
             ${c.instituicao ? `<div class="convenio-detail"><span>🏫</span><span>${escapeHtml(c.instituicao)}</span></div>` : ''}
             <p>${escapeHtml(c.descricao)}</p>
             ${c.desconto ? `<span class="curso-desconto-badge">${escapeHtml(c.desconto)}</span>` : ''}
-            ${linkSeguro ? `<a href="${linkSeguro}" target="_blank" rel="noopener" class="convenio-site-link">🔗 Mais informações</a>` : ''}
+            <span class="curso-card-hint">Ver mais →</span>
         </div>
     </div>
     `;
@@ -396,10 +397,58 @@ async function renderCursos() {
         container.innerHTML = `<div class="convenio-empty"><p>Em breve, cursos com desconto para você.</p></div>`;
         return;
     }
+    cursosCache = cursos;
     container.innerHTML = track
         ? cursos.map(c => `<div class="carousel-item">${buildCursoCardHTML(c)}</div>`).join('')
         : cursos.map(buildCursoCardHTML).join('');
 }
+
+// ========== MODAL DETALHE DO CURSO ==========
+const cursoModalOverlay = document.getElementById('cursoModalOverlay');
+
+function openCursoModal(id) {
+    const c = cursosCache.find(x => x.id === id);
+    if (!c || !cursoModalOverlay) return;
+
+    const logoUrlSegura = safeUrl(c.logo_url);
+    document.getElementById('cursoModalAvatar').innerHTML = logoUrlSegura
+        ? `<img src="${logoUrlSegura}" alt="${escapeHtml(c.nome)}">`
+        : escapeHtml(c.nome).charAt(0).toUpperCase();
+    document.getElementById('cursoModalTitulo').textContent = c.nome || '';
+
+    const instituicaoEl = document.getElementById('cursoModalInstituicao');
+    instituicaoEl.textContent = c.instituicao ? `🏫 ${c.instituicao}` : '';
+    instituicaoEl.style.display = c.instituicao ? 'block' : 'none';
+
+    document.getElementById('cursoModalDesc').textContent = c.descricao || '';
+
+    const linkSeguro = safeUrl(c.link);
+    const actions = document.getElementById('cursoModalActions');
+    actions.innerHTML = [
+        c.desconto ? `<span class="curso-desconto-badge">${escapeHtml(c.desconto)}</span>` : '',
+        linkSeguro ? `<a href="${linkSeguro}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Mais informações</a>` : ''
+    ].join('');
+
+    cursoModalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCursoModal() {
+    if (!cursoModalOverlay) return;
+    cursoModalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+if (cursoModalOverlay) {
+    document.getElementById('cursoModalClose').addEventListener('click', closeCursoModal);
+    cursoModalOverlay.addEventListener('click', (e) => {
+        if (e.target === cursoModalOverlay) closeCursoModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeCursoModal();
+    });
+}
+
 
 // ========== RENDER DOCUMENTOS (Convenções / Comunicados / Modelos) ==========
 function buildDocCardHTML(c, showDownload = true) {
